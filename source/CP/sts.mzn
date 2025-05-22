@@ -14,7 +14,7 @@ array[Weeks, Periods] of var Teams: away;
 
 % Main constraints
 %Only for not optimized
-%constraint 
+% constraint 
 %  forall(w in Weeks, p in Periods)(
 %    home[w, p] < away[w, p] % break symmetric match-ups
 %  );
@@ -64,8 +64,12 @@ constraint
     home_count[t] + away_count[t] = n - 1
   );
 
+% Implied constraint for total period appearances
+constraint forall(t in Teams) (
+  sum(p_val in Periods) (period_count[t,p_val]) = n-1
+);
+
 % Symmetry breaking
-constraint home[1,1] = 1 /\ away[1,1] = 2;
 
 %symmetry breaking weeks
 constraint forall(w in 1..weeks - 1)(
@@ -84,13 +88,24 @@ constraint forall(w in Weeks)(
 
 
 % Enforce sorted home teams in week 1
-%constraint forall(p in 1..periods-1)(
-%  home[1,p] < home[1,p+1]
-%);% for not optimized version could fix the whole first week
+constraint
+  forall(i in Periods) (
+    home[1, i] = 2*i - 1 /\ 
+    away[1, i] = 2*i
+  );% for not optimized version could fix the whole first week
 
 % Objective: balance home/away games
 var int: max_diff = max([abs(home_count[t] - away_count[t]) | t in Teams]);
-solve minimize max_diff;
+solve 
+:: int_search(
+         [home[w, p] | w in Weeks, p in Periods] ++ [away[w, p] | w in Weeks, p in Periods],
+         first_fail,
+         indomain_min,
+         complete
+       )
+%         :: restart_luby(10000)
+%        :: relax_and_reconstruct([home[w, p] | w in Weeks, p in Periods] ++ [away[w, p] | w in Weeks, p in Periods], 85)
+       minimize max_diff;
 
 % Output
 output [
