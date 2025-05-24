@@ -125,13 +125,9 @@ solve
 
 % Output
 output [
-  "Schedule:\n"
-] ++ [
-  "Week \(w): " ++
-  concat([ "P\(p): \(show(home[w, p])) vs \(show(away[w, p]))  " | p in Periods ]) ++ "\n"
-  | w in Weeks
-] ++
-["\nHome games: "] ++ [ "\(home_count[t]) " | t in Teams ] ++
-["\nAway games: "] ++ [ "\(away_count[t]) " | t in Teams ] ++
-["\nMax difference: \(max_diff)\n"]
-;
+  "{",
+  "\"obj\": ", show(max_diff), "," ,
+  "\"sol\": ", show([ [ [home[w,p], away[w,p]] | p in Periods ] | w in Weeks ]),
+  "}"
+];
+
