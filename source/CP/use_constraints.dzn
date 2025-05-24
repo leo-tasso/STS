@@ -1,0 +1,8 @@
+n = 8;
+
+use_constraint_symm_break_slots = false;
+use_constraint_symm_break_weeks = false;
+use_constraint_symm_break_periods = false;
+use_constraint_symm_break_teams = false;
+use_constraint_implied_matches_per_team = false;
+use_constraint_implied_period_count = false;

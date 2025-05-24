@@ -5,6 +5,13 @@ int: n; % Number of teams (even)
 int: weeks = n - 1;
 int: periods = n div 2;
 
+bool: use_constraint_symm_break_slots;
+bool: use_constraint_symm_break_weeks;
+bool: use_constraint_symm_break_periods;
+bool: use_constraint_symm_break_teams;
+bool: use_constraint_implied_matches_per_team;
+bool: use_constraint_implied_period_count;
+
 set of int: Teams = 1..n;
 set of int: Weeks = 1..weeks;
 set of int: Periods = 1..periods;
@@ -14,10 +21,11 @@ array[Weeks, Periods] of var Teams: away;
 
 % Main constraints
 %Only for not optimized
-% constraint 
-%  forall(w in Weeks, p in Periods)(
-%    home[w, p] < away[w, p] % break symmetric match-ups
-%  );
+constraint 
+  use_constraint_symm_break_slots ->
+  forall(w in Weeks, p in Periods)(
+    home[w, p] < away[w, p] % break symmetric match-ups
+);
 
 % Each pair plays once
 constraint
@@ -60,35 +68,43 @@ constraint
 
 % Implied constraint: number of games per team
 constraint
+  use_constraint_implied_matches_per_team ->
   forall(t in Teams)(
     home_count[t] + away_count[t] = n - 1
   );
 
 % Implied constraint for total period appearances
-constraint forall(t in Teams) (
-  sum(p_val in Periods) (period_count[t,p_val]) = n-1
-);
+constraint 
+  use_constraint_implied_period_count ->
+  forall(t in Teams) (
+    sum(p_val in Periods) (period_count[t,p_val]) = n-1
+  );
 
 % Symmetry breaking
 
 %symmetry breaking weeks
-constraint forall(w in 1..weeks - 1)(
-  lex_less(
-    [ home[w,p] | p in Periods ] ++ [ away[w,p] | p in Periods ],
-    [ home[w+1,p] | p in Periods ] ++ [ away[w+1,p] | p in Periods ]
-  )
-);
+constraint 
+  use_constraint_symm_break_weeks ->
+  forall(w in 1..weeks - 1)(
+    lex_less(
+      [ home[w,p] | p in Periods ] ++ [ away[w,p] | p in Periods ],
+      [ home[w+1,p] | p in Periods ] ++ [ away[w+1,p] | p in Periods ]
+    )
+  );
 %symmetry breaking periods
-constraint forall(w in Weeks)(
-  lex_lesseq(
-    [ home[w,p] | p in 1..periods-1 ] ++ [ away[w,p] | p in 1..periods-1 ],
-    [ home[w,p+1] | p in 1..periods-1 ] ++ [ away[w,p+1] | p in 1..periods-1 ]
-  )
-);
+constraint 
+  use_constraint_symm_break_periods ->
+  forall(w in Weeks)(
+    lex_lesseq(
+      [ home[w,p] | p in 1..periods-1 ] ++ [ away[w,p] | p in 1..periods-1 ],
+      [ home[w,p+1] | p in 1..periods-1 ] ++ [ away[w,p+1] | p in 1..periods-1 ]
+    )
+  );
 
 
 % Enforce sorted home teams in week 1
 constraint
+  use_constraint_symm_break_teams ->
   forall(i in Periods) (
     home[1, i] = 2*i - 1 /\ 
     away[1, i] = 2*i
