@@ -20,12 +20,12 @@ array[Weeks, Periods] of var Teams: home;
 array[Weeks, Periods] of var Teams: away;
 
 % Main constraints
-%Only for not optimized
-constraint 
-  use_constraint_symm_break_slots ->
-  forall(w in Weeks, p in Periods)(
-    home[w, p] < away[w, p] % break symmetric match-ups
-);
+%Only for not optimized TO CHECK: unsat
+%constraint 
+%  use_constraint_symm_break_slots ->
+%  forall(w in Weeks, p in Periods)(
+%    home[w, p] < away[w, p] % break symmetric match-ups
+%);
 
 % Each pair plays once
 constraint
