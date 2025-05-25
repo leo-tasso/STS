@@ -36,7 +36,7 @@ def read_constraint_names_from_dzn(dzn_path: str = DZN_PATH, variable_prefix: st
 
 ALL_CONSTRAINTS = read_constraint_names_from_dzn()
 
-def clean_minizinc_stdout(stdout: str) -> str:
+def clean_minizinc_stdout(stdout: str) -> dict:
     """
     Cleans the MiniZinc stdout output by removing unnecessary lines and formatting.
     
@@ -44,10 +44,11 @@ def clean_minizinc_stdout(stdout: str) -> str:
         stdout (str): The raw output from MiniZinc.
         
     Returns:
-        str: Cleaned output string.
+        dict: Cleaned output as a dictionary.
     """
 
     cleaned_output = json.loads(stdout.split("%")[0].strip())
+
     time_elapsed = None
     for line in stdout.splitlines():
         line = line.strip()
@@ -60,7 +61,7 @@ def clean_minizinc_stdout(stdout: str) -> str:
         "time": time_elapsed,
         "optimal": "true" if time_elapsed < 300 else "false",
         "obj": cleaned_output["obj"],
-        "sol": str(cleaned_output["sol"])
+        "sol": cleaned_output["sol"]
     }
 
     return ordered_output
@@ -110,24 +111,24 @@ def generate_dzn_file(n: int, active_constraints: list[str]) -> str:
     return temp_dzn_path
 
 
-def write_result_to_json(result: dict, name: str, n: int, append_result: bool = False):
+# TODO: more compact way to save "sol" list in JSON
+def write_results_to_json(results: list[dict], names: list[str], n: int):
     """
-    Save the given result dictionary, i. e. the Minizinc output to a JSON file.
+    Save the given results dictionaries, i. e. the Minizinc output of multiple executions to a JSON file.
     
     Args:
-        result (dict): The dictionary containing the result of the Minizinc execution.
-        name (str): Name to identify the execution that generated this result.
+        results (list[dict]): The dictionaries containing the results of the Minizinc executions.
+        names (list[str]): Names to identify each execution that generated each result.
         n (int): Number of teams used as the json file name.
-        append_result (bool) : If True, append the result to the existing file, otherwise overwrite it.
     """
-
-    result = {
-        name: result
-    }
     filename = f"{JSON_FOLDER}/{n}.json"
-    with open(filename, "a" if append_result else "w") as f:
-        json.dump(result, f, indent=2)
+    for result, name in zip(results, names):
+        result = {
+            name: result
+        }
+    with open(filename, "w") as f:
+        json.dump(results, f, indent=2)
 
 n = 6
 result = run_minizinc_model_cli(n)
-write_result_to_json(result, "test", n)
+write_results_to_json([result, result], ["test1", "test2"], n)
