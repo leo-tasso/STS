@@ -57,7 +57,7 @@ The system supports the following constraint types:
 ### Basic Command Structure
 
 ```bash
-python test/CP/run_CP.py -n <teams> [mode] [constraints] [options]
+python run_CP.py -n <teams> [mode] [constraints] [options]
 ```
 
 ### Parameters
@@ -77,22 +77,22 @@ Runs the optimized model once with all available constraints enabled using Chuff
 
 ```bash
 # Run with 6 teams using all constraints (optimized, Chuffed)
-python test/CP/run_CP.py -n 6
+python run_CP.py -n 6
 
 # Run with 6 teams using non-optimized model
-python test/CP/run_CP.py -n 6 --no-opt
+python run_CP.py -n 6 --no-opt
 
 # Run with 6 teams using Gecode solver
-python test/CP/run_CP.py -n 6 --gecode
+python run_CP.py -n 6 --gecode
 
 # Run with 6 teams using non-optimized model and Gecode solver
-python test/CP/run_CP.py -n 6 --no-opt --gecode
+python run_CP.py -n 6 --no-opt --gecode
 
 # Run with 6 teams and custom timeout of 10 minutes
-python test/CP/run_CP.py -n 6 --timeout 600
+python run_CP.py -n 6 --timeout 600
 
 # Run with 6 teams using non-optimized model, Gecode solver, and 2-minute timeout
-python test/CP/run_CP.py -n 6 --no-opt --gecode --timeout 120
+python run_CP.py -n 6 --no-opt --gecode --timeout 120
 ```
 
 #### 2. Generate Mode (`-g`)
@@ -100,13 +100,13 @@ Runs the model once with only the specified constraints enabled.
 
 ```bash
 # Run with 8 teams using only symmetry breaking constraints (optimized, Chuffed)
-python test/CP/run_CP.py -n 8 -g -c use_constraint_symm_break_weeks use_constraint_symm_break_teams
+python run_CP.py -n 8 -g -c use_constraint_symm_break_weeks use_constraint_symm_break_teams
 
 # Run with 8 teams using non-optimized model and Gecode solver
-python test/CP/run_CP.py -n 8 -g -c use_constraint_symm_break_weeks use_constraint_symm_break_teams --no-opt --gecode
+python run_CP.py -n 8 -g -c use_constraint_symm_break_weeks use_constraint_symm_break_teams --no-opt --gecode
 
 # Run with custom timeout of 10 minutes
-python test/CP/run_CP.py -n 8 -g -c use_constraint_symm_break_weeks use_constraint_symm_break_teams --timeout 600
+python run_CP.py -n 8 -g -c use_constraint_symm_break_weeks use_constraint_symm_break_teams --timeout 600
 ```
 
 #### 3. Test Mode (`-t`)
@@ -114,10 +114,10 @@ Systematically tests all possible combinations of the specified constraints.
 
 ```bash
 # Test all combinations of 2 constraints with 6 teams (optimized, Chuffed)
-python test/CP/run_CP.py -n 6 -t -c use_constraint_symm_break_slots use_constraint_symm_break_weeks
+python run_CP.py -n 6 -t -c use_constraint_symm_break_slots use_constraint_symm_break_weeks
 
 # Test all combinations using non-optimized model with Gecode solver
-python test/CP/run_CP.py -n 6 -t -c use_constraint_symm_break_slots use_constraint_symm_break_weeks --no-opt --gecode
+python run_CP.py -n 6 -t -c use_constraint_symm_break_slots use_constraint_symm_break_weeks --no-opt --gecode
 ```
 
 This will run 4 experiments:
@@ -130,42 +130,42 @@ This will run 4 experiments:
 
 ```bash
 # Quick test with minimal constraints (optimized, Chuffed)
-python test/CP/run_CP.py -n 4 -g -c use_constraint_symm_break_teams
+python run_CP.py -n 4 -g -c use_constraint_symm_break_teams
 
 # Same test using non-optimized model
-python test/CP/run_CP.py -n 4 -g -c use_constraint_symm_break_teams --no-opt
+python run_CP.py -n 4 -g -c use_constraint_symm_break_teams --no-opt
 
 # Quick test using Gecode solver
-python test/CP/run_CP.py -n 4 -g -c use_constraint_symm_break_teams --gecode
+python run_CP.py -n 4 -g -c use_constraint_symm_break_teams --gecode
 
 # Comprehensive constraint analysis (optimized, Chuffed)
-python test/CP/run_CP.py -n 6 -t -c use_constraint_symm_break_weeks use_constraint_symm_break_periods use_constraint_implied_matches_per_team
+python run_CP.py -n 6 -t -c use_constraint_symm_break_weeks use_constraint_symm_break_periods use_constraint_implied_matches_per_team
 
 # Same analysis using non-optimized model with Gecode
-python test/CP/run_CP.py -n 6 -t -c use_constraint_symm_break_weeks use_constraint_symm_break_periods use_constraint_implied_matches_per_team --no-opt --gecode
+python run_CP.py -n 6 -t -c use_constraint_symm_break_weeks use_constraint_symm_break_periods use_constraint_implied_matches_per_team --no-opt --gecode
 
 # Large tournament with all constraints (optimized, Chuffed)
-python test/CP/run_CP.py -n 12 -g
+python run_CP.py -n 12 -g
 
 # Large tournament using non-optimized model with Gecode
-python test/CP/run_CP.py -n 12 -g --no-opt --gecode
+python run_CP.py -n 12 -g --no-opt --gecode
 
 # Run with extended timeout for difficult instances
-python test/CP/run_CP.py -n 14 -g --timeout 900  # 15 minutes
+python run_CP.py -n 14 -g --timeout 900  # 15 minutes
 
 # Quick test with short timeout
-python test/CP/run_CP.py -n 8 -g --timeout 60  # 1 minute
+python run_CP.py -n 8 -g --timeout 60  # 1 minute
 
 # Compare solver performance for same configuration
-python test/CP/run_CP.py -n 8 -g  # Chuffed (default)
-python test/CP/run_CP.py -n 8 -g --gecode  # Gecode
+python run_CP.py -n 8 -g  # Chuffed (default)
+python run_CP.py -n 8 -g --gecode  # Gecode
 
 # Compare model versions with same solver
-python test/CP/run_CP.py -n 8 -g  # Optimized (default)
-python test/CP/run_CP.py -n 8 -g --no-opt  # Non-optimized
+python run_CP.py -n 8 -g  # Optimized (default)
+python run_CP.py -n 8 -g --no-opt  # Non-optimized
 
 # Help and available options
-python test/CP/run_CP.py --help
+python run_CP.py --help
 ```
 
 ## Output Format
@@ -245,18 +245,18 @@ Use different combinations to analyze performance:
 
 ```bash
 # Compare solvers with optimized model
-python test/CP/run_CP.py -n 8 -g  # Chuffed + Optimized
-python test/CP/run_CP.py -n 8 -g --gecode  # Gecode + Optimized
+python run_CP.py -n 8 -g  # Chuffed + Optimized
+python run_CP.py -n 8 -g --gecode  # Gecode + Optimized
 
 # Compare model versions with Chuffed
-python test/CP/run_CP.py -n 8 -g  # Chuffed + Optimized  
-python test/CP/run_CP.py -n 8 -g --no-opt  # Chuffed + Non-optimized
+python run_CP.py -n 8 -g  # Chuffed + Optimized  
+python run_CP.py -n 8 -g --no-opt  # Chuffed + Non-optimized
 
 # Compare all combinations
-python test/CP/run_CP.py -n 8 -g  # Chuffed + Optimized
-python test/CP/run_CP.py -n 8 -g --gecode  # Gecode + Optimized
-python test/CP/run_CP.py -n 8 -g --no-opt  # Chuffed + Non-optimized
-python test/CP/run_CP.py -n 8 -g --no-opt --gecode  # Gecode + Non-optimized
+python run_CP.py -n 8 -g  # Chuffed + Optimized
+python run_CP.py -n 8 -g --gecode  # Gecode + Optimized
+python run_CP.py -n 8 -g --no-opt  # Chuffed + Non-optimized
+python run_CP.py -n 8 -g --no-opt --gecode  # Gecode + Non-optimized
 ```
 
 ## Performance Analysis
@@ -265,16 +265,16 @@ Use test mode to compare constraint effectiveness across different configuration
 
 ```bash
 # Compare symmetry breaking strategies with different solvers
-python test/CP/run_CP.py -n 8 -t -c use_constraint_symm_break_weeks use_constraint_symm_break_periods use_constraint_symm_break_teams
-python test/CP/run_CP.py -n 8 -t -c use_constraint_symm_break_weeks use_constraint_symm_break_periods use_constraint_symm_break_teams --gecode
+python run_CP.py -n 8 -t -c use_constraint_symm_break_weeks use_constraint_symm_break_periods use_constraint_symm_break_teams
+python run_CP.py -n 8 -t -c use_constraint_symm_break_weeks use_constraint_symm_break_periods use_constraint_symm_break_teams --gecode
 
 # Compare model optimization effectiveness
-python test/CP/run_CP.py -n 8 -t -c use_constraint_symm_break_weeks use_constraint_symm_break_periods  # Optimized
-python test/CP/run_CP.py -n 8 -t -c use_constraint_symm_break_weeks use_constraint_symm_break_periods --no-opt  # Non-optimized
+python run_CP.py -n 8 -t -c use_constraint_symm_break_weeks use_constraint_symm_break_periods  # Optimized
+python run_CP.py -n 8 -t -c use_constraint_symm_break_weeks use_constraint_symm_break_periods --no-opt  # Non-optimized
 
 # Test with different timeout values to analyze time sensitivity
-python test/CP/run_CP.py -n 12 -g --timeout 60   # Quick timeout
-python test/CP/run_CP.py -n 12 -g --timeout 600  # Extended timeout
+python run_CP.py -n 12 -g --timeout 60   # Quick timeout
+python run_CP.py -n 12 -g --timeout 600  # Extended timeout
 ```
 
 Key metrics to analyze:
@@ -320,10 +320,10 @@ Key metrics to analyze:
 
 ```bash
 # Show all available options
-python test/CP/run_CP.py --help
+python run_CP.py --help
 
 # List available constraints (check error message when using invalid constraint)
-python test/CP/run_CP.py -n 4 -c invalid_constraint
+python run_CP.py -n 4 -c invalid_constraint
 ```
 
 ## Model Details
