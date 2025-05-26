@@ -1,0 +1,8 @@
+n = 14;
+
+use_constraint_symm_break_weeks = true;
+use_constraint_symm_break_periods = true;
+use_constraint_symm_break_teams = true;
+use_constraint_implied_matches_per_team = true;
+use_constraint_implied_period_count = true;
+use_constraint_no_three_consecutive = true;
