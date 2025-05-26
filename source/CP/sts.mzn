@@ -41,7 +41,7 @@ constraint
   );
 
 % Period limit: Each team appears in same period at most twice
-array[Teams, Periods] of var int: period_count;
+array[Teams, Periods] of var 0..2: period_count;
 
 constraint
   forall(p in Periods)(
@@ -57,8 +57,9 @@ constraint
   );
 
 % Home/away count for fairness
-array[Teams] of var int: home_count;
-array[Teams] of var int: away_count;
+set of int: Count = 1..n-1;
+array[Teams] of var Count: home_count;
+array[Teams] of var Count: away_count;
 
 constraint
   forall(t in Teams)(
@@ -111,7 +112,8 @@ constraint
   );% for not optimized version could fix the whole first week
 
 % Objective: balance home/away games
-var int: max_diff = max([abs(home_count[t] - away_count[t]) | t in Teams]);
+set of int: Count_diff = 1..n-1;
+var Count_diff: max_diff = max([abs(home_count[t] - away_count[t]) | t in Teams]);
 solve 
 :: int_search(
          [home[w, p] | w in Weeks, p in Periods] ++ [away[w, p] | w in Weeks, p in Periods],
