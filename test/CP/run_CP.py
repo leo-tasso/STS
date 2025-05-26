@@ -67,13 +67,13 @@ def clean_minizinc_stdout(stdout: str) -> dict:
         if line.startswith("% time elapsed:"):
             parts = line.split()
             if len(parts) >= 5:
-                time_elapsed = int(parts[3])
+                time_elapsed = math.floor(float(parts[3]))
 
     ordered_output = {
         "time": time_elapsed,
         "optimal": "true" if time_elapsed < 300 else "false",
         "obj": cleaned_output["obj"],
-        "sol": cleaned_output["sol"]
+        "sol": str(cleaned_output["sol"])
     }
 
     return ordered_output
@@ -140,6 +140,22 @@ def write_results_to_json(results: list[dict], names: list[str], n: int):
     
     with open(filename, "w") as f:
         json.dump(output_data, f, indent=2)
+
+    # Post-process: remove quotes around the sol list
+    with open(filename, "r") as f:
+        lines = f.readlines()
+
+    with open(filename, "w") as f:
+        for line in lines:
+            if '"sol": "' in line and "unsat" not in line:
+                # Clean line: remove surrounding quotes and unescape inner quotes
+                line = line.replace('\\"', '"')  # unescape quotes inside
+                line = line.replace('"sol": "', '"sol": ').rstrip()
+                if line.endswith('"'):
+                    line = line[:-1]  # remove closing quote
+                f.write(line + "\n")
+            else:
+                f.write(line)
 
 
 
