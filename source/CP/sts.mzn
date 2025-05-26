@@ -5,7 +5,6 @@ int: n; % Number of teams (even)
 int: weeks = n - 1;
 int: periods = n div 2;
 
-bool: use_constraint_symm_break_slots;
 bool: use_constraint_symm_break_weeks;
 bool: use_constraint_symm_break_periods;
 bool: use_constraint_symm_break_teams;
@@ -20,12 +19,6 @@ array[Weeks, Periods] of var Teams: home;
 array[Weeks, Periods] of var Teams: away;
 
 % Main constraints
-%Only for not optimized TO CHECK: unsat
-%constraint 
-%  use_constraint_symm_break_slots ->
-%  forall(w in Weeks, p in Periods)(
-%    home[w, p] < away[w, p] % break symmetric match-ups
-%);
 
 % Each pair plays once
 constraint
@@ -36,8 +29,8 @@ constraint
 
 % Each team plays once per week
 constraint
-  forall(t in Teams, w in Weeks)(
-    sum([bool2int(home[w, p] = t \/ away[w, p] = t) | p in Periods]) = 1
+  forall(w in Weeks)(
+    all_different([home[w, p] | p in Periods] ++ [away[w, p] | p in Periods])
   );
 
 % Period limit: Each team appears in same period at most twice
@@ -50,10 +43,6 @@ constraint
       Teams,
       [period_count[t, p] | t in Teams]
     )
-  )
-  /\
-  forall(t in Teams, p in Periods)(
-    period_count[t, p] <= 2
   );
 
 % Home/away count for fairness
