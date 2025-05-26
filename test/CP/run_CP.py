@@ -1,3 +1,4 @@
+import math
 import tempfile
 import subprocess
 import os
@@ -49,15 +50,24 @@ def clean_minizinc_stdout(stdout: str) -> dict:
         dict: Cleaned output as a dictionary.
     """
 
+    # Handle unsat case, like for n = 4
+    unsat = "UNSATISFIABLE" in stdout
+    if unsat:
+        return {
+            "time": None,
+            "optimal": "false",
+            "obj": None,
+            "sol": "unsat"
+        }
+    
     cleaned_output = json.loads(stdout.split("%")[0].strip())
-
     time_elapsed = None
     for line in stdout.splitlines():
         line = line.strip()
         if line.startswith("% time elapsed:"):
             parts = line.split()
             if len(parts) >= 5:
-                time_elapsed = float(parts[3])
+                time_elapsed = int(parts[3])
 
     ordered_output = {
         "time": time_elapsed,

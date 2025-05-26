@@ -1,0 +1,8 @@
+{
+  "default": {
+    "time": null,
+    "optimal": "false",
+    "obj": null,
+    "sol": "unsat"
+  }
+}
