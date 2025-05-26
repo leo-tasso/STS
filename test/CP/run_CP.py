@@ -39,7 +39,11 @@ def read_constraint_names_from_dzn(dzn_path: str = DZN_PATH, variable_prefix: st
 
 ALL_CONSTRAINTS = read_constraint_names_from_dzn()
 
-def clean_minizinc_stdout(stdout: str, expired_timeout: bool = False, timeout_sec: int = 300) -> dict:
+def clean_minizinc_stdout(
+        stdout: str, 
+        expired_timeout: bool = False, 
+        timeout_sec: int = 300,
+        optimization_version: bool = True) -> dict:
     """
     Cleans the MiniZinc stdout output by removing unnecessary lines and formatting.
     
@@ -47,6 +51,7 @@ def clean_minizinc_stdout(stdout: str, expired_timeout: bool = False, timeout_se
         stdout (str): The raw output from MiniZinc.
         expired_timeout (bool): If True, indicates that the MiniZinc run timed out.
         timeout_sec (int): The timeout duration in seconds, default is 300.
+        optimization_version (bool): If True, indicates that the output is from an optimization version of the STS.
         
     Returns:
         dict: Cleaned output as a dictionary.
@@ -83,7 +88,7 @@ def clean_minizinc_stdout(stdout: str, expired_timeout: bool = False, timeout_se
     ordered_output = {
         "time": time_elapsed,
         "optimal": "true" if time_elapsed < 300 else "false",
-        "obj": cleaned_output["obj"],
+        "obj": cleaned_output["obj"] if optimization_version else None,
         "sol": str(cleaned_output["sol"])
     }
 
@@ -94,7 +99,8 @@ def run_minizinc_model_cli(
         active_constraints: list[str] = ALL_CONSTRAINTS, 
         model_path: str = MODEL_PATH, 
         timeout_sec: int = 300,
-        use_chuffed: bool = True
+        use_chuffed: bool = True,
+        is_optimization: bool = True
     ) -> dict:
     """
     Runs a MiniZinc model via the CLI, setting constraint flags by a temporary `.dzn` file.
@@ -104,7 +110,8 @@ def run_minizinc_model_cli(
         model_path (str): Path to the `.mzn` model.
         active_constraints (list[str]): List of constraint names to activate.
         timeout (int): Timeout in seconds for the model run.
-        use_chuffed (bool): Whether to use the Chuffed solver (True) or Gecode (False)
+        use_chuffed (bool): Whether to use the Chuffed solver (True) or Gecode (False).
+        is_optimization (bool): If True, indicates that the output is from an optimization version of the STS.
         
     Returns:
         str: The stdout of the MiniZinc execution.
@@ -118,13 +125,12 @@ def run_minizinc_model_cli(
     try:
         cmd = ["minizinc", "--output-time", *timeout_flag, *solver_flag, model_path, temp_dzn_path]
         process = subprocess.run(cmd, capture_output=True, text=True)
-        result = clean_minizinc_stdout(process.stdout)  
+        result = clean_minizinc_stdout(process.stdout, optimization_version=is_optimization)  
     except KeyboardInterrupt:
         result = clean_minizinc_stdout(None, expired_timeout=True)
     finally:
         os.remove(temp_dzn_path)
 
-    print(result)
     return result
 
 def generate_dzn_file(n: int, active_constraints: list[str]) -> str:
@@ -145,8 +151,6 @@ def generate_dzn_file(n: int, active_constraints: list[str]) -> str:
         temp_dzn_path = temp_dzn.name
     return temp_dzn_path
 
-
-# TODO: more compact way to save "sol" list in JSON
 def write_results_to_json(results: list[dict], names: list[str], n: int):
     """
     Save the given results dictionaries, i. e. the Minizinc output of multiple executions to a JSON file.
