@@ -51,7 +51,9 @@ def clean_minizinc_stdout(
         stdout: str, 
         expired_timeout: bool = False, 
         timeout_sec: int = 300,
-        optimization_version: bool = True) -> dict:
+        optimization_version: bool = True,
+        use_chuffed: bool = True,
+        all_constraints: list[str] = None) -> dict:
     """
     Cleans the MiniZinc stdout output by removing unnecessary lines and formatting.
     
@@ -60,10 +62,14 @@ def clean_minizinc_stdout(
         expired_timeout (bool): If True, indicates that the MiniZinc run timed out.
         timeout_sec (int): The timeout duration in seconds, default is 300.
         optimization_version (bool): If True, indicates that the output is from an optimization version of the STS.
+        use_chuffed (bool): Whether it was used the Chuffed solver (True) or Gecode (False).
+        all_constraints (list[str]): All available constraints used for the selected model version.
         
     Returns:
         dict: Cleaned output as a dictionary.
     """
+
+    solver = "chuffed" if use_chuffed else "gecode"
 
     # Handle timeout case, like for large n
     if expired_timeout or stdout is None or stdout.strip() == "":
@@ -71,7 +77,9 @@ def clean_minizinc_stdout(
             "time": timeout_sec,
             "optimal": "false",
             "obj": None,
-            "sol": "timeout"
+            "sol": "timeout",
+            "solver": solver,
+            "constraints": all_constraints
         }
     
     # Handle unsat case, like for n = 4
@@ -81,7 +89,9 @@ def clean_minizinc_stdout(
             "time": None,
             "optimal": "false",
             "obj": None,
-            "sol": "unsat"
+            "sol": "unsat",
+            "solver": solver, 
+            "constraints": all_constraints
         }
     
     # Check if MiniZinc timed out internally (produces incomplete output)
@@ -90,7 +100,9 @@ def clean_minizinc_stdout(
             "time": timeout_sec,
             "optimal": "false",
             "obj": None,
-            "sol": "timeout"
+            "sol": "timeout",
+            "solver": solver,
+            "constraints": all_constraints
         }
     
     try:
@@ -102,7 +114,9 @@ def clean_minizinc_stdout(
                 "time": timeout_sec,
                 "optimal": "false",
                 "obj": None,
-                "sol": "timeout"
+                "sol": "timeout",
+                "solver": solver,
+                "constraints": all_constraints
             }
         
         cleaned_output = json.loads(json_part)
@@ -112,7 +126,9 @@ def clean_minizinc_stdout(
             "time": timeout_sec,
             "optimal": "false",
             "obj": None,
-            "sol": "timeout"
+            "sol": "timeout",
+            "solver": solver,
+            "constraints": all_constraints
         }
     
     # Extract time elapsed from MiniZinc output
@@ -133,7 +149,9 @@ def clean_minizinc_stdout(
         "time": time_elapsed,
         "optimal": "true" if time_elapsed < timeout_sec else "false",
         "obj": cleaned_output.get("obj") if optimization_version else None,
-        "sol": str(cleaned_output.get("sol", "unknown"))
+        "sol": str(cleaned_output.get("sol", "unknown")),
+        "solver": solver,
+        "constraints": all_constraints
     }
 
     return ordered_output
@@ -176,6 +194,12 @@ def run_minizinc_model_cli(
     timeout_flag = ["--time-limit", str(timeout_sec * 1000)]
     solver_flag = ["--solver", "chuffed" if use_chuffed else "gecode"]
 
+    result_params = {
+        "timeout_sec": timeout_sec,
+        "optimization_version": is_optimization,
+        "all_constraints": all_constraints
+    }
+
     try:
         cmd = ["minizinc", "--output-time", *timeout_flag, *solver_flag, model_path, temp_dzn_path]
         
@@ -193,23 +217,23 @@ def run_minizinc_model_cli(
         if process.returncode != 0 and process.stderr:
             # Handle MiniZinc errors
             if "time limit exceeded" in process.stderr.lower() or "timeout" in process.stderr.lower():
-                result = clean_minizinc_stdout(None, expired_timeout=True, timeout_sec=timeout_sec, optimization_version=is_optimization)
+                result = clean_minizinc_stdout(None, expired_timeout=True, **result_params)
             else:
                 # Other MiniZinc error - still try to parse stdout
-                result = clean_minizinc_stdout(process.stdout, timeout_sec=timeout_sec, optimization_version=is_optimization)
+                result = clean_minizinc_stdout(process.stdout, **result_params)
         else:
-            result = clean_minizinc_stdout(process.stdout, timeout_sec=timeout_sec, optimization_version=is_optimization)
+            result = clean_minizinc_stdout(process.stdout, **result_params)
             
     except subprocess.TimeoutExpired:
         # Subprocess timed out (backup timeout triggered)
-        result = clean_minizinc_stdout(None, expired_timeout=True, timeout_sec=timeout_sec, optimization_version=is_optimization)
+        result = clean_minizinc_stdout(None, expired_timeout=True, **result_params)
     except KeyboardInterrupt:
         # User interrupted
-        result = clean_minizinc_stdout(None, expired_timeout=True, timeout_sec=timeout_sec, optimization_version=is_optimization)
+        result = clean_minizinc_stdout(None, expired_timeout=True, **result_params)
     except Exception as e:
         # Other unexpected errors
         print(f"Unexpected error running MiniZinc: {e}")
-        result = clean_minizinc_stdout(None, expired_timeout=True, timeout_sec=timeout_sec, optimization_version=is_optimization)
+        result = clean_minizinc_stdout(None, expired_timeout=True, **result_params)
     finally:
         # Always clean up the temporary file
         if os.path.exists(temp_dzn_path):
@@ -263,8 +287,8 @@ def write_results_to_json(results: list[dict], names: list[str], n: int):
                 # Clean line: remove surrounding quotes and unescape inner quotes
                 line = line.replace('\\"', '"')  # unescape quotes inside
                 line = line.replace('"sol": "', '"sol": ').rstrip()
-                if line.endswith('"'):
-                    line = line[:-1]  # remove closing quote
+                if line.endswith('",'):
+                    line = line[:-2] + ","  # remove closing quote
                 f.write(line + "\n")
             else:
                 f.write(line)
