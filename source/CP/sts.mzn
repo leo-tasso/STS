@@ -11,6 +11,10 @@ bool: use_constraint_symm_break_teams;
 bool: use_constraint_implied_matches_per_team;
 bool: use_constraint_implied_period_count;
 
+bool: use_constraint_int_search;
+bool: use_constraint_restart_luby;
+bool: use_constraint_relax_and_reconstruct;
+
 set of int: Teams = 1..n;
 set of int: Weeks = 1..weeks;
 set of int: Periods = 1..periods;
@@ -104,15 +108,19 @@ constraint
 set of int: Count_diff = 1..n-1;
 var Count_diff: max_diff = max([abs(home_count[t] - away_count[t]) | t in Teams]);
 solve 
-:: int_search(
-         [home[w, p] | w in Weeks, p in Periods] ++ [away[w, p] | w in Weeks, p in Periods],
-         first_fail,
-         indomain_min,
-         complete
-       )
-%         :: restart_luby(10000)
-%        :: relax_and_reconstruct([home[w, p] | w in Weeks, p in Periods] ++ [away[w, p] | w in Weeks, p in Periods], 85)
-       minimize max_diff;
+:: if use_constraint_int_search then
+     int_search(
+       [home[w, p] | w in Weeks, p in Periods] ++ [away[w, p] | w in Weeks, p in Periods],
+       first_fail,
+       indomain_min,
+       complete
+     )
+   endif
+:: if use_constraint_restart_luby then restart_luby(10000) endif
+:: if use_constraint_relax_and_reconstruct then 
+     relax_and_reconstruct([home[w, p] | w in Weeks, p in Periods] ++ [away[w, p] | w in Weeks, p in Periods], 85)
+   endif
+   minimize max_diff;
 
 % Output
 output [
