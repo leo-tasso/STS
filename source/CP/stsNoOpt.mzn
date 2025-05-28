@@ -110,12 +110,12 @@ constraint
 % Objective: just find a solution
 solve 
 :: if use_int_search then
- int_search(
-         [home[w, p] | w in Weeks, p in Periods] ++ [away[w, p] | w in Weeks, p in Periods],
-         first_fail,
-         indomain_min,
-         complete
-       )
+     int_search(
+       [home[w, p] | w in Weeks, p in Periods] ++ [away[w, p] | w in Weeks, p in Periods],
+       first_fail,
+       indomain_min,
+       complete
+     )
    endif
 :: if use_restart_luby then restart_luby(10000) endif
 :: if use_relax_and_reconstruct then 
