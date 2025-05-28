@@ -49,11 +49,12 @@ ALL_CONSTRAINTS_NO_OPT = read_constraint_names_from_dzn(DZN_PATH_NO_OPT)
 
 def clean_minizinc_stdout(
         stdout: str, 
-        expired_timeout: bool = False, 
+        error: bool = False, 
         timeout_sec: int = 300,
         optimization_version: bool = True,
         use_chuffed: bool = True,
-        all_constraints: list[str] = None) -> dict:
+        all_constraints: list[str] = None,
+        error_message: str = None) -> dict:
     """
     Cleans the MiniZinc stdout output by removing unnecessary lines and formatting.
     
@@ -71,17 +72,25 @@ def clean_minizinc_stdout(
 
     solver = "chuffed" if use_chuffed else "gecode"
 
-    # Handle timeout case, like for large n
-    if expired_timeout or stdout is None or stdout.strip() == "":
+    # Handle timeout case and errors, like for large n
+    if stdout is None or stdout.strip() == "":
         return {
             "time": timeout_sec,
             "optimal": "false",
             "obj": None,
-            "sol": "timeout",
+            "sol": '"error empty stdout"',
             "solver": solver,
             "constraints": all_constraints
         }
-    
+    if error:
+        return {
+            "time": timeout_sec,
+            "optimal": "false",
+            "obj": None,
+            "sol": error_message if error_message != None else 'unkown error',
+            "solver": solver,
+            "constraints": all_constraints
+        }
     # Handle unsat case, like for n = 4
     unsat = "UNSATISFIABLE" in stdout
     if unsat:
@@ -100,7 +109,7 @@ def clean_minizinc_stdout(
             "time": timeout_sec,
             "optimal": "false",
             "obj": None,
-            "sol": "timeout",
+            "sol": "=====UNKNOWN===== (likely timeout)",
             "solver": solver,
             "constraints": all_constraints
         }
@@ -114,7 +123,7 @@ def clean_minizinc_stdout(
                 "time": timeout_sec,
                 "optimal": "false",
                 "obj": None,
-                "sol": "timeout",
+                "sol": "ERROR PARSING STDOUT",
                 "solver": solver,
                 "constraints": all_constraints
             }
@@ -126,7 +135,7 @@ def clean_minizinc_stdout(
             "time": timeout_sec,
             "optimal": "false",
             "obj": None,
-            "sol": "timeout",
+            "sol": "JSONDecodeError",
             "solver": solver,
             "constraints": all_constraints
         }
@@ -143,7 +152,7 @@ def clean_minizinc_stdout(
 
     # If no time was found but we have valid output, set time to 0
     if time_elapsed is None:
-        time_elapsed = 0
+        time_elapsed = 'unknown'
 
     ordered_output = {
         "time": time_elapsed,
@@ -217,7 +226,7 @@ def run_minizinc_model_cli(
         if process.returncode != 0 and process.stderr:
             # Handle MiniZinc errors
             if "time limit exceeded" in process.stderr.lower() or "timeout" in process.stderr.lower():
-                result = clean_minizinc_stdout(None, expired_timeout=True, **result_params)
+                result = clean_minizinc_stdout(None, error=True, **result_params)
             else:
                 # Other MiniZinc error - still try to parse stdout
                 result = clean_minizinc_stdout(process.stdout, **result_params)
@@ -226,14 +235,14 @@ def run_minizinc_model_cli(
             
     except subprocess.TimeoutExpired:
         # Subprocess timed out (backup timeout triggered)
-        result = clean_minizinc_stdout(None, expired_timeout=True, **result_params)
+        result = clean_minizinc_stdout(None, error=True, **result_params, error_message = 'Process timeout')
     except KeyboardInterrupt:
         # User interrupted
-        result = clean_minizinc_stdout(None, expired_timeout=True, **result_params)
+        result = clean_minizinc_stdout(None, error=True, **result_params, error_message = 'Keyboard Interrupt')
     except Exception as e:
         # Other unexpected errors
         print(f"Unexpected error running MiniZinc: {e}")
-        result = clean_minizinc_stdout(None, expired_timeout=True, **result_params)
+        result = clean_minizinc_stdout(None, error=True, **result_params, error_message =' Unexpected error' + e)
     finally:
         # Always clean up the temporary file
         if os.path.exists(temp_dzn_path):
