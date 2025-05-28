@@ -1,4 +1,4 @@
-n = 6;
+n = 12;
 
 use_symm_break_weeks = true;
 use_symm_break_periods = true;

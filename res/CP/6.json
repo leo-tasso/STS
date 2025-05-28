@@ -2,18 +2,18 @@
   "generate_all_constraints": {
     "time": 0,
     "optimal": "true",
-    "obj": 1,
-    "sol": [[[1, 2], [3, 4], [5, 6]], [[1, 5], [6, 3], [2, 4]], [[3, 5], [4, 1], [2, 6]], [[3, 2], [6, 1], [5, 4]], [[4, 6], [5, 2], [1, 3]]],
+    "obj": 3,
+    "sol": [[[1, 2], [3, 4], [5, 6]], [[3, 6], [5, 2], [4, 1]], [[3, 5], [6, 1], [4, 2]], [[4, 6], [5, 1], [2, 3]], [[5, 4], [6, 2], [1, 3]]],
     "solver": "chuffed",
     "constraints": [
-      "use_constraint_symm_break_weeks",
-      "use_constraint_symm_break_periods",
-      "use_constraint_symm_break_teams",
-      "use_constraint_implied_matches_per_team",
-      "use_constraint_implied_period_count",
-      "use_constraint_int_search",
-      "use_constraint_restart_luby",
-      "use_constraint_relax_and_reconstruct"
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
     ]
   }
 }

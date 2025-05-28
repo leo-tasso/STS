@@ -5,7 +5,6 @@ use_symm_break_periods = true;
 use_symm_break_teams = true;
 use_implied_matches_per_team = true;
 use_implied_period_count = true;
-use_no_three_consecutive = true;
 
 use_int_search = true;
 use_restart_luby = false;

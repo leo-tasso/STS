@@ -105,23 +105,7 @@ constraint
     away[1, i] = 2*i
   );% for not optimized version could fix the whole first week
 
-% No three consecutive home or away games
-constraint
-  use_no_three_consecutive ->
-  forall(t in Teams, w in 1..weeks-2) (
-    % No three consecutive home games
-    not (
-      exists(p1 in Periods) (home[w, p1] = t) /\
-      exists(p2 in Periods) (home[w+1, p2] = t) /\
-      exists(p3 in Periods) (home[w+2, p3] = t)
-    ) /\
-    % No three consecutive away games
-    not (
-      exists(p1 in Periods) (away[w, p1] = t) /\
-      exists(p2 in Periods) (away[w+1, p2] = t) /\
-      exists(p3 in Periods) (away[w+2, p3] = t)
-    )
-  );
+
 
 % Objective: just find a solution
 solve 

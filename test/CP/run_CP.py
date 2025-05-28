@@ -17,7 +17,10 @@ MODEL_PATH_NO_OPT = "../../source/CP/stsNoOpt.mzn"
 JSON_FOLDER = "../../res/CP"
 VARIABLE_PREFIX = "use_"
 
-def read_constraint_names_from_dzn(dzn_path: str = DZN_PATH, variable_prefix: str = VARIABLE_PREFIX) -> list[str]:
+
+def read_constraint_names_from_dzn(
+    dzn_path: str = DZN_PATH, variable_prefix: str = VARIABLE_PREFIX
+) -> list[str]:
     """
     Reads a MiniZinc `.dzn` data file and extracts all boolean constraint toggles
     whose names start with `variable_prefix`.
@@ -44,28 +47,31 @@ def read_constraint_names_from_dzn(dzn_path: str = DZN_PATH, variable_prefix: st
 
     return constraint_names
 
+
 ALL_CONSTRAINTS = read_constraint_names_from_dzn()
 ALL_CONSTRAINTS_NO_OPT = read_constraint_names_from_dzn(DZN_PATH_NO_OPT)
 
+
 def clean_minizinc_stdout(
-        stdout: str, 
-        error: bool = False, 
-        timeout_sec: int = 300,
-        optimization_version: bool = True,
-        use_chuffed: bool = True,
-        all_constraints: list[str] = None,
-        error_message: str = None) -> dict:
+    stdout: str,
+    use_chuffed: bool,
+    error: bool = False,
+    timeout_sec: int = 300,
+    optimization_version: bool = True,
+    active_constraints: list[str] = None,
+    error_message: str = None,
+) -> dict:
     """
     Cleans the MiniZinc stdout output by removing unnecessary lines and formatting.
-    
+
     Args:
         stdout (str): The raw output from MiniZinc.
         expired_timeout (bool): If True, indicates that the MiniZinc run timed out.
         timeout_sec (int): The timeout duration in seconds, default is 300.
         optimization_version (bool): If True, indicates that the output is from an optimization version of the STS.
         use_chuffed (bool): Whether it was used the Chuffed solver (True) or Gecode (False).
-        all_constraints (list[str]): All available constraints used for the selected model version.
-        
+        active_constraints (list[str]): All available constraints used for the selected model version.
+
     Returns:
         dict: Cleaned output as a dictionary.
     """
@@ -80,16 +86,16 @@ def clean_minizinc_stdout(
             "obj": None,
             "sol": '"error empty stdout"',
             "solver": solver,
-            "constraints": all_constraints
+            "constraints": active_constraints,
         }
     if error:
         return {
             "time": timeout_sec,
             "optimal": "false",
             "obj": None,
-            "sol": error_message if error_message != None else 'unkown error',
+            "sol": error_message if error_message != None else "unkown error",
             "solver": solver,
-            "constraints": all_constraints
+            "constraints": active_constraints,
         }
     # Handle unsat case, like for n = 4
     unsat = "UNSATISFIABLE" in stdout
@@ -99,10 +105,10 @@ def clean_minizinc_stdout(
             "optimal": "false",
             "obj": None,
             "sol": "unsat",
-            "solver": solver, 
-            "constraints": all_constraints
+            "solver": solver,
+            "constraints": active_constraints,
         }
-    
+
     # Check if MiniZinc timed out internally (produces incomplete output)
     if "=====UNKNOWN=====" in stdout or stdout.count("{") != stdout.count("}"):
         return {
@@ -111,9 +117,9 @@ def clean_minizinc_stdout(
             "obj": None,
             "sol": "=====UNKNOWN===== (likely timeout)",
             "solver": solver,
-            "constraints": all_constraints
+            "constraints": active_constraints,
         }
-    
+
     try:
         # Try to parse JSON output
         json_part = stdout.split("%")[0].strip()
@@ -125,9 +131,9 @@ def clean_minizinc_stdout(
                 "obj": None,
                 "sol": "ERROR PARSING STDOUT",
                 "solver": solver,
-                "constraints": all_constraints
+                "constraints": active_constraints,
             }
-        
+
         cleaned_output = json.loads(json_part)
     except (json.JSONDecodeError, ValueError):
         # JSON parsing failed - likely timeout or invalid output
@@ -137,9 +143,9 @@ def clean_minizinc_stdout(
             "obj": None,
             "sol": "JSONDecodeError",
             "solver": solver,
-            "constraints": all_constraints
+            "constraints": active_constraints,
         }
-    
+
     # Extract time elapsed from MiniZinc output
     time_elapsed = None
     for line in stdout.splitlines():
@@ -152,7 +158,7 @@ def clean_minizinc_stdout(
 
     # If no time was found but we have valid output, set time to 0
     if time_elapsed is None:
-        time_elapsed = 'unknown'
+        time_elapsed = "unknown"
 
     ordered_output = {
         "time": time_elapsed,
@@ -160,23 +166,24 @@ def clean_minizinc_stdout(
         "obj": cleaned_output.get("obj") if optimization_version else None,
         "sol": str(cleaned_output.get("sol", "unknown")),
         "solver": solver,
-        "constraints": all_constraints
+        "constraints": active_constraints,
     }
 
     return ordered_output
 
+
 def run_minizinc_model_cli(
-        n: int, 
-        active_constraints: list[str] = None, 
-        model_path: str = None, 
-        timeout_sec: int = 300,
-        use_chuffed: bool = True,
-        is_optimization: bool = True,
-        all_constraints: list[str] = None
-    ) -> dict:
+    n: int,
+    active_constraints: list[str] = None,
+    model_path: str = None,
+    timeout_sec: int = 300,
+    use_chuffed: bool = True,
+    is_optimization: bool = True,
+    all_constraints: list[str] = None,
+) -> dict:
     """
     Runs a MiniZinc model via the CLI, setting constraint flags by a temporary `.dzn` file.
-    
+
     Args:
         n (int): The number of teams.
         active_constraints (list[str]): List of constraint names to activate.
@@ -185,13 +192,15 @@ def run_minizinc_model_cli(
         use_chuffed (bool): Whether to use the Chuffed solver (True) or Gecode (False).
         is_optimization (bool): If True, indicates that the output is from an optimization version of the STS.
         all_constraints (list[str]): All available constraints for the selected model version.
-        
+
     Returns:
         dict: The cleaned output from the MiniZinc execution.
     """
     # Set defaults based on optimization version
     if active_constraints is None:
-        active_constraints = ALL_CONSTRAINTS if is_optimization else ALL_CONSTRAINTS_NO_OPT
+        active_constraints = (
+            ALL_CONSTRAINTS if is_optimization else ALL_CONSTRAINTS_NO_OPT
+        )
     if model_path is None:
         model_path = MODEL_PATH if is_optimization else MODEL_PATH_NO_OPT
     if all_constraints is None:
@@ -206,43 +215,57 @@ def run_minizinc_model_cli(
     result_params = {
         "timeout_sec": timeout_sec,
         "optimization_version": is_optimization,
-        "all_constraints": all_constraints
+        "active_constraints": active_constraints,
+        "use_chuffed": use_chuffed,
     }
 
     try:
-        cmd = ["minizinc", "--output-time", *timeout_flag, *solver_flag, model_path, temp_dzn_path]
-        
+        cmd = [
+            "minizinc",
+            "--output-time",
+            *timeout_flag,
+            *solver_flag,
+            model_path,
+            temp_dzn_path,
+        ]
+
         # Use subprocess timeout as a backup (add 10 seconds buffer for MiniZinc to cleanup)
         process_timeout = timeout_sec + 10
-        
+
         process = subprocess.run(
-            cmd, 
-            capture_output=True, 
-            text=True, 
-            timeout=process_timeout
+            cmd, capture_output=True, text=True, timeout=process_timeout
         )
-        
+
         # Check if the process completed successfully
         if process.returncode != 0 and process.stderr:
             # Handle MiniZinc errors
-            if "time limit exceeded" in process.stderr.lower() or "timeout" in process.stderr.lower():
+            if (
+                "time limit exceeded" in process.stderr.lower()
+                or "timeout" in process.stderr.lower()
+            ):
                 result = clean_minizinc_stdout(None, error=True, **result_params)
             else:
                 # Other MiniZinc error - still try to parse stdout
                 result = clean_minizinc_stdout(process.stdout, **result_params)
         else:
             result = clean_minizinc_stdout(process.stdout, **result_params)
-            
+
     except subprocess.TimeoutExpired:
         # Subprocess timed out (backup timeout triggered)
-        result = clean_minizinc_stdout(None, error=True, **result_params, error_message = 'Process timeout')
+        result = clean_minizinc_stdout(
+            None, error=True, **result_params, error_message="Process timeout"
+        )
     except KeyboardInterrupt:
         # User interrupted
-        result = clean_minizinc_stdout(None, error=True, **result_params, error_message = 'Keyboard Interrupt')
+        result = clean_minizinc_stdout(
+            None, error=True, **result_params, error_message="Keyboard Interrupt"
+        )
     except Exception as e:
         # Other unexpected errors
         print(f"Unexpected error running MiniZinc: {e}")
-        result = clean_minizinc_stdout(None, error=True, **result_params, error_message =' Unexpected error' + e)
+        result = clean_minizinc_stdout(
+            None, error=True, **result_params, error_message=" Unexpected error" + e
+        )
     finally:
         # Always clean up the temporary file
         if os.path.exists(temp_dzn_path):
@@ -250,7 +273,10 @@ def run_minizinc_model_cli(
 
     return result
 
-def generate_dzn_file(n: int, active_constraints: list[str], all_constraints: list[str] = ALL_CONSTRAINTS) -> str:
+
+def generate_dzn_file(
+    n: int, active_constraints: list[str], all_constraints: list[str] = ALL_CONSTRAINTS
+) -> str:
     """
     Generates a temporary `.dzn` file with the specified number of teams and active constraints.
 
@@ -261,7 +287,9 @@ def generate_dzn_file(n: int, active_constraints: list[str], all_constraints: li
     Returns:
         str: The path to the generated temporary `.dzn` file.
     """
-    with tempfile.NamedTemporaryFile(delete=False, mode='w', suffix='.dzn', dir=".") as temp_dzn:
+    with tempfile.NamedTemporaryFile(
+        delete=False, mode="w", suffix=".dzn", dir="."
+    ) as temp_dzn:
         temp_dzn.write(f"n = {n};\n")
         for var in all_constraints:
             val = "true" if var in active_constraints else "false"
@@ -269,10 +297,11 @@ def generate_dzn_file(n: int, active_constraints: list[str], all_constraints: li
         temp_dzn_path = temp_dzn.name
     return temp_dzn_path
 
+
 def write_results_to_json(results: list[dict], names: list[str], n: int):
     """
     Save the given results dictionaries, i. e. the Minizinc output of multiple executions to a JSON file.
-    
+
     Args:
         results (list[dict]): The dictionaries containing the results of the Minizinc executions.
         names (list[str]): Names to identify each execution that generated each result.
@@ -282,7 +311,7 @@ def write_results_to_json(results: list[dict], names: list[str], n: int):
     output_data = {}
     for result, name in zip(results, names):
         output_data[name] = result
-    
+
     with open(filename, "w") as f:
         json.dump(output_data, f, indent=2)
 
@@ -292,7 +321,7 @@ def write_results_to_json(results: list[dict], names: list[str], n: int):
 
     with open(filename, "w") as f:
         for line in lines:
-            if '"sol": "' in line and "unsat"  not in line and "timeout" not in line:
+            if '"sol": "' in line and "unsat" not in line and "timeout" not in line:
                 # Clean line: remove surrounding quotes and unescape inner quotes
                 line = line.replace('\\"', '"')  # unescape quotes inside
                 line = line.replace('"sol": "', '"sol": ').rstrip()
@@ -303,11 +332,16 @@ def write_results_to_json(results: list[dict], names: list[str], n: int):
                 f.write(line)
 
 
-
-def run_test_mode(n: int, selected_constraints: list[str], is_optimization: bool = True, use_chuffed: bool = True, timeout_sec: int = 300) -> tuple[list[dict], list[str]]:
+def run_test_mode(
+    n: int,
+    selected_constraints: list[str],
+    is_optimization: bool = True,
+    use_chuffed: bool = True,
+    timeout_sec: int = 300,
+) -> tuple[list[dict], list[str]]:
     """
     Run the MiniZinc model with all possible combinations of the selected constraints.
-    
+
     Args:
         n (int): The number of teams.
         selected_constraints (list[str]): List of constraint names to test combinations of.
@@ -315,7 +349,8 @@ def run_test_mode(n: int, selected_constraints: list[str], is_optimization: bool
         use_chuffed (bool): Whether to use the Chuffed solver (True) or Gecode (False).
         timeout_sec (int): Timeout in seconds for each model run.
     Returns:
-        tuple[list[dict], list[str]]: Results and corresponding names for each combination.    """
+        tuple[list[dict], list[str]]: Results and corresponding names for each combination.
+    """
     results = []
     names = []
     # Generate all possible combinations (including empty set and full set)
@@ -323,11 +358,19 @@ def run_test_mode(n: int, selected_constraints: list[str], is_optimization: bool
         for combo in combinations(selected_constraints, r):
             combo_list = list(combo)
             combo_name = f"combo_{'_'.join(combo_list) if combo_list else 'none'}"
-            
-            print(f"Running combination: {combo_list if combo_list else 'No constraints'}")
-            
+
+            print(
+                f"Running combination: {combo_list if combo_list else 'No constraints'}"
+            )
+
             try:
-                result = run_minizinc_model_cli(n, combo_list, is_optimization=is_optimization, use_chuffed=use_chuffed, timeout_sec=timeout_sec)
+                result = run_minizinc_model_cli(
+                    n,
+                    combo_list,
+                    is_optimization=is_optimization,
+                    use_chuffed=use_chuffed,
+                    timeout_sec=timeout_sec,
+                )
                 results.append(result)
                 names.append(combo_name)
             except Exception as e:
@@ -338,83 +381,125 @@ def run_test_mode(n: int, selected_constraints: list[str], is_optimization: bool
                     "optimal": "false",
                     "obj": None,
                     "sol": None,
-                    "error": str(e)
+                    "error": str(e),
                 }
                 results.append(error_result)
                 names.append(f"{combo_name}_error")
-    
+
     return results, names
+
 
 def main():
     """Main function to handle command-line arguments and execute the script."""
-    parser = argparse.ArgumentParser(description="Run MiniZinc model with configurable constraints")
-    
+    parser = argparse.ArgumentParser(
+        description="Run MiniZinc model with configurable constraints"
+    )
+
     # Required parameter: number of teams
-    parser.add_argument('-n', '--teams', type=int, required=True, 
-                       help='Number of teams (required)')
-    
+    parser.add_argument(
+        "-n", "--teams", type=int, required=True, help="Number of teams (required)"
+    )
+
     # Mutually exclusive group for -g or -t
     group = parser.add_mutually_exclusive_group()
-    group.add_argument('-g', '--generate', action='store_true',
-                      help='Generate mode with the selected constraints')
-    group.add_argument('-t', '--test', action='store_true', 
-                      help='Test mode, tries all possible combinations of the selected constraints')
-      # List of constraint strings
-    parser.add_argument('-c', '--constraints', nargs='*', default=ALL_CONSTRAINTS,
-                       help='List of constraint names to activate (default: all constraints)')    # Optimization flag
-    parser.add_argument('--no-opt', action='store_true',
-                       help='Use non-optimized version (stsNoOpt.mzn) instead of optimized version (sts.mzn)')
-      # Solver flag
-    parser.add_argument('--gecode', action='store_true',
-                       help='Use Gecode solver instead of Chuffed (default: Chuffed)')
-    
+    group.add_argument(
+        "-g",
+        "--generate",
+        action="store_true",
+        help="Generate mode with the selected constraints",
+    )
+    group.add_argument(
+        "-t",
+        "--test",
+        action="store_true",
+        help="Test mode, tries all possible combinations of the selected constraints",
+    )
+    # List of constraint strings
+    parser.add_argument(
+        "-c",
+        "--constraints",
+        nargs="*",
+        default=ALL_CONSTRAINTS,
+        help="List of constraint names to activate (default: all constraints)",
+    )  # Optimization flag
+    parser.add_argument(
+        "--no-opt",
+        action="store_true",
+        help="Use non-optimized version (stsNoOpt.mzn) instead of optimized version (sts.mzn)",
+    )
+    # Solver flag
+    parser.add_argument(
+        "--gecode",
+        action="store_true",
+        help="Use Gecode solver instead of Chuffed (default: Chuffed)",
+    )
+
     # Timeout flag
-    parser.add_argument('--timeout', type=int, default=300,
-                       help='Solver timeout in seconds (default: 300)')
-    
+    parser.add_argument(
+        "--timeout",
+        type=int,
+        default=300,
+        help="Solver timeout in seconds (default: 300)",
+    )
+
     args = parser.parse_args()
-      # Determine which version to use
+    # Determine which version to use
     is_optimization = not args.no_opt
     use_chuffed = not args.gecode
-    available_constraints = ALL_CONSTRAINTS if is_optimization else ALL_CONSTRAINTS_NO_OPT
-    
+    available_constraints = (
+        ALL_CONSTRAINTS if is_optimization else ALL_CONSTRAINTS_NO_OPT
+    )
+
     # Set default constraints if none provided
     if args.constraints == ALL_CONSTRAINTS and not is_optimization:
         args.constraints = ALL_CONSTRAINTS_NO_OPT
-      # Validate constraint names
-    invalid_constraints = [c for c in args.constraints if c not in available_constraints]
+    # Validate constraint names
+    invalid_constraints = [
+        c for c in args.constraints if c not in available_constraints
+    ]
     if invalid_constraints:
         print(f"Error: Invalid constraint names: {invalid_constraints}")
         print(f"Available constraints: {available_constraints}")
         return 1
-      # Run the model based on mode
+    # Run the model based on mode
     print(f"Running MiniZinc model with {args.teams} teams")
-    print(f"Mode: {'Generate' if args.generate else 'Test' if args.test else 'Default'}")
+    print(
+        f"Mode: {'Generate' if args.generate else 'Test' if args.test else 'Default'}"
+    )
     print(f"Version: {'Optimized' if is_optimization else 'Non-optimized'}")
     print(f"Solver: {'Chuffed' if use_chuffed else 'Gecode'}")
     print(f"Timeout: {args.timeout} seconds")
     print(f"Selected constraints: {args.constraints}")
-    
+
     results = []
     names = []
-    
+
     if args.test:
         # Test mode: try all possible combinations of the selected constraints
         print("Test mode: Running all possible combinations of selected constraints...")
-        results, names = run_test_mode(args.teams, args.constraints, is_optimization, use_chuffed, args.timeout)
+        results, names = run_test_mode(
+            args.teams, args.constraints, is_optimization, use_chuffed, args.timeout
+        )
     else:
         # Generate mode: run once with all selected constraints active
         print("Generate mode: Running with all selected constraints active...")
-        result = run_minizinc_model_cli(args.teams, args.constraints, is_optimization=is_optimization, use_chuffed=use_chuffed, timeout_sec=args.timeout)
+        result = run_minizinc_model_cli(
+            args.teams,
+            args.constraints,
+            is_optimization=is_optimization,
+            use_chuffed=use_chuffed,
+            timeout_sec=args.timeout,
+        )
         results = [result]
         names = ["generate_all_constraints"]
-    
+
     # Save results
     write_results_to_json(results, names, args.teams)
     print(f"Results saved to {JSON_FOLDER}/{args.teams}.json")
     print(f"Total executions: {len(results)}")
-    
+
     return 0
+
 
 if __name__ == "__main__":
     exit(main())
