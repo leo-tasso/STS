@@ -60,9 +60,11 @@ def clean_minizinc_stdout(
     optimization_version: bool = True,
     active_constraints: list[str] = None,
     error_message: str = None,
+    verbose: bool = False,
 ) -> dict:
     """
     Cleans the MiniZinc stdout output by removing unnecessary lines and formatting.
+    When intermediate solutions are present, takes the last (best) solution.
 
     Args:
         stdout (str): The raw output from MiniZinc.
@@ -73,7 +75,7 @@ def clean_minizinc_stdout(
         active_constraints (list[str]): All available constraints used for the selected model version.
 
     Returns:
-        dict: Cleaned output as a dictionary.
+        dict: Cleaned output as a dictionary with the best (last) solution.
     """
 
     solver = "chuffed" if use_chuffed else "gecode"
@@ -121,20 +123,57 @@ def clean_minizinc_stdout(
         }
 
     try:
-        # Try to parse JSON output
-        json_part = stdout.split("%")[0].strip()
-        if not json_part:
-            # No JSON output - likely timeout
-            return {
-                "time": timeout_sec,
-                "optimal": "false",
-                "obj": None,
-                "sol": "ERROR PARSING STDOUT",
-                "solver": solver,
-                "constraints": active_constraints,
-            }
-
-        cleaned_output = json.loads(json_part)
+        # Parse multiple JSON solutions and take the last (best) one
+        json_solutions = []
+        
+        # Split by comments (%) to separate solutions from status messages
+        output_lines = stdout.splitlines()
+        current_json = ""
+        
+        for line in output_lines:
+            line = line.strip()
+            # Skip comment lines starting with %
+            if line.startswith("%"):
+                continue
+            
+            # Accumulate lines that could be part of JSON
+            if line and (line.startswith("{") or current_json):
+                current_json += line
+                
+                # Check if we have a complete JSON object
+                if line.endswith("}") and current_json.count("{") == current_json.count("}"):
+                    try:
+                        parsed_json = json.loads(current_json)
+                        json_solutions.append(parsed_json)
+                        if verbose:
+                            print(f"Found intermediate solution {len(json_solutions)}: obj={parsed_json.get('obj', 'N/A')}")
+                        current_json = ""
+                    except json.JSONDecodeError:
+                        # Not a complete JSON yet, continue accumulating
+                        current_json += "\n"
+        
+        # If no valid JSON solutions found, try the old method as fallback
+        if not json_solutions:
+            json_part = stdout.split("%")[0].strip()
+            if not json_part:
+                # No JSON output - likely timeout
+                return {
+                    "time": timeout_sec,
+                    "optimal": "false",
+                    "obj": None,
+                    "sol": "ERROR PARSING STDOUT",
+                    "solver": solver,
+                    "constraints": active_constraints,
+                }
+            cleaned_output = json.loads(json_part)
+            if verbose:
+                print("Used fallback parsing method")
+        else:
+            # Take the last (best) solution
+            cleaned_output = json_solutions[-1]
+            if verbose:
+                print(f"Using best solution (#{len(json_solutions)}) with obj={cleaned_output.get('obj', 'N/A')}")
+            
     except (json.JSONDecodeError, ValueError):
         # JSON parsing failed - likely timeout or invalid output
         return {
@@ -154,11 +193,13 @@ def clean_minizinc_stdout(
             parts = line.split()
             if len(parts) >= 5:
                 time_elapsed = math.floor(float(parts[3]))
-                break
+
 
     # If no time was found but we have valid output, set time to 0
     if time_elapsed is None:
         time_elapsed = "unknown"
+
+        
 
     ordered_output = {
         "time": time_elapsed,
@@ -168,6 +209,10 @@ def clean_minizinc_stdout(
         "solver": solver,
         "constraints": active_constraints,
     }
+
+    if "% Time limit exceeded!" in stdout:
+        ordered_output["optimal"] = False
+        ordered_output["time"] = timeout_sec
 
     return ordered_output
 
@@ -180,6 +225,7 @@ def run_minizinc_model_cli(
     use_chuffed: bool = True,
     is_optimization: bool = True,
     all_constraints: list[str] = None,
+    verbose: bool = False,
 ) -> dict:
     """
     Runs a MiniZinc model via the CLI, setting constraint flags by a temporary `.dzn` file.
@@ -217,12 +263,14 @@ def run_minizinc_model_cli(
         "optimization_version": is_optimization,
         "active_constraints": active_constraints,
         "use_chuffed": use_chuffed,
+        "verbose": verbose,
     }
 
     try:
         cmd = [
             "minizinc",
             "--output-time",
+            "--intermediate-solutions",
             *timeout_flag,
             *solver_flag,
             model_path,
@@ -338,6 +386,7 @@ def run_test_mode(
     is_optimization: bool = True,
     use_chuffed: bool = True,
     timeout_sec: int = 300,
+    verbose: bool = False,
 ) -> tuple[list[dict], list[str]]:
     """
     Run the MiniZinc model with all possible combinations of the selected constraints.
@@ -370,6 +419,7 @@ def run_test_mode(
                     is_optimization=is_optimization,
                     use_chuffed=use_chuffed,
                     timeout_sec=timeout_sec,
+                    verbose=verbose,
                 )
                 results.append(result)
                 names.append(combo_name)
@@ -442,6 +492,14 @@ def main():
         help="Solver timeout in seconds (default: 300)",
     )
 
+    # Verbose flag
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        help="Enable verbose output showing intermediate solutions",
+    )
+
     args = parser.parse_args()
     # Determine which version to use
     is_optimization = not args.no_opt
@@ -478,7 +536,7 @@ def main():
         # Test mode: try all possible combinations of the selected constraints
         print("Test mode: Running all possible combinations of selected constraints...")
         results, names = run_test_mode(
-            args.teams, args.constraints, is_optimization, use_chuffed, args.timeout
+            args.teams, args.constraints, is_optimization, use_chuffed, args.timeout, args.verbose
         )
     else:
         # Generate mode: run once with all selected constraints active
@@ -489,6 +547,7 @@ def main():
             is_optimization=is_optimization,
             use_chuffed=use_chuffed,
             timeout_sec=args.timeout,
+            verbose=args.verbose,
         )
         results = [result]
         names = ["generate_all_constraints"]
