@@ -15,7 +15,7 @@ DZN_PATH_NO_OPT = "../../source/CP/use_constraintsNoOpt.dzn"
 MODEL_PATH_NO_OPT = "../../source/CP/stsNoOpt.mzn"
 
 JSON_FOLDER = "../../res/CP"
-VARIABLE_PREFIX = "use_constraint_"
+VARIABLE_PREFIX = "use_"
 
 def read_constraint_names_from_dzn(dzn_path: str = DZN_PATH, variable_prefix: str = VARIABLE_PREFIX) -> list[str]:
     """

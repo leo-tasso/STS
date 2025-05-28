@@ -1,11 +1,11 @@
-n = 14;
+n = 6;
 
-use_constraint_symm_break_weeks = true;
-use_constraint_symm_break_periods = true;
-use_constraint_symm_break_teams = true;
-use_constraint_implied_matches_per_team = true;
-use_constraint_implied_period_count = true;
+use_symm_break_weeks = true;
+use_symm_break_periods = true;
+use_symm_break_teams = true;
+use_implied_matches_per_team = true;
+use_implied_period_count = true;
 
-use_constraint_int_search = true;
-use_constraint_restart_luby = false;
-use_constraint_relax_and_reconstruct = false;
+use_int_search = true;
+use_restart_luby = false;
+use_relax_and_reconstruct = false;

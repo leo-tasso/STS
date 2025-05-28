@@ -5,15 +5,15 @@ int: n; % Number of teams (even)
 int: weeks = n - 1;
 int: periods = n div 2;
 
-bool: use_constraint_symm_break_weeks;
-bool: use_constraint_symm_break_periods;
-bool: use_constraint_symm_break_teams;
-bool: use_constraint_implied_matches_per_team;
-bool: use_constraint_implied_period_count;
+bool: use_symm_break_weeks;
+bool: use_symm_break_periods;
+bool: use_symm_break_teams;
+bool: use_implied_matches_per_team;
+bool: use_implied_period_count;
 
-bool: use_constraint_int_search;
-bool: use_constraint_restart_luby;
-bool: use_constraint_relax_and_reconstruct;
+bool: use_int_search;
+bool: use_restart_luby;
+bool: use_relax_and_reconstruct;
 
 set of int: Teams = 1..n;
 set of int: Weeks = 1..weeks;
@@ -62,14 +62,14 @@ constraint
 
 % Implied constraint: number of games per team
 constraint
-  use_constraint_implied_matches_per_team ->
+  use_implied_matches_per_team ->
   forall(t in Teams)(
     home_count[t] + away_count[t] = n - 1
   );
 
 % Implied constraint for total period appearances
 constraint 
-  use_constraint_implied_period_count ->
+  use_implied_period_count ->
   forall(t in Teams) (
     sum(p_val in Periods) (period_count[t,p_val]) = n-1
   );
@@ -78,7 +78,7 @@ constraint
 
 %symmetry breaking weeks
 constraint 
-  use_constraint_symm_break_weeks ->
+  use_symm_break_weeks ->
   forall(w in 1..weeks - 1)(
     lex_less(
       [ home[w,p] | p in Periods ] ++ [ away[w,p] | p in Periods ],
@@ -87,7 +87,7 @@ constraint
   );
 %symmetry breaking periods
 constraint 
-  use_constraint_symm_break_periods ->
+  use_symm_break_periods ->
   forall(w in Weeks)(
     lex_lesseq(
       [ home[w,p] | p in 1..periods-1 ] ++ [ away[w,p] | p in 1..periods-1 ],
@@ -98,7 +98,7 @@ constraint
 
 % Enforce sorted home teams in week 1
 constraint
-  use_constraint_symm_break_teams ->
+  use_symm_break_teams ->
   forall(i in Periods) (
     home[1, i] = 2*i - 1 /\ 
     away[1, i] = 2*i
@@ -108,7 +108,7 @@ constraint
 set of int: Count_diff = 1..n-1;
 var Count_diff: max_diff = max([abs(home_count[t] - away_count[t]) | t in Teams]);
 solve 
-:: if use_constraint_int_search then
+:: if use_int_search then
      int_search(
        [home[w, p] | w in Weeks, p in Periods] ++ [away[w, p] | w in Weeks, p in Periods],
        first_fail,
@@ -116,8 +116,8 @@ solve
        complete
      )
    endif
-:: if use_constraint_restart_luby then restart_luby(10000) endif
-:: if use_constraint_relax_and_reconstruct then 
+:: if use_restart_luby then restart_luby(10000) endif
+:: if use_relax_and_reconstruct then 
      relax_and_reconstruct([home[w, p] | w in Weeks, p in Periods] ++ [away[w, p] | w in Weeks, p in Periods], 85)
    endif
    minimize max_diff;
