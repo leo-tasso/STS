@@ -1,0 +1,15 @@
+n = 10;
+
+use_symm_break_weeks = true;
+use_symm_break_periods = true;
+use_symm_break_teams = true;
+use_implied_matches_per_team = true;
+use_implied_period_count = true;
+
+% Dual viewpoint settings
+use_team_viewpoint = true;
+use_match_viewpoint = false;
+
+use_int_search = true;
+use_restart_luby = false;
+use_relax_and_reconstruct = false;
