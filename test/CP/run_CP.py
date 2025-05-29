@@ -637,18 +637,26 @@ def main():
         "--constraints",
         nargs="*",
         default=ALL_CONSTRAINTS,
-        help="List of constraint names to activate (default: all constraints)",
-    )  # Optimization flag
+        help="List of constraint names to activate (default: all constraints)",    )
+    
+    # Optimization flag
     parser.add_argument(
         "--no-opt",
         action="store_true",
         help="Use non-optimized version (stsNoOpt.mzn) instead of optimized version (sts.mzn)",
     )
-    # Solver flag
-    parser.add_argument(
+    
+    # Solver flags
+    solver_group = parser.add_mutually_exclusive_group()
+    solver_group.add_argument(
+        "--chuffed",
+        action="store_true",
+        help="Use Chuffed solver only",
+    )
+    solver_group.add_argument(
         "--gecode",
         action="store_true",
-        help="Use Gecode solver instead of Chuffed (default: Chuffed)",
+        help="Use Gecode solver only",
     )
 
     # Timeout flag
@@ -657,7 +665,9 @@ def main():
         type=int,
         default=300,
         help="Solver timeout in seconds (default: 300)",
-    )    # Verbose flag
+    )
+    
+    # Verbose flag
     parser.add_argument(
         "-v",
         "--verbose",
@@ -674,9 +684,18 @@ def main():
     )
 
     args = parser.parse_args()
+    
     # Determine which version to use
     is_optimization = not args.no_opt
-    use_chuffed = not args.gecode
+      # Determine which solver(s) to use
+    if args.chuffed:
+        solvers_to_use = ["chuffed"]
+    elif args.gecode:
+        solvers_to_use = ["gecode"]
+    else:
+        # Neither specified - run with both
+        solvers_to_use = ["chuffed", "gecode"]
+    
     available_constraints = (
         ALL_CONSTRAINTS if is_optimization else ALL_CONSTRAINTS_NO_OPT
     )
@@ -691,13 +710,13 @@ def main():
     if invalid_constraints:
         print(f"Error: Invalid constraint names: {invalid_constraints}")
         print(f"Available constraints: {available_constraints}")
-        return 1
-    # Run the model based on mode    print(f"Running MiniZinc model with {args.teams} teams")
+        return 1    # Run the model based on mode
+    print(f"Running MiniZinc model with {args.teams} teams")
     print(
         f"Mode: {'Generate' if args.generate else 'Test' if args.test else 'Default'}"
     )
     print(f"Version: {'Optimized' if is_optimization else 'Non-optimized'}")
-    print(f"Solver: {'Chuffed' if use_chuffed else 'Gecode'}")
+    print(f"Solver(s): {', '.join(solvers_to_use)}")
     print(f"Timeout: {args.timeout} seconds")
     print(f"Runs per measurement: {args.runs}")
     print(f"Selected constraints: {args.constraints}")
@@ -705,28 +724,38 @@ def main():
     results = []
     names = []
 
-    if args.test:
-        # Test mode: try all possible combinations of the selected constraints
-        print("Test mode: Running all possible combinations of selected constraints...")
-        print(f"Each combination will be run {args.runs} times for reliable measurements.")
-        results, names = run_test_mode(
-            args.teams, args.constraints, is_optimization, use_chuffed, args.timeout, args.verbose, args.runs
-        )
-    else:
-        # Generate mode: run once with all selected constraints active
-        print("Generate mode: Running with all selected constraints active...")
-        print(f"Will run {args.runs} times for reliable measurements.")
-        result = run_minizinc_with_averaging(
-            args.teams,
-            args.constraints,
-            is_optimization=is_optimization,
-            use_chuffed=use_chuffed,
-            timeout_sec=args.timeout,
-            verbose=args.verbose,
-            num_runs=args.runs,
-        )
-        results = [result]
-        names = ["generate_all_constraints"]    # Save results
+    # Run for each solver
+    for solver_name in solvers_to_use:
+        use_chuffed = (solver_name == "chuffed")
+        print(f"\n--- Running with {solver_name.upper()} solver ---")
+        
+        if args.test:
+            # Test mode: try all possible combinations of the selected constraints
+            print("Test mode: Running all possible combinations of selected constraints...")
+            print(f"Each combination will be run {args.runs} times for reliable measurements.")
+            solver_results, solver_names_list = run_test_mode(
+                args.teams, args.constraints, is_optimization, use_chuffed, args.timeout, args.verbose, args.runs
+            )
+            # Add solver suffix to names
+            solver_results_named = solver_results
+            solver_names_with_solver = [f"{name}_{solver_name}" for name in solver_names_list]
+            results.extend(solver_results_named)
+            names.extend(solver_names_with_solver)
+        else:
+            # Generate mode: run once with all selected constraints active
+            print("Generate mode: Running with all selected constraints active...")
+            print(f"Will run {args.runs} times for reliable measurements.")
+            result = run_minizinc_with_averaging(
+                args.teams,
+                args.constraints,
+                is_optimization=is_optimization,
+                use_chuffed=use_chuffed,
+                timeout_sec=args.timeout,
+                verbose=args.verbose,
+                num_runs=args.runs,
+            )
+            results.append(result)
+            names.append(f"generate_all_constraints_{solver_name}")# Save results
     write_results_to_json(results, names, args.teams)
     print(f"Results saved to {JSON_FOLDER}/{args.teams}.json")
     print(f"Total executions: {len(results)}")
