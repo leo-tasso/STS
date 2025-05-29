@@ -4,6 +4,7 @@ import subprocess
 import os
 import json
 import argparse
+import statistics
 from itertools import combinations
 
 # Optimized version paths
@@ -387,6 +388,7 @@ def run_test_mode(
     use_chuffed: bool = True,
     timeout_sec: int = 300,
     verbose: bool = False,
+    num_runs: int = 5,
 ) -> tuple[list[dict], list[str]]:
     """
     Run the MiniZinc model with all possible combinations of the selected constraints.
@@ -397,6 +399,8 @@ def run_test_mode(
         is_optimization (bool): If True, use the optimization version; otherwise use non-optimization version.
         use_chuffed (bool): Whether to use the Chuffed solver (True) or Gecode (False).
         timeout_sec (int): Timeout in seconds for each model run.
+        verbose (bool): Whether to show verbose output.
+        num_runs (int): Number of runs to average over for each combination.
     Returns:
         tuple[list[dict], list[str]]: Results and corresponding names for each combination.
     """
@@ -413,13 +417,14 @@ def run_test_mode(
             )
 
             try:
-                result = run_minizinc_model_cli(
+                result = run_minizinc_with_averaging(
                     n,
                     combo_list,
                     is_optimization=is_optimization,
                     use_chuffed=use_chuffed,
                     timeout_sec=timeout_sec,
                     verbose=verbose,
+                    num_runs=num_runs,
                 )
                 results.append(result)
                 names.append(combo_name)
@@ -437,6 +442,168 @@ def run_test_mode(
                 names.append(f"{combo_name}_error")
 
     return results, names
+
+
+def run_minizinc_with_averaging(
+    n: int,
+    active_constraints: list[str] = None,
+    model_path: str = None,
+    timeout_sec: int = 300,
+    use_chuffed: bool = True,
+    is_optimization: bool = True,
+    all_constraints: list[str] = None,
+    verbose: bool = False,
+    num_runs: int = 5,
+) -> dict:
+    """
+    Runs a MiniZinc model multiple times and computes averaged statistics for reliable measurements.
+
+    Args:
+        n (int): The number of teams.
+        active_constraints (list[str]): List of constraint names to activate.
+        model_path (str): Path to the `.mzn` model.
+        timeout_sec (int): Timeout in seconds for each model run.
+        use_chuffed (bool): Whether to use the Chuffed solver (True) or Gecode (False).
+        is_optimization (bool): If True, indicates that the output is from an optimization version of the STS.
+        all_constraints (list[str]): All available constraints for the selected model version.
+        verbose (bool): Whether to show verbose output.
+        num_runs (int): Number of runs to average over.
+
+    Returns:
+        dict: Averaged results with additional statistics.
+    """
+    if verbose:
+        print(f"Running {num_runs} times for averaging...")
+    
+    results = []
+    valid_times = []
+    valid_objs = []
+    successful_runs = 0
+    errors = []
+    
+    for run_num in range(num_runs):
+        if verbose:
+            print(f"  Run {run_num + 1}/{num_runs}...")
+        
+        result = run_minizinc_model_cli(
+            n=n,
+            active_constraints=active_constraints,
+            model_path=model_path,
+            timeout_sec=timeout_sec,
+            use_chuffed=use_chuffed,
+            is_optimization=is_optimization,
+            all_constraints=all_constraints,
+            verbose=False,  # Disable verbose for individual runs to reduce noise
+        )
+        
+        results.append(result)
+        
+        # Check if this run was successful (not error, timeout, or unsat)
+        if (result.get("sol") not in ["unsat", "=====UNKNOWN===== (likely timeout)", "JSONDecodeError", "ERROR PARSING STDOUT"] 
+            and not isinstance(result.get("sol"), str) or "error" not in result.get("sol", "").lower()):
+            
+            successful_runs += 1
+            
+            # Collect valid timing data
+            time_val = result.get("time")
+            if time_val is not None and time_val != "unknown" and isinstance(time_val, (int, float)):
+                valid_times.append(time_val)
+            
+            # Collect valid objective values for optimization problems
+            if is_optimization:
+                obj_val = result.get("obj")
+                if obj_val is not None and isinstance(obj_val, (int, float)):
+                    valid_objs.append(obj_val)
+        else:
+            # Track errors
+            error_msg = result.get("sol", "unknown error")
+            errors.append(error_msg)
+    
+    # If no successful runs, return the last result as is
+    if successful_runs == 0:
+        last_result = results[-1].copy()
+        last_result["runs_info"] = {
+            "total_runs": num_runs,
+            "successful_runs": 0,
+            "errors": errors,
+        }
+        return last_result
+    
+    # Compute statistics from successful runs
+    avg_result = results[0].copy()  # Use first result as template
+    
+    # Compute time statistics
+    if valid_times:
+        avg_result["time"] = round(statistics.mean(valid_times), 2)
+        time_stats = {
+            "mean": round(statistics.mean(valid_times), 2),
+            "median": round(statistics.median(valid_times), 2),
+            "min": min(valid_times),
+            "max": max(valid_times),
+        }
+        if len(valid_times) > 1:
+            time_stats["stdev"] = round(statistics.stdev(valid_times), 2)
+        else:
+            time_stats["stdev"] = 0
+    else:
+        time_stats = None
+    
+    # Compute objective statistics for optimization problems
+    obj_stats = None
+    if is_optimization and valid_objs:
+        avg_result["obj"] = round(statistics.mean(valid_objs), 2)
+        obj_stats = {
+            "mean": round(statistics.mean(valid_objs), 2),
+            "median": round(statistics.median(valid_objs), 2),
+            "min": min(valid_objs),
+            "max": max(valid_objs),
+        }
+        if len(valid_objs) > 1:
+            obj_stats["stdev"] = round(statistics.stdev(valid_objs), 2)
+        else:
+            obj_stats["stdev"] = 0
+    
+    # Determine if solution is optimal (majority of runs were optimal and within time limit)
+    optimal_runs = sum(1 for r in results if r.get("optimal") == "true" or r.get("optimal") is True)
+    avg_result["optimal"] = "true" if optimal_runs > num_runs / 2 else "false"
+    
+    # Use the best solution found across all runs
+    best_obj = None
+    best_sol = None
+    for result in results:
+        if result.get("sol") not in ["unsat", "=====UNKNOWN===== (likely timeout)", "JSONDecodeError", "ERROR PARSING STDOUT"]:
+            if is_optimization:
+                obj_val = result.get("obj")
+                if obj_val is not None and (best_obj is None or obj_val < best_obj):  # Assuming minimization
+                    best_obj = obj_val
+                    best_sol = result.get("sol")
+            else:
+                best_sol = result.get("sol")
+                break
+    
+    if best_sol is not None:
+        avg_result["sol"] = best_sol
+    if best_obj is not None:
+        avg_result["obj"] = best_obj
+    
+    # Add run information and statistics
+    avg_result["runs_info"] = {
+        "total_runs": num_runs,
+        "successful_runs": successful_runs,
+        "optimal_runs": optimal_runs,
+        "time_stats": time_stats,
+        "obj_stats": obj_stats,
+        "errors": errors if errors else None,
+    }
+    
+    if verbose:
+        print(f"  Completed {successful_runs}/{num_runs} successful runs")
+        if time_stats:
+            print(f"  Average time: {time_stats['mean']}s (±{time_stats.get('stdev', 0)}s)")
+        if obj_stats:
+            print(f"  Average objective: {obj_stats['mean']} (±{obj_stats.get('stdev', 0)})")
+    
+    return avg_result
 
 
 def main():
@@ -490,14 +657,20 @@ def main():
         type=int,
         default=300,
         help="Solver timeout in seconds (default: 300)",
-    )
-
-    # Verbose flag
+    )    # Verbose flag
     parser.add_argument(
         "-v",
         "--verbose",
         action="store_true",
         help="Enable verbose output showing intermediate solutions",
+    )
+
+    # Runs flag for averaging
+    parser.add_argument(
+        "--runs",
+        type=int,
+        default=5,
+        help="Number of runs to average over for reliable measurements (default: 5)",
     )
 
     args = parser.parse_args()
@@ -519,14 +692,14 @@ def main():
         print(f"Error: Invalid constraint names: {invalid_constraints}")
         print(f"Available constraints: {available_constraints}")
         return 1
-    # Run the model based on mode
-    print(f"Running MiniZinc model with {args.teams} teams")
+    # Run the model based on mode    print(f"Running MiniZinc model with {args.teams} teams")
     print(
         f"Mode: {'Generate' if args.generate else 'Test' if args.test else 'Default'}"
     )
     print(f"Version: {'Optimized' if is_optimization else 'Non-optimized'}")
     print(f"Solver: {'Chuffed' if use_chuffed else 'Gecode'}")
     print(f"Timeout: {args.timeout} seconds")
+    print(f"Runs per measurement: {args.runs}")
     print(f"Selected constraints: {args.constraints}")
 
     results = []
@@ -535,27 +708,30 @@ def main():
     if args.test:
         # Test mode: try all possible combinations of the selected constraints
         print("Test mode: Running all possible combinations of selected constraints...")
+        print(f"Each combination will be run {args.runs} times for reliable measurements.")
         results, names = run_test_mode(
-            args.teams, args.constraints, is_optimization, use_chuffed, args.timeout, args.verbose
+            args.teams, args.constraints, is_optimization, use_chuffed, args.timeout, args.verbose, args.runs
         )
     else:
         # Generate mode: run once with all selected constraints active
         print("Generate mode: Running with all selected constraints active...")
-        result = run_minizinc_model_cli(
+        print(f"Will run {args.runs} times for reliable measurements.")
+        result = run_minizinc_with_averaging(
             args.teams,
             args.constraints,
             is_optimization=is_optimization,
             use_chuffed=use_chuffed,
             timeout_sec=args.timeout,
             verbose=args.verbose,
+            num_runs=args.runs,
         )
         results = [result]
-        names = ["generate_all_constraints"]
-
-    # Save results
+        names = ["generate_all_constraints"]    # Save results
     write_results_to_json(results, names, args.teams)
     print(f"Results saved to {JSON_FOLDER}/{args.teams}.json")
     print(f"Total executions: {len(results)}")
+    if args.runs > 1:
+        print(f"Each execution was averaged over {args.runs} runs for reliable measurements.")
 
     return 0
 
