@@ -72,6 +72,7 @@ python run_CP.py -n <teams> [mode] [constraints] [options]
 - **`-n, --teams`** (required): Number of teams (must be even)
 - **`-g, --generate`** (optional): Generate mode - run once with selected constraints
 - **`-t, --test`** (optional): Test mode - try all combinations of selected constraints
+- **`-s, --select`** (optional): Select group mode – systematically tests all possible combinations of a group of related constraints, with every other constraint always enabled.  
 - **`-c, --constraints`** (optional): List of constraints to activate (default: all)
 - **`--no-opt`** (optional): Use non-optimized model version (stsNoOpt.mzn instead of sts.mzn)
 - **`--chuffed`** (optional): Use Chuffed solver only
@@ -147,6 +148,38 @@ This will run multiple experiments (each averaged over several runs):
 - Only `use_symm_break_slots`
 - Only `use_symm_break_weeks`
 - Both constraints together
+
+#### 4. Select group mode (`-s`):
+For each group (or the specified group), the script generates **all possible combinations** (including the empty set) of the constraints in that group.
+ 
+For each combination, it runs the model with:
+- The constraints in the combination set to `True`
+- The other constraints in the group set to `False`
+- **All other constraints (not in the group) set to `True`**
+
+Available groups for `-s`:
+
+- `symm` – All symmetry breaking constraints
+- `implied` – All implied constraints 
+- `search` – All search strategy constraints 
+- `all` (or just `-s` with no value) – Runs all combinations for all groups above
+
+```bash
+# Try all combinations of symmetry-breaking constraints (others always enabled)
+python run_CP.py -n 8 -s symm
+
+# Try all combinations of implied constraints (others always enabled)
+python run_CP.py -n 8 -s implied
+
+# Try all combinations of search strategy constraints (others always enabled)
+python run_CP.py -n 8 -s search
+
+# Try all combinations for all groups (symm, implied, search)
+python run_CP.py -n 8 -s
+
+# Use with solver and other options
+python run_CP.py -n 8 -s symm --gecode --timeout 600 --runs 3
+```
 
 ### Examples
 
@@ -315,7 +348,15 @@ python run_CP.py -n 8 -g  # Runs with both Chuffed and Gecode
 # Compare averaging reliability
 python run_CP.py -n 8 -g --runs 1   # Single run
 python run_CP.py -n 8 -g --runs 10  # More reliable averaging
+
+# Compare groups of constraints using select mode
+python run_CP.py -n 8 -s symm       # All combinations of symmetry-breaking constraints
+python run_CP.py -n 8 -s implied    # All combinations of implied constraints
+python run_CP.py -n 8 -s search     # All combinations of search strategy constraints
+python run_CP.py -n 8 -s            # All combinations for all groups
 ```
+
+You can use the `-s/--select` option to systematically compare the effect of enabling/disabling constraints within a group (symm, implied, search), while keeping all other constraints enabled. This allows for focused comparative analysis of constraint groups.
 
 ## Performance Analysis
 
