@@ -48,9 +48,32 @@ def read_constraint_names_from_dzn(
 
     return constraint_names
 
-
 ALL_CONSTRAINTS = read_constraint_names_from_dzn()
 ALL_CONSTRAINTS_NO_OPT = read_constraint_names_from_dzn(DZN_PATH_NO_OPT)
+
+def select_constraints_from_group(
+    group_name: str, all_constraints: list[str] = ALL_CONSTRAINTS
+) -> list[str]:
+    """
+    Selects constraints from a predefined group.
+
+    Args:
+        group_name (str): The name of the group to select constraints from.
+        all_constraints (list[str]): List of all available constraints.
+
+    Returns:
+        list[str]: List of selected constraints from the specified group.
+    """
+    if group_name == "search":
+        return all_constraints[-3:]
+    
+    return [c for c in all_constraints if group_name in c]
+    
+ALL_CONSTRAINTS_GROUPS = {
+    "symm": select_constraints_from_group("symm"),
+    "implied": select_constraints_from_group("implied"),
+    "search": select_constraints_from_group("search")
+}
 
 
 def clean_minizinc_stdout(
@@ -443,6 +466,113 @@ def run_test_mode(
 
     return results, names
 
+def run_select_mode(
+    n: int,
+    selected_group: str,
+    is_optimization: bool = True,
+    use_chuffed: bool = True,
+    timeout_sec: int = 300,
+    verbose: bool = False,
+    num_runs: int = 5,
+) -> tuple[list[dict], list[str]]:
+    """
+    For each combination of the selected group's constraints, runs the MiniZinc model
+    with all other constraints set to True (active).
+
+    Args:
+        n (int): The number of teams.
+        selected_group (str): Selected group constraint.
+        is_optimization (bool): If True, use the optimization version; otherwise use non-optimization version.
+        use_chuffed (bool): Whether to use the Chuffed solver (True) or Gecode (False).
+        timeout_sec (int): Timeout in seconds for each model run.
+        verbose (bool): Whether to show verbose output.
+        num_runs (int): Number of runs to average over for each combination.
+
+    Returns:
+        tuple[list[dict], list[str]]: Results and corresponding names for each combination.
+    """
+    results = []
+    names = []
+    all_constraints = ALL_CONSTRAINTS if is_optimization else ALL_CONSTRAINTS_NO_OPT
+    if selected_group == "all":
+        for group in ALL_CONSTRAINTS_GROUPS:
+            group_results, group_names = run_selected_group(
+                n, group, is_optimization, use_chuffed, timeout_sec, verbose, num_runs, all_constraints
+            )
+            results += group_results
+            names += group_names
+    else:
+        results, names = run_selected_group(
+            n, selected_group, is_optimization, use_chuffed, timeout_sec, verbose, num_runs, all_constraints
+        )
+    return results, names
+
+def run_selected_group(
+    n: int,
+    selected_group: str,
+    is_optimization: bool,
+    use_chuffed: bool,
+    timeout_sec: int,
+    verbose: bool,
+    num_runs: int,
+    all_constraints: list[str],
+) -> tuple[list[dict], list[str]]:
+    """
+    For each combination of the selected group's constraints, runs the MiniZinc model
+    with all other constraints set to True (active).
+
+    Args:
+        n (int): The number of teams.
+        selected_group (str): The group name whose constraints will be varied.
+        is_optimization (bool): If True, use the optimization version; otherwise use non-optimization version.
+        use_chuffed (bool): Whether to use the Chuffed solver (True) or Gecode (False).
+        timeout_sec (int): Timeout in seconds for each model run.
+        verbose (bool): Whether to show verbose output.
+        num_runs (int): Number of runs to average over for each combination.
+        all_constraints (list[str]): All available constraints for the selected model version.
+
+    Returns:
+        tuple[list[dict], list[str]]: Results and corresponding names for each combination.
+    """
+    results = []
+    names = []
+    selected_constraints = ALL_CONSTRAINTS_GROUPS[selected_group]
+
+    # Generate all possible combinations of the selected constraints
+    for r in range(len(selected_constraints) + 1):
+        for combo in combinations(selected_constraints, r):
+            # Constraints in this combo are set to True, others in selected_constraints to False, all others to True
+            combo_set = set(combo)
+            active_constraints = [
+                c for c in all_constraints
+                if c not in selected_constraints or c in combo_set
+            ]
+            combo_name = f"select_group_{selected_group}_{'_'.join(combo) if combo else 'none'}"
+            try:
+                result = run_minizinc_with_averaging(
+                    n,
+                    active_constraints,
+                    is_optimization=is_optimization,
+                    use_chuffed=use_chuffed,
+                    timeout_sec=timeout_sec,
+                    verbose=verbose,
+                    num_runs=num_runs,
+                )
+                results.append(result)
+                names.append(combo_name)
+            except Exception as e:
+                print(f"Error running combination {combo}: {e}")
+                error_result = {
+                    "time": None,
+                    "optimal": "false",
+                    "obj": None,
+                    "sol": None,
+                    "error": str(e),
+                }
+                results.append(error_result)
+                names.append(f"{combo_name}_error")
+
+    return results, names
 
 def run_minizinc_with_averaging(
     n: int,
@@ -617,7 +747,7 @@ def main():
         "-n", "--teams", type=int, required=True, help="Number of teams (required)"
     )
 
-    # Mutually exclusive group for -g or -t
+    # Mutually exclusive group for -g, -t or -s
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
         "-g",
@@ -631,6 +761,16 @@ def main():
         action="store_true",
         help="Test mode, tries all possible combinations of the selected constraints",
     )
+    group.add_argument(
+        "-s",
+        "--select",
+        nargs="?",
+        const="all",
+        choices=list(ALL_CONSTRAINTS_GROUPS.keys())+["all"],
+        help="Try with a combination of one of the following groups: symm, implied, search. "
+             "If used without a value, all grouped constraints will be used.",
+    )
+
     # List of constraint strings
     parser.add_argument(
         "-c",
@@ -710,7 +850,8 @@ def main():
     if invalid_constraints:
         print(f"Error: Invalid constraint names: {invalid_constraints}")
         print(f"Available constraints: {available_constraints}")
-        return 1    # Run the model based on mode
+        return 1    
+    # Run the model based on mode
     print(f"Running MiniZinc model with {args.teams} teams")
     print(
         f"Mode: {'Generate' if args.generate else 'Test' if args.test else 'Default'}"
@@ -719,7 +860,10 @@ def main():
     print(f"Solver(s): {', '.join(solvers_to_use)}")
     print(f"Timeout: {args.timeout} seconds")
     print(f"Runs per measurement: {args.runs}")
-    print(f"Selected constraints: {args.constraints}")
+    if args.select:
+        print(f"Selected constraint group: {args.select}")
+    else:
+        print(f"Selected constraints: {args.constraints}")
 
     results = []
     names = []
@@ -741,6 +885,18 @@ def main():
             solver_names_with_solver = [f"{name}_{solver_name}" for name in solver_names_list]
             results.extend(solver_results_named)
             names.extend(solver_names_with_solver)
+        elif args.select:
+            # Select group mode: run with all possible combinations of the selected constraint group
+            print("Select group mode: Running all possible combinations of selected group constraint...")
+            print(f"Each combination will be run {args.runs} times for reliable measurements.")
+            solver_results, solver_names_list = run_select_mode(
+                args.teams, args.select, is_optimization, use_chuffed, args.timeout, args.verbose, args.runs
+            )
+            # Add solver suffix to names
+            solver_results_named = solver_results
+            solver_names_with_solver = [f"{name}_{solver_name}" for name in solver_names_list]
+            results.extend(solver_results_named)
+            names.extend(solver_names_with_solver)
         else:
             # Generate mode: run once with all selected constraints active
             print("Generate mode: Running with all selected constraints active...")
@@ -755,7 +911,8 @@ def main():
                 num_runs=args.runs,
             )
             results.append(result)
-            names.append(f"generate_all_constraints_{solver_name}")# Save results
+            names.append(f"generate_all_constraints_{solver_name}")
+    # Save results
     write_results_to_json(results, names, args.teams)
     print(f"Results saved to {JSON_FOLDER}/{args.teams}.json")
     print(f"Total executions: {len(results)}")
