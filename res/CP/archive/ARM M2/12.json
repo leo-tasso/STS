@@ -1,0 +1,684 @@
+{
+  "select_group_symm_none_chuffed": {
+    "time": 56.4,
+    "optimal": "true",
+    "obj": 1,
+    "sol": [[[8, 10], [7, 5], [12, 11], [2, 3], [9, 1], [6, 4]], [[7, 6], [3, 1], [8, 9], [12, 2], [10, 5], [11, 4]], [[9, 3], [12, 4], [2, 5], [6, 10], [7, 8], [11, 1]], [[10, 12], [8, 4], [11, 7], [6, 3], [1, 2], [5, 9]], [[4, 1], [9, 6], [3, 10], [5, 11], [12, 7], [8, 2]], [[11, 8], [1, 6], [3, 5], [4, 7], [9, 12], [10, 2]], [[5, 12], [2, 11], [8, 6], [1, 10], [3, 4], [9, 7]], [[5, 1], [7, 2], [6, 12], [4, 9], [11, 10], [8, 3]], [[6, 11], [12, 3], [2, 9], [1, 8], [4, 5], [7, 10]], [[3, 7], [5, 8], [10, 4], [9, 11], [2, 6], [1, 12]], [[4, 2], [10, 9], [7, 1], [12, 8], [11, 3], [5, 6]]],
+    "solver": "chuffed",
+    "constraints": [
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 5,
+      "time_stats": {
+        "mean": 56.4,
+        "median": 65,
+        "min": 42,
+        "max": 67,
+        "stdev": 12.72
+      },
+      "obj_stats": {
+        "mean": 1,
+        "median": 1,
+        "min": 1,
+        "max": 1,
+        "stdev": 0.0
+      },
+      "errors": null
+    }
+  },
+  "select_group_symm_use_symm_break_weeks_chuffed": {
+    "time": 24.2,
+    "optimal": "true",
+    "obj": 1,
+    "sol": [[[2, 1], [11, 9], [7, 6], [10, 12], [4, 5], [8, 3]], [[3, 9], [8, 5], [1, 10], [4, 12], [7, 11], [6, 2]], [[5, 2], [3, 6], [9, 10], [7, 8], [4, 1], [12, 11]], [[5, 12], [4, 9], [8, 2], [10, 6], [3, 7], [1, 11]], [[6, 4], [1, 8], [11, 5], [2, 3], [12, 9], [10, 7]], [[7, 12], [10, 4], [3, 1], [9, 8], [11, 2], [5, 6]], [[7, 4], [11, 10], [5, 3], [6, 1], [12, 8], [9, 2]], [[8, 11], [1, 7], [12, 6], [5, 9], [2, 10], [4, 3]], [[8, 10], [7, 5], [2, 4], [3, 11], [6, 9], [1, 12]], [[9, 1], [3, 12], [11, 4], [2, 7], [6, 8], [5, 10]], [[11, 6], [12, 2], [9, 7], [1, 5], [10, 3], [4, 8]]],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 5,
+      "time_stats": {
+        "mean": 24.2,
+        "median": 17,
+        "min": 17,
+        "max": 52,
+        "stdev": 15.55
+      },
+      "obj_stats": {
+        "mean": 1,
+        "median": 1,
+        "min": 1,
+        "max": 1,
+        "stdev": 0.0
+      },
+      "errors": null
+    }
+  },
+  "select_group_symm_use_symm_break_periods_chuffed": {
+    "time": 62.2,
+    "optimal": "true",
+    "obj": 1,
+    "sol": [[[9, 7], [10, 2], [8, 11], [5, 3], [1, 12], [4, 6]], [[2, 12], [8, 3], [5, 11], [9, 4], [6, 7], [10, 1]], [[5, 12], [11, 4], [1, 9], [10, 6], [7, 8], [3, 2]], [[3, 6], [4, 1], [7, 12], [11, 10], [2, 9], [8, 5]], [[10, 4], [12, 6], [7, 2], [9, 8], [11, 3], [5, 1]], [[5, 10], [12, 11], [6, 9], [1, 7], [3, 4], [8, 2]], [[7, 4], [9, 10], [3, 1], [12, 8], [2, 5], [11, 6]], [[2, 11], [9, 5], [4, 8], [3, 12], [6, 1], [10, 7]], [[6, 8], [7, 5], [10, 3], [2, 1], [11, 9], [4, 12]], [[1, 11], [7, 3], [4, 2], [6, 5], [8, 10], [12, 9]], [[1, 8], [2, 6], [12, 10], [11, 7], [5, 4], [9, 3]]],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_periods",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 5,
+      "time_stats": {
+        "mean": 62.2,
+        "median": 65,
+        "min": 54,
+        "max": 66,
+        "stdev": 4.97
+      },
+      "obj_stats": {
+        "mean": 1,
+        "median": 1,
+        "min": 1,
+        "max": 1,
+        "stdev": 0.0
+      },
+      "errors": null
+    }
+  },
+  "select_group_symm_use_symm_break_teams_chuffed": {
+    "time": 80.8,
+    "optimal": "true",
+    "obj": 1,
+    "sol": [[[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]], [[10, 8], [5, 12], [2, 9], [4, 6], [11, 1], [7, 3]], [[12, 4], [7, 11], [6, 1], [9, 3], [2, 8], [5, 10]], [[11, 5], [12, 2], [1, 7], [10, 6], [3, 8], [4, 9]], [[2, 4], [1, 5], [10, 3], [8, 11], [12, 9], [6, 7]], [[11, 6], [7, 9], [8, 5], [1, 12], [10, 4], [3, 2]], [[3, 6], [11, 10], [7, 4], [9, 1], [5, 2], [8, 12]], [[7, 10], [6, 8], [3, 12], [2, 11], [4, 1], [9, 5]], [[8, 9], [1, 3], [4, 11], [12, 10], [5, 7], [6, 2]], [[12, 7], [9, 6], [2, 10], [4, 5], [11, 3], [8, 1]], [[5, 3], [8, 4], [9, 11], [2, 7], [6, 12], [10, 1]]],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 5,
+      "time_stats": {
+        "mean": 80.8,
+        "median": 95,
+        "min": 29,
+        "max": 104,
+        "stdev": 30.88
+      },
+      "obj_stats": {
+        "mean": 1,
+        "median": 1,
+        "min": 1,
+        "max": 1,
+        "stdev": 0.0
+      },
+      "errors": null
+    }
+  },
+  "select_group_symm_use_symm_break_weeks_use_symm_break_periods_chuffed": {
+    "time": 300,
+    "optimal": "false",
+    "obj": 5,
+    "sol": [[[1, 12], [7, 8], [11, 6], [3, 10], [4, 5], [9, 2]], [[1, 4], [12, 8], [7, 10], [11, 9], [2, 6], [3, 5]], [[2, 3], [5, 6], [1, 7], [8, 4], [9, 10], [12, 11]], [[3, 11], [4, 2], [9, 12], [1, 5], [8, 10], [7, 6]], [[5, 11], [12, 3], [1, 10], [8, 2], [6, 9], [4, 7]], [[6, 10], [9, 7], [2, 11], [3, 4], [8, 1], [12, 5]], [[6, 8], [11, 1], [3, 9], [5, 7], [12, 2], [4, 10]], [[7, 2], [9, 1], [8, 5], [11, 10], [4, 12], [3, 6]], [[9, 5], [10, 2], [4, 6], [7, 12], [3, 1], [11, 8]], [[9, 4], [10, 5], [8, 3], [12, 6], [11, 7], [2, 1]], [[10, 12], [11, 4], [2, 5], [6, 1], [7, 3], [8, 9]]],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": {
+        "mean": 5,
+        "median": 5,
+        "min": 5,
+        "max": 5,
+        "stdev": 0
+      },
+      "errors": null
+    }
+  },
+  "select_group_symm_use_symm_break_weeks_use_symm_break_teams_chuffed": {
+    "time": 300,
+    "optimal": "false",
+    "obj": 5,
+    "sol": [[[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]], [[4, 1], [5, 2], [6, 3], [9, 11], [10, 7], [12, 8]], [[4, 12], [7, 9], [5, 8], [10, 3], [6, 1], [2, 11]], [[5, 11], [8, 10], [4, 7], [12, 1], [2, 3], [9, 6]], [[5, 7], [10, 2], [1, 11], [6, 4], [12, 3], [9, 8]], [[6, 10], [8, 1], [2, 7], [9, 12], [11, 4], [3, 5]], [[7, 12], [11, 6], [3, 8], [2, 4], [5, 9], [10, 1]], [[8, 11], [3, 7], [1, 9], [6, 2], [12, 5], [4, 10]], [[8, 6], [4, 9], [2, 12], [10, 5], [7, 11], [3, 1]], [[9, 2], [5, 1], [12, 10], [11, 3], [4, 8], [6, 7]], [[9, 3], [6, 12], [11, 10], [7, 1], [8, 2], [4, 5]]],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": {
+        "mean": 7,
+        "median": 7.0,
+        "min": 5,
+        "max": 9,
+        "stdev": 2.83
+      },
+      "errors": null
+    }
+  },
+  "select_group_symm_use_symm_break_periods_use_symm_break_teams_chuffed": {
+    "time": 300,
+    "optimal": "false",
+    "obj": 5,
+    "sol": [[[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]], [[9, 4], [11, 6], [3, 5], [8, 2], [7, 12], [10, 1]], [[5, 10], [11, 1], [12, 8], [9, 3], [2, 6], [4, 7]], [[11, 7], [12, 5], [4, 8], [3, 1], [6, 10], [2, 9]], [[3, 12], [4, 2], [6, 7], [9, 5], [8, 1], [11, 10]], [[11, 8], [12, 2], [3, 10], [6, 4], [5, 7], [9, 1]], [[2, 7], [6, 3], [9, 11], [10, 12], [4, 1], [8, 5]], [[1, 5], [9, 7], [2, 10], [4, 12], [3, 11], [8, 6]], [[9, 6], [10, 8], [1, 12], [11, 2], [5, 4], [7, 3]], [[8, 3], [10, 7], [4, 11], [6, 1], [12, 9], [5, 2]], [[4, 10], [8, 9], [1, 7], [11, 5], [2, 3], [12, 6]]],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": {
+        "mean": 5,
+        "median": 5.0,
+        "min": 5,
+        "max": 5,
+        "stdev": 0.0
+      },
+      "errors": null
+    }
+  },
+  "select_group_symm_use_symm_break_weeks_use_symm_break_periods_use_symm_break_teams_chuffed": {
+    "time": 243,
+    "optimal": "false",
+    "obj": 1,
+    "sol": [[[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]], [[1, 11], [7, 5], [4, 9], [12, 8], [3, 6], [10, 2]], [[2, 6], [9, 1], [8, 5], [12, 4], [11, 10], [3, 7]], [[3, 12], [8, 1], [2, 7], [6, 10], [4, 11], [5, 9]], [[4, 6], [5, 3], [8, 9], [11, 2], [7, 1], [10, 12]], [[7, 12], [10, 4], [6, 11], [9, 3], [1, 5], [2, 8]], [[7, 9], [12, 2], [10, 3], [5, 11], [6, 8], [4, 1]], [[8, 4], [9, 2], [11, 3], [7, 10], [5, 12], [6, 1]], [[8, 10], [11, 7], [1, 12], [9, 6], [3, 2], [5, 4]], [[9, 11], [12, 6], [1, 10], [2, 5], [4, 7], [3, 8]], [[10, 5], [11, 8], [2, 4], [1, 3], [12, 9], [6, 7]]],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 1,
+      "time_stats": {
+        "mean": 243,
+        "median": 300,
+        "min": 15,
+        "max": 300,
+        "stdev": 127.46
+      },
+      "obj_stats": {
+        "mean": 1,
+        "median": 1,
+        "min": 1,
+        "max": 1,
+        "stdev": 0
+      },
+      "errors": null
+    }
+  },
+  "select_group_implied_none_chuffed": {
+    "time": 300,
+    "optimal": "false",
+    "obj": null,
+    "sol": "=====UNKNOWN===== (likely timeout)",
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "select_group_implied_use_implied_matches_per_team_chuffed": {
+    "time": 300,
+    "optimal": "false",
+    "obj": 5,
+    "sol": [[[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]], [[4, 10], [5, 12], [1, 8], [2, 7], [9, 11], [3, 6]], [[4, 9], [7, 5], [2, 6], [10, 12], [8, 3], [11, 1]], [[5, 2], [6, 8], [7, 10], [11, 4], [12, 1], [3, 9]], [[5, 11], [7, 9], [1, 3], [8, 12], [6, 10], [2, 4]], [[6, 9], [8, 4], [11, 3], [5, 1], [12, 7], [10, 2]], [[6, 12], [9, 2], [11, 7], [3, 10], [4, 1], [8, 5]], [[7, 3], [11, 10], [12, 4], [5, 9], [8, 2], [1, 6]], [[7, 1], [12, 3], [8, 9], [4, 6], [11, 2], [5, 10]], [[8, 11], [10, 1], [4, 5], [3, 2], [7, 6], [9, 12]], [[8, 10], [11, 6], [12, 2], [1, 9], [5, 3], [7, 4]]],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": {
+        "mean": 5,
+        "median": 5,
+        "min": 5,
+        "max": 5,
+        "stdev": 0
+      },
+      "errors": null
+    }
+  },
+  "select_group_implied_use_implied_period_count_chuffed": {
+    "time": 300,
+    "optimal": "false",
+    "obj": null,
+    "sol": "=====UNKNOWN===== (likely timeout)",
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "select_group_implied_use_implied_matches_per_team_use_implied_period_count_chuffed": {
+    "time": 300,
+    "optimal": "false",
+    "obj": 5,
+    "sol": [[[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]], [[2, 11], [5, 1], [12, 10], [4, 9], [7, 6], [3, 8]], [[4, 1], [10, 7], [11, 3], [2, 12], [5, 8], [6, 9]], [[6, 3], [12, 4], [9, 7], [5, 10], [11, 1], [2, 8]], [[7, 4], [8, 6], [12, 5], [11, 9], [2, 10], [3, 1]], [[7, 12], [11, 6], [10, 1], [4, 8], [9, 3], [5, 2]], [[8, 11], [9, 1], [7, 2], [3, 5], [12, 6], [4, 10]], [[8, 10], [9, 2], [11, 4], [6, 1], [12, 3], [7, 5]], [[9, 12], [10, 3], [1, 8], [2, 6], [4, 5], [7, 11]], [[9, 5], [12, 8], [3, 2], [11, 10], [7, 1], [4, 6]], [[10, 6], [11, 5], [8, 9], [3, 7], [2, 4], [1, 12]]],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": {
+        "mean": 5,
+        "median": 5.0,
+        "min": 5,
+        "max": 5,
+        "stdev": 0.0
+      },
+      "errors": null
+    }
+  },
+  "select_group_search_none_chuffed": {
+    "time": 300,
+    "optimal": "false",
+    "obj": 3,
+    "sol": [[[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]], [[2, 3], [7, 6], [12, 1], [5, 4], [9, 11], [8, 10]], [[3, 12], [6, 1], [8, 5], [7, 10], [11, 2], [9, 4]], [[4, 11], [9, 5], [6, 2], [3, 8], [12, 7], [10, 1]], [[5, 10], [7, 2], [3, 9], [1, 11], [8, 4], [6, 12]], [[5, 12], [8, 2], [10, 4], [6, 11], [3, 1], [9, 7]], [[6, 10], [12, 8], [4, 1], [2, 9], [5, 7], [11, 3]], [[7, 1], [11, 5], [8, 9], [3, 6], [12, 10], [2, 4]], [[7, 4], [11, 10], [12, 2], [9, 1], [5, 3], [6, 8]], [[9, 6], [10, 3], [11, 7], [4, 12], [1, 8], [2, 5]], [[11, 8], [12, 9], [7, 3], [10, 2], [4, 6], [1, 5]]],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": {
+        "mean": 3.67,
+        "median": 3,
+        "min": 3,
+        "max": 5,
+        "stdev": 1.15
+      },
+      "errors": null
+    }
+  },
+  "select_group_search_use_int_search_chuffed": {
+    "time": 300,
+    "optimal": "false",
+    "obj": null,
+    "sol": "=====UNKNOWN===== (likely timeout)",
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "select_group_search_use_restart_luby_chuffed": {
+    "time": 300,
+    "optimal": "false",
+    "obj": null,
+    "sol": "=====UNKNOWN===== (likely timeout)",
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_restart_luby"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "select_group_search_use_relax_and_reconstruct_chuffed": {
+    "time": 300,
+    "optimal": "false",
+    "obj": 5,
+    "sol": [[[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]], [[3, 11], [4, 1], [7, 10], [5, 8], [12, 6], [9, 2]], [[4, 10], [11, 2], [12, 1], [3, 6], [5, 7], [9, 8]], [[4, 5], [12, 7], [8, 6], [11, 9], [2, 3], [1, 10]], [[5, 2], [11, 6], [3, 9], [12, 10], [7, 1], [4, 8]], [[6, 7], [8, 2], [9, 4], [11, 10], [5, 12], [1, 3]], [[7, 3], [8, 12], [5, 11], [4, 2], [1, 9], [6, 10]], [[8, 1], [9, 5], [10, 2], [12, 3], [4, 6], [11, 7]], [[8, 10], [9, 7], [12, 2], [6, 1], [4, 11], [5, 3]], [[9, 12], [10, 3], [7, 4], [5, 1], [8, 11], [2, 6]], [[9, 6], [10, 5], [11, 1], [2, 7], [3, 8], [12, 4]]],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": {
+        "mean": 5,
+        "median": 5,
+        "min": 5,
+        "max": 5,
+        "stdev": 0
+      },
+      "errors": null
+    }
+  },
+  "select_group_search_use_int_search_use_restart_luby_chuffed": {
+    "time": 300,
+    "optimal": "false",
+    "obj": null,
+    "sol": "=====UNKNOWN===== (likely timeout)",
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "select_group_search_use_int_search_use_relax_and_reconstruct_chuffed": {
+    "time": 300,
+    "optimal": "false",
+    "obj": 3,
+    "sol": [[[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]], [[5, 3], [7, 2], [11, 8], [6, 10], [4, 12], [9, 1]], [[7, 1], [8, 3], [12, 9], [2, 4], [6, 11], [5, 10]], [[7, 6], [9, 5], [2, 12], [10, 11], [1, 3], [8, 4]], [[8, 10], [9, 6], [7, 5], [3, 12], [4, 1], [2, 11]], [[8, 6], [10, 4], [3, 2], [11, 9], [7, 12], [5, 1]], [[9, 4], [10, 2], [8, 1], [3, 7], [5, 11], [12, 6]], [[9, 2], [11, 7], [4, 6], [1, 12], [5, 8], [3, 10]], [[10, 12], [11, 1], [4, 7], [2, 5], [9, 8], [3, 6]], [[11, 3], [12, 8], [1, 10], [5, 4], [6, 2], [7, 9]], [[11, 4], [12, 5], [3, 9], [6, 1], [10, 7], [8, 2]]],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": {
+        "mean": 4.5,
+        "median": 5.0,
+        "min": 3,
+        "max": 5,
+        "stdev": 1.0
+      },
+      "errors": null
+    }
+  },
+  "select_group_search_use_restart_luby_use_relax_and_reconstruct_chuffed": {
+    "time": 149,
+    "optimal": "true",
+    "obj": 1,
+    "sol": [[[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]], [[1, 11], [7, 5], [4, 9], [12, 8], [3, 6], [10, 2]], [[2, 6], [9, 1], [8, 5], [12, 4], [11, 10], [3, 7]], [[3, 12], [8, 1], [2, 7], [6, 10], [4, 11], [5, 9]], [[4, 6], [5, 3], [8, 9], [11, 2], [7, 1], [10, 12]], [[7, 12], [10, 4], [6, 11], [9, 3], [1, 5], [2, 8]], [[7, 9], [12, 2], [10, 3], [5, 11], [6, 8], [4, 1]], [[8, 4], [9, 2], [11, 3], [7, 10], [5, 12], [6, 1]], [[8, 10], [11, 7], [1, 12], [9, 6], [3, 2], [5, 4]], [[9, 11], [12, 6], [1, 10], [2, 5], [4, 7], [3, 8]], [[10, 5], [11, 8], [2, 4], [1, 3], [12, 9], [6, 7]]],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 3,
+      "time_stats": {
+        "mean": 149,
+        "median": 67,
+        "min": 22,
+        "max": 300,
+        "stdev": 138.84
+      },
+      "obj_stats": {
+        "mean": 3,
+        "median": 1,
+        "min": 1,
+        "max": 7,
+        "stdev": 2.83
+      },
+      "errors": null
+    }
+  },
+  "select_group_search_use_int_search_use_restart_luby_use_relax_and_reconstruct_chuffed": {
+    "time": 300,
+    "optimal": "false",
+    "obj": 5,
+    "sol": [[[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]], [[2, 10], [8, 3], [7, 11], [6, 9], [1, 5], [12, 4]], [[3, 11], [4, 1], [7, 10], [5, 2], [12, 6], [9, 8]], [[4, 11], [7, 9], [8, 12], [3, 1], [2, 6], [5, 10]], [[4, 8], [9, 2], [10, 11], [7, 12], [3, 5], [6, 1]], [[5, 9], [11, 8], [6, 4], [2, 12], [1, 7], [10, 3]], [[5, 8], [11, 6], [9, 1], [10, 4], [12, 3], [7, 2]], [[6, 3], [7, 5], [1, 12], [9, 4], [10, 8], [2, 11]], [[6, 7], [12, 10], [3, 9], [1, 11], [8, 2], [5, 4]], [[9, 12], [10, 6], [2, 3], [5, 11], [4, 7], [1, 8]], [[10, 1], [12, 5], [4, 2], [8, 6], [9, 11], [3, 7]]],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": {
+        "mean": 5.67,
+        "median": 5,
+        "min": 5,
+        "max": 7,
+        "stdev": 1.15
+      },
+      "errors": null
+    }
+  }
+}
