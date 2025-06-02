@@ -5,6 +5,7 @@ import os
 import json
 import argparse
 import statistics
+import random
 from itertools import combinations
 
 # Optimized version paths
@@ -226,7 +227,7 @@ def clean_minizinc_stdout(
         
 
     ordered_output = {
-        "time": time_elapsed,
+        "time": math.floor(time_elapsed),
         "optimal": "true" if time_elapsed < timeout_sec else "false",
         "obj": cleaned_output.get("obj") if optimization_version else None,
         "sol": str(cleaned_output.get("sol", "unknown")),
@@ -250,6 +251,7 @@ def run_minizinc_model_cli(
     is_optimization: bool = True,
     all_constraints: list[str] = None,
     verbose: bool = False,
+    random_seed: int = None,
 ) -> dict:
     """
     Runs a MiniZinc model via the CLI, setting constraint flags by a temporary `.dzn` file.
@@ -262,6 +264,7 @@ def run_minizinc_model_cli(
         use_chuffed (bool): Whether to use the Chuffed solver (True) or Gecode (False).
         is_optimization (bool): If True, indicates that the output is from an optimization version of the STS.
         all_constraints (list[str]): All available constraints for the selected model version.
+        random_seed (int): Random seed for MiniZinc solver. If None, no seed is set.
 
     Returns:
         dict: The cleaned output from the MiniZinc execution.
@@ -281,6 +284,11 @@ def run_minizinc_model_cli(
     # MiniZinc expects timeout in milliseconds
     timeout_flag = ["--time-limit", str(timeout_sec * 1000)]
     solver_flag = ["--solver", "chuffed" if use_chuffed else "gecode"]
+    
+    # Add random seed flag if provided
+    seed_flag = []
+    if random_seed is not None:
+        seed_flag = ["--random-seed", str(random_seed)]
 
     result_params = {
         "timeout_sec": timeout_sec,
@@ -297,10 +305,11 @@ def run_minizinc_model_cli(
             "--intermediate-solutions",
             *timeout_flag,
             *solver_flag,
+            *seed_flag,
             model_path,
             temp_dzn_path,
         ]
-
+        print(cmd)
         # Use subprocess timeout as a backup (add 10 seconds buffer for MiniZinc to cleanup)
         process_timeout = timeout_sec + 10
 
@@ -597,9 +606,7 @@ def run_minizinc_with_averaging(
         is_optimization (bool): If True, indicates that the output is from an optimization version of the STS.
         all_constraints (list[str]): All available constraints for the selected model version.
         verbose (bool): Whether to show verbose output.
-        num_runs (int): Number of runs to average over.
-
-    Returns:
+        num_runs (int): Number of runs to average over.    Returns:
         dict: Averaged results with additional statistics.
     """
     if verbose:
@@ -615,6 +622,9 @@ def run_minizinc_with_averaging(
         if verbose:
             print(f"  Run {run_num + 1}/{num_runs}...")
         
+        # Generate a unique random seed for each run
+        run_seed = random.randint(1, 2**31 - 1)
+        
         result = run_minizinc_model_cli(
             n=n,
             active_constraints=active_constraints,
@@ -624,6 +634,7 @@ def run_minizinc_with_averaging(
             is_optimization=is_optimization,
             all_constraints=all_constraints,
             verbose=False,  # Disable verbose for individual runs to reduce noise
+            random_seed=run_seed,
         )
         
         results.append(result)
