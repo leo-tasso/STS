@@ -4,15 +4,13 @@ import matplotlib.pyplot as plt
 import re
 from collections import defaultdict
 
-# --- CONFIGURATION ---
 PARENT_DIR = "../../res/CP/archive/"
 RESULTS_DIR_ARM = "ARM M2"
 RESULTS_DIR_RIZEN = "Ryzen 5 5600X"
 GROUP_COLORS = {
     "symm": "green",
     "implied": "blue",
-    "search": "orange",
-    "other": "gray"
+    "search": "orange"
 }
 GROUP_SHADES = {
     "symm": [
@@ -26,8 +24,16 @@ GROUP_SHADES = {
     "implied": ["#00008B", "#1E90FF", "#4682B4", "#87CEEB"]
 }
 
-# --- GROUP DETECTION ---
-def get_group(name):
+def get_group(name: str) -> str:
+    """
+    Determines the constraint group for a given combination name.
+
+    Args:
+        name: The name of the constraint combination.
+
+    Returns:
+        The group name: 'symm', 'implied' or 'search'.
+    """
     if "symm" in name:
         return "symm"
     if "implied" in name:
@@ -36,23 +42,40 @@ def get_group(name):
         return "search"
     return "other"
 
-def get_group_index(name, group):
-    # Extract which combination within the group (for shade selection)
-    # e.g. select_group_symm_use_symm_break_weeks_use_symm_break_teams_chuffed
+def get_group_index(name: str, group: str) -> int:
+    """
+    Extracts the index of the combination within a group for shade selection.
+
+    Args:
+        name: The name of the constraint combination.
+        group: The group name.
+
+    Returns:
+        The index (int) for shade selection within the group.
+    """
     parts = name.split("_")
-    # Find all group constraint names after group name
     if group in parts:
         idx = parts.index(group) + 1
-        # Count how many constraint names are present after group
         return len(parts[idx:-1])  # -1 to skip solver name
     return 0
 
-# --- LOAD DATA ---
-def load_results(results_dir):
+def load_results(results_dir: str) -> tuple[
+    dict[str, dict[str, dict[int, float]]], list[int], list[str]
+]:
+    """
+    Loads and parses result JSON files from a directory.
+
+    Args:
+        results_dir: Path to the directory containing result JSON files.
+
+    Returns:
+        data: Nested dictionary of results [solver][combo][n] = time.
+        n_values: Sorted list of team sizes (n).
+        combo_names: Sorted list of combination names.
+    """
     data = defaultdict(lambda: defaultdict(dict))  # data[solver][combo][n] = time
     n_values = set()
     combo_names = set()
-    # Only consider files like 6.json, 8.json, etc.
     for fname in os.listdir(results_dir):
         if not fname.endswith(".json"):
             continue
@@ -78,25 +101,37 @@ def load_results(results_dir):
             data[solver][combo][n] = float(time)
     return data, sorted(n_values), sorted(combo_names)
 
-# --- PLOT ---
-def plot_solver(data, n_values, combo_names, solver, save_path=None):
+def plot_solver(
+    data: dict[str, dict[str, dict[int, float]]],
+    n_values: list[int],
+    combo_names: list[str],
+    solver: str,
+    save_path: str = None
+) -> None:
+    """
+    Plots the solving time for each constraint combination for a given solver.
+
+    Args:
+        data: Nested dictionary of results [solver][combo][n] = time.
+        n_values: List of team sizes (n).
+        combo_names: List of combination names.
+        solver: Solver name ('chuffed' or 'gecode').
+        save_path: Optional path to save the plot image.
+    """
     plt.figure(figsize=(12, 8))
     group_lines = defaultdict(list)
     group_labels = defaultdict(list)
-    # Assign colors/shades
     group_combo_map = defaultdict(list)
     for combo in combo_names:
         if not combo.endswith(f"_{solver}"):
             continue
         group = get_group(combo)
         group_combo_map[group].append(combo)
-    # Plot each line
     for group, combos in group_combo_map.items():
         shades = GROUP_SHADES.get(group, ["gray"])
         for i, combo in enumerate(combos):
             color = shades[i % len(shades)]
             times = [data[solver][combo].get(n, None) for n in n_values]
-            # Only plot if at least one value is present
             if all(t is None for t in times):
                 continue
             label = combo.replace(f"_{solver}", "")
@@ -104,16 +139,13 @@ def plot_solver(data, n_values, combo_names, solver, save_path=None):
             group_labels[group].append(label)
     plt.xlabel("Number of teams (n)")
     plt.ylabel("Time (s)")
-    plt.title(f"MiniZinc Solving Time vs Number of Teams ({solver.capitalize()})")
-    # Set x-axis ticks to only n_values
+    plt.title(f"{solver.capitalize()} Solving Time vs Number of Teams")
     plt.xticks(n_values)
-    # Build legend: one entry per group combination
     handles = []
     labels = []
     for group in group_lines:
         for i, line in enumerate(group_lines[group]):
             handles.append(line)
-            # Add a comma before each occurrence of 'use'
             label = " ".join(group_labels[group][i].split("_")[2:])
             label = re.sub(r"\b use", r", use", label)
             labels.append(label)
@@ -124,11 +156,12 @@ def plot_solver(data, n_values, combo_names, solver, save_path=None):
     plt.tight_layout()
     plt.show()
 
-def main():
+def main() -> None:
     for RESULTS_DIR in [RESULTS_DIR_ARM, RESULTS_DIR_RIZEN]:
         data, n_values, combo_names = load_results(PARENT_DIR + RESULTS_DIR)
         for solver in ["chuffed"]:
-            plot_solver(data, n_values, combo_names, solver, save_path=f"plots/plot_{solver}_{RESULTS_DIR}.png")
+            save_path = f"plots/plot_{solver}_{RESULTS_DIR}.png"
+            plot_solver(data, n_values, combo_names, solver, save_path=save_path)
 
 if __name__ == "__main__":
     main()
