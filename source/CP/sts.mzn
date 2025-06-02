@@ -55,9 +55,17 @@ array[Teams] of var Count: home_count;
 array[Teams] of var Count: away_count;
 
 constraint
-  forall(t in Teams)(
-    home_count[t] = sum([bool2int(home[w, p] = t) | w in Weeks, p in Periods]) /\
-    away_count[t] = sum([bool2int(away[w, p] = t) | w in Weeks, p in Periods])
+  global_cardinality(
+    [home[w,p] | w in Weeks, p in Periods],
+    Teams,
+    [home_count[t] | t in Teams]
+  );
+
+constraint
+  global_cardinality(
+    [away[w,p] | w in Weeks, p in Periods], 
+    Teams,
+    [away_count[t] | t in Teams]
   );
 
 % Implied constraint: number of games per team
@@ -112,7 +120,7 @@ solve
      int_search(
        [home[w, p] | w in Weeks, p in Periods] ++ [away[w, p] | w in Weeks, p in Periods],
        first_fail,
-       indomain_min,
+       indomain_random,
        complete
      )
    endif
