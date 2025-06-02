@@ -80,6 +80,7 @@ python run_CP.py -n <teams> [mode] [constraints] [options]
 - **`--timeout`** (optional): Solver timeout in seconds (default: 300)
 - **`-v, --verbose`** (optional): Enable verbose output showing intermediate solutions
 - **`--runs`** (optional): Number of runs to average over for reliable measurements (default: 5)
+- **`--max-workers`** (optional): Maximum number of parallel workers for execution (default: auto-detect based on CPU count)
 
 ### Execution Modes
 
@@ -107,6 +108,9 @@ python run_CP.py -n 6 --verbose
 
 # Run with custom number of averaged runs for reliable measurements
 python run_CP.py -n 6 --runs 10
+
+# Run with custom parallel workers for faster execution
+python run_CP.py -n 6 --max-workers 8
 ```
 
 #### 2. Generate Mode (`-g`)
@@ -127,6 +131,9 @@ python run_CP.py -n 8 -g -c use_symm_break_weeks use_symm_break_teams --timeout 
 
 # Run with custom number of averaged runs
 python run_CP.py -n 8 -g -c use_symm_break_weeks use_symm_break_teams --runs 10
+
+# Run with parallel execution for faster performance
+python run_CP.py -n 8 -g -c use_symm_break_weeks use_symm_break_teams --max-workers 4
 ```
 
 #### 3. Test Mode (`-t`)
@@ -141,6 +148,9 @@ python run_CP.py -n 6 -t -c use_symm_break_slots use_symm_break_weeks --gecode
 
 # Test with non-optimized model and custom averaging
 python run_CP.py -n 6 -t -c use_symm_break_slots use_symm_break_weeks --no-opt --runs 3
+
+# Test with parallel execution for faster performance
+python run_CP.py -n 6 -t -c use_symm_break_slots use_symm_break_weeks --max-workers 8
 ```
 
 This will run multiple experiments (each averaged over several runs):
@@ -179,6 +189,9 @@ python run_CP.py -n 8 -s
 
 # Use with solver and other options
 python run_CP.py -n 8 -s symm --gecode --timeout 600 --runs 3
+
+# Use with parallel execution for faster performance
+python run_CP.py -n 8 -s symm --max-workers 6
 ```
 
 ### Examples
@@ -211,6 +224,9 @@ python run_CP.py -n 14 -g --timeout 900  # 15 minutes
 # Quick test with short timeout and reduced averaging
 python run_CP.py -n 8 -g --timeout 60 --runs 3
 
+# Run with parallel execution for faster performance
+python run_CP.py -n 8 -g --max-workers 4
+
 # Compare solver performance for same configuration
 python run_CP.py -n 8 -g --chuffed  # Chuffed only
 python run_CP.py -n 8 -g --gecode   # Gecode only
@@ -236,6 +252,8 @@ Running Tournament Scheduling (Teams: 8, Version: Optimized, Solver: Chuffed)
 Using all constraints
 Timeout: 300 seconds
 Runs per measurement: 5
+Running 5 times for averaging (in parallel)...
+Using 8 parallel workers...
 Running MiniZinc model...
 ```
 
@@ -260,7 +278,7 @@ Running MiniZinc model...
     "runs_info": {          // Statistics from multiple runs
       "total_runs": 5,
       "successful_runs": 5,
-      "optimal_runs": 5
+      "optimal_runs": 5       // Number of runs that found optimal solutions
     },
     "time_stats": {         // Time statistics across runs
       "mean": 67,
@@ -290,6 +308,9 @@ Running MiniZinc model...
 - **`solver`**: Solver used (chuffed or gecode)
 - **`constraints`**: List of active constraints used
 - **`runs_info`**: Statistics about the multiple runs performed
+  - `total_runs`: Total number of runs attempted
+  - `successful_runs`: Number of runs that completed successfully
+  - `optimal_runs`: Number of runs that found optimal solutions
 - **`time_stats`**: Detailed timing statistics (mean, median, min, max, standard deviation)
 - **`obj_stats`**: Detailed objective value statistics (for optimization problems)
 - **`error`**: Present only if execution failed
@@ -349,11 +370,9 @@ python run_CP.py -n 8 -g  # Runs with both Chuffed and Gecode
 python run_CP.py -n 8 -g --runs 1   # Single run
 python run_CP.py -n 8 -g --runs 10  # More reliable averaging
 
-# Compare groups of constraints using select mode
-python run_CP.py -n 8 -s symm       # All combinations of symmetry-breaking constraints
-python run_CP.py -n 8 -s implied    # All combinations of implied constraints
-python run_CP.py -n 8 -s search     # All combinations of search strategy constraints
-python run_CP.py -n 8 -s            # All combinations for all groups
+# Control parallel execution performance
+python run_CP.py -n 8 -g --max-workers 1   # Sequential execution
+python run_CP.py -n 8 -g --max-workers 16  # Maximum parallelism
 ```
 
 You can use the `-s/--select` option to systematically compare the effect of enabling/disabling constraints within a group (symm, implied, search), while keeping all other constraints enabled. This allows for focused comparative analysis of constraint groups.
@@ -381,6 +400,10 @@ python run_CP.py -n 12 -g --timeout 600  # Extended timeout
 # Compare reliability with different run counts
 python run_CP.py -n 8 -g --runs 1   # Fast but less reliable
 python run_CP.py -n 8 -g --runs 10  # Slower but more reliable
+
+# Control parallel execution for performance tuning
+python run_CP.py -n 8 -g --max-workers 1   # Sequential execution
+python run_CP.py -n 8 -g --max-workers 16  # Maximum parallelism
 ```
 
 Key metrics to analyze:
@@ -391,39 +414,54 @@ Key metrics to analyze:
 - **Optimization impact**: Compare optimized vs non-optimized model performance
 - **Timeout sensitivity**: Analyze how different timeout values affect solution quality and completion rates
 - **Statistical reliability**: Use time_stats and obj_stats to assess measurement reliability
+- **Parallel execution efficiency**: Use --max-workers to optimize performance for your system's CPU capabilities
 
-## Reliability and Statistical Analysis
+## Parallel Execution and Performance Optimization
 
-The system now includes robust statistical analysis to ensure reliable measurements:
+The system leverages parallel execution to significantly improve performance when running multiple experiments:
 
-### Multiple Run Averaging
-- Each execution automatically runs multiple times (default: 5) and averages results
-- Reduces noise from solver randomness and system variability
-- Provides statistical measures including mean, median, min, max, and standard deviation
+### How Parallel Execution Works
+- **Concurrent Runs**: When averaging over multiple runs (e.g., `--runs 10`), all runs execute simultaneously in parallel
+- **Thread-Based**: Uses Python's ThreadPoolExecutor for efficient I/O-bound parallel execution
+- **Per-Experiment Parallelization**: Each constraint combination or test mode experiment runs its multiple averaging runs in parallel
+- **Automatic Coordination**: Results are collected and synchronized automatically as parallel runs complete
 
-### Statistical Output
-Results include detailed statistics for both timing and objective values:
-- **Time Statistics**: Mean execution time with confidence measures
-- **Objective Statistics**: Average solution quality with variance analysis  
-- **Run Success Rates**: Track successful vs failed runs for reliability assessment
+### Performance Benefits
+- **Dramatically Reduced Runtime**: 5 runs that might take 25 minutes sequentially can complete in ~5 minutes with parallel execution
+- **Scalable**: Performance improves with more CPU cores (up to the number of parallel runs)
+- **Efficient Resource Usage**: Maximizes CPU utilization during solver-intensive operations
 
-### Customizing Reliability
+### Configuring Parallel Execution
 ```bash
-# High reliability (more runs, slower)
-python run_CP.py -n 8 -g --runs 10
+# Let the system auto-detect optimal worker count (recommended)
+python run_CP.py -n 8 -g
 
-# Fast testing (single run, faster but less reliable)
-python run_CP.py -n 8 -g --runs 1
+# Use specific number of workers
+python run_CP.py -n 8 -g --max-workers 4
 
-# Default balanced approach
-python run_CP.py -n 8 -g  # Uses 5 runs by default
+# Sequential execution (disable parallelism)
+python run_CP.py -n 8 -g --max-workers 1
+
+# Maximum parallelism (useful for high-core systems)
+python run_CP.py -n 8 -g --max-workers 16
 ```
 
-### Interpreting Statistical Data
-- **Low standard deviation**: Consistent, reliable measurements
-- **High standard deviation**: Results vary significantly between runs
-- **Success rate**: Percentage of runs that completed successfully
-- **Optimal rate**: Percentage of runs that found optimal solutions
+### Worker Count Guidelines
+- **Default**: `min(32, num_runs, os.cpu_count() + 4)` - balances performance and resource usage
+- **High CPU Systems**: Use `--max-workers 16` or higher for systems with 12+ cores
+- **Memory-Constrained Systems**: Use `--max-workers 2-4` to limit concurrent solver instances
+- **Sequential Debugging**: Use `--max-workers 1` when debugging solver behavior or for deterministic execution order
+
+### Performance Monitoring
+The system provides real-time feedback on parallel execution:
+```
+Running 10 times for averaging (in parallel)...
+Using 8 parallel workers...
+  Completed run 1/10 (run #3)
+  Completed run 2/10 (run #1)
+  Completed run 3/10 (run #5)
+  ...
+```
 
 ## Troubleshooting
 
@@ -438,7 +476,7 @@ python run_CP.py -n 8 -g  # Uses 5 runs by default
    - Ensure the file structure matches the expected layout
    - Check that both optimized and non-optimized files exist:
      - `source/CP/use_constraints.dzn` (for optimized model)
-     - `source/CP/use_constraintsNoOpt.dzn` (for non-optimized model)
+     - `source/CP/use_constraintsNoOpt.dzn` (for non-optimized model)  
      - `source/CP/sts.mzn` (optimized model)
      - `source/CP/stsNoOpt.mzn` (non-optimized model)
 
@@ -462,6 +500,12 @@ python run_CP.py -n 8 -g  # Uses 5 runs by default
    - Increase number of averaging runs with `--runs <number>` (default: 5)
    - Check `time_stats` and `obj_stats` in results for measurement reliability
    - Use `--verbose` flag to see intermediate solutions and run details
+
+6. **Poor performance with parallel execution**
+   - Adjust `--max-workers` parameter based on your system capabilities
+   - Use `--max-workers 1` for sequential execution if parallel execution causes issues
+   - Monitor system resources when using high worker counts
+   - Consider reducing `--runs` if parallel execution overwhelms system memory
 
 ### Getting Help
 
@@ -488,3 +532,8 @@ The MiniZinc model (`source/CP/sts.mzn`) implements:
 - **Statistical Reliability**: Multiple runs with averaging for consistent measurements
 
 For detailed constraint definitions, see the comments in `sts.mzn`.
+
+Results saved to `res/CP/{args.teams}.json`
+Total executions: {len(results)}
+Each execution was averaged over {args.runs} runs for reliable measurements.
+Parallel execution used {args.max_workers} workers for improved performance.

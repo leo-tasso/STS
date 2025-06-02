@@ -7,6 +7,7 @@ import argparse
 import statistics
 import random
 from itertools import combinations
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # Optimized version paths
 DZN_PATH = "../../source/CP/use_constraints.dzn"
@@ -227,7 +228,7 @@ def clean_minizinc_stdout(
         
 
     ordered_output = {
-        "time": math.floor(time_elapsed),
+        "time": time_elapsed,
         "optimal": "true" if time_elapsed < timeout_sec else "false",
         "obj": cleaned_output.get("obj") if optimization_version else None,
         "sol": str(cleaned_output.get("sol", "unknown")),
@@ -309,7 +310,7 @@ def run_minizinc_model_cli(
             model_path,
             temp_dzn_path,
         ]
-        print(cmd)
+
         # Use subprocess timeout as a backup (add 10 seconds buffer for MiniZinc to cleanup)
         process_timeout = timeout_sec + 10
 
@@ -421,6 +422,7 @@ def run_test_mode(
     timeout_sec: int = 300,
     verbose: bool = False,
     num_runs: int = 5,
+    max_workers: int = None,
 ) -> tuple[list[dict], list[str]]:
     """
     Run the MiniZinc model with all possible combinations of the selected constraints.
@@ -457,6 +459,7 @@ def run_test_mode(
                     timeout_sec=timeout_sec,
                     verbose=verbose,
                     num_runs=num_runs,
+                    max_workers=max_workers,
                 )
                 results.append(result)
                 names.append(combo_name)
@@ -483,6 +486,7 @@ def run_select_mode(
     timeout_sec: int = 300,
     verbose: bool = False,
     num_runs: int = 5,
+    max_workers: int = None,
 ) -> tuple[list[dict], list[str]]:
     """
     For each combination of the selected group's constraints, runs the MiniZinc model
@@ -506,13 +510,13 @@ def run_select_mode(
     if selected_group == "all":
         for group in ALL_CONSTRAINTS_GROUPS:
             group_results, group_names = run_selected_group(
-                n, group, is_optimization, use_chuffed, timeout_sec, verbose, num_runs, all_constraints
+                n, group, is_optimization, use_chuffed, timeout_sec, verbose, num_runs, all_constraints, max_workers
             )
             results += group_results
             names += group_names
     else:
         results, names = run_selected_group(
-            n, selected_group, is_optimization, use_chuffed, timeout_sec, verbose, num_runs, all_constraints
+            n, selected_group, is_optimization, use_chuffed, timeout_sec, verbose, num_runs, all_constraints, max_workers
         )
     return results, names
 
@@ -525,6 +529,7 @@ def run_selected_group(
     verbose: bool,
     num_runs: int,
     all_constraints: list[str],
+    max_workers: int = None,
 ) -> tuple[list[dict], list[str]]:
     """
     For each combination of the selected group's constraints, runs the MiniZinc model
@@ -566,6 +571,7 @@ def run_selected_group(
                     timeout_sec=timeout_sec,
                     verbose=verbose,
                     num_runs=num_runs,
+                    max_workers=max_workers,
                 )
                 results.append(result)
                 names.append(combo_name)
@@ -583,6 +589,36 @@ def run_selected_group(
 
     return results, names
 
+def _run_single_minizinc_instance(args_tuple):
+    """
+    Helper function to run a single MiniZinc instance with the given parameters.
+    Used for parallel execution.
+    
+    Args:
+        args_tuple: Tuple containing (run_num, n, active_constraints, model_path, 
+                   timeout_sec, use_chuffed, is_optimization, all_constraints, run_seed)
+    
+    Returns:
+        tuple: (run_num, result) where result is the output from run_minizinc_model_cli
+    """
+    (run_num, n, active_constraints, model_path, timeout_sec, 
+     use_chuffed, is_optimization, all_constraints, run_seed) = args_tuple
+    
+    result = run_minizinc_model_cli(
+        n=n,
+        active_constraints=active_constraints,
+        model_path=model_path,
+        timeout_sec=timeout_sec,
+        use_chuffed=use_chuffed,
+        is_optimization=is_optimization,
+        all_constraints=all_constraints,
+        verbose=False,  # Disable verbose for individual runs to reduce noise
+        random_seed=run_seed,
+    )
+    
+    return run_num, result
+
+
 def run_minizinc_with_averaging(
     n: int,
     active_constraints: list[str] = None,
@@ -593,9 +629,10 @@ def run_minizinc_with_averaging(
     all_constraints: list[str] = None,
     verbose: bool = False,
     num_runs: int = 5,
+    max_workers: int = None,
 ) -> dict:
     """
-    Runs a MiniZinc model multiple times and computes averaged statistics for reliable measurements.
+    Runs a MiniZinc model multiple times in parallel and computes averaged statistics for reliable measurements.
 
     Args:
         n (int): The number of teams.
@@ -606,39 +643,71 @@ def run_minizinc_with_averaging(
         is_optimization (bool): If True, indicates that the output is from an optimization version of the STS.
         all_constraints (list[str]): All available constraints for the selected model version.
         verbose (bool): Whether to show verbose output.
-        num_runs (int): Number of runs to average over.    Returns:
+        num_runs (int): Number of runs to average over.
+        max_workers (int): Maximum number of parallel workers. If None, uses min(32, num_runs, os.cpu_count() + 4).
+
+    Returns:
         dict: Averaged results with additional statistics.
     """
     if verbose:
-        print(f"Running {num_runs} times for averaging...")
+        print(f"Running {num_runs} times for averaging (in parallel)...")
     
-    results = []
+    # Determine number of workers
+    if max_workers is None:
+        max_workers = min(32, num_runs, (os.cpu_count() or 1) + 4)
+    
+    if verbose:
+        print(f"Using {max_workers} parallel workers...")
+    
+    # Prepare arguments for each run
+    run_args = []
+    for run_num in range(num_runs):
+        # Generate a unique random seed for each run
+        run_seed = random.randint(1, 2**31 - 1)
+        run_args.append((
+            run_num, n, active_constraints, model_path, timeout_sec,
+            use_chuffed, is_optimization, all_constraints, run_seed
+        ))
+    
+    # Execute runs in parallel
+    results = [None] * num_runs  # Pre-allocate list to maintain order
+    completed_runs = 0
+    
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        # Submit all jobs
+        future_to_run = {executor.submit(_run_single_minizinc_instance, args): args[0] 
+                        for args in run_args}
+        
+        # Collect results as they complete
+        for future in as_completed(future_to_run):
+            run_num = future_to_run[future]
+            try:
+                run_num, result = future.result()
+                results[run_num] = result
+                completed_runs += 1
+                
+                if verbose:
+                    print(f"  Completed run {completed_runs}/{num_runs} (run #{run_num + 1})")
+                    
+            except Exception as exc:
+                if verbose:
+                    print(f"  Run {run_num + 1} generated an exception: {exc}")
+                # Create error result
+                results[run_num] = {
+                    "time": timeout_sec,
+                    "optimal": "false",
+                    "obj": None,
+                    "sol": f"Exception: {str(exc)}",
+                    "solver": "chuffed" if use_chuffed else "gecode",
+                    "constraints": active_constraints,
+                }
+      # Process results (same as before)
     valid_times = []
     valid_objs = []
     successful_runs = 0
     errors = []
     
-    for run_num in range(num_runs):
-        if verbose:
-            print(f"  Run {run_num + 1}/{num_runs}...")
-        
-        # Generate a unique random seed for each run
-        run_seed = random.randint(1, 2**31 - 1)
-        
-        result = run_minizinc_model_cli(
-            n=n,
-            active_constraints=active_constraints,
-            model_path=model_path,
-            timeout_sec=timeout_sec,
-            use_chuffed=use_chuffed,
-            is_optimization=is_optimization,
-            all_constraints=all_constraints,
-            verbose=False,  # Disable verbose for individual runs to reduce noise
-            random_seed=run_seed,
-        )
-        
-        results.append(result)
-        
+    for result in results:
         # Check if this run was successful (not error, timeout, or unsat)
         if (result.get("sol") not in ["unsat", "=====UNKNOWN===== (likely timeout)", "JSONDecodeError", "ERROR PARSING STDOUT"] 
             and not isinstance(result.get("sol"), str) or "error" not in result.get("sol", "").lower()):
@@ -675,7 +744,7 @@ def run_minizinc_with_averaging(
     
     # Compute time statistics
     if valid_times:
-        avg_result["time"] = round(statistics.mean(valid_times), 2)
+        avg_result["time"] = round(statistics.mean(valid_times), 0)
         time_stats = {
             "mean": round(statistics.mean(valid_times), 2),
             "median": round(statistics.median(valid_times), 2),
@@ -824,14 +893,20 @@ def main():
         "--verbose",
         action="store_true",
         help="Enable verbose output showing intermediate solutions",
-    )
-
-    # Runs flag for averaging
+    )    # Runs flag for averaging
     parser.add_argument(
         "--runs",
         type=int,
         default=5,
         help="Number of runs to average over for reliable measurements (default: 5)",
+    )
+
+    # Max workers flag for parallel execution
+    parser.add_argument(
+        "--max-workers",
+        type=int,
+        default=None,
+        help="Maximum number of parallel workers (default: auto-detect based on CPU count)",
     )
 
     args = parser.parse_args()
@@ -889,7 +964,7 @@ def main():
             print("Test mode: Running all possible combinations of selected constraints...")
             print(f"Each combination will be run {args.runs} times for reliable measurements.")
             solver_results, solver_names_list = run_test_mode(
-                args.teams, args.constraints, is_optimization, use_chuffed, args.timeout, args.verbose, args.runs
+                args.teams, args.constraints, is_optimization, use_chuffed, args.timeout, args.verbose, args.runs, args.max_workers
             )
             # Add solver suffix to names
             solver_results_named = solver_results
@@ -901,7 +976,7 @@ def main():
             print("Select group mode: Running all possible combinations of selected group constraint...")
             print(f"Each combination will be run {args.runs} times for reliable measurements.")
             solver_results, solver_names_list = run_select_mode(
-                args.teams, args.select, is_optimization, use_chuffed, args.timeout, args.verbose, args.runs
+                args.teams, args.select, is_optimization, use_chuffed, args.timeout, args.verbose, args.runs, args.max_workers
             )
             # Add solver suffix to names
             solver_results_named = solver_results
@@ -920,6 +995,7 @@ def main():
                 timeout_sec=args.timeout,
                 verbose=args.verbose,
                 num_runs=args.runs,
+                max_workers=args.max_workers,
             )
             results.append(result)
             names.append(f"generate_all_constraints_{solver_name}")
