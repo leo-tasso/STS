@@ -202,11 +202,12 @@ def clean_minizinc_stdout(
             
     except (json.JSONDecodeError, ValueError):
         # JSON parsing failed - likely timeout or invalid output
+        print(stdout)
         return {
             "time": timeout_sec,
             "optimal": "false",
             "obj": None,
-            "sol": "JSONDecodeError",
+            "sol": '"JSONDecodeError"',
             "solver": solver,
             "constraints": active_constraints,
         }
