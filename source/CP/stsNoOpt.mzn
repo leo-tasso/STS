@@ -10,7 +10,6 @@ bool: use_symm_break_periods;
 bool: use_symm_break_teams;
 bool: use_implied_matches_per_team;
 bool: use_implied_period_count;
-bool: use_no_three_consecutive;
 
 bool: use_int_search;
 bool: use_restart_luby;
@@ -89,10 +88,10 @@ constraint
 %symmetry breaking periods
 constraint 
   use_symm_break_periods ->
-  forall(w in Weeks)(
-    lex_lesseq(
-      [ home[w,p] | p in 1..periods-1 ] ++ [ away[w,p] | p in 1..periods-1 ],
-      [ home[w,p+1] | p in 1..periods-1 ] ++ [ away[w,p+1] | p in 1..periods-1 ]
+  forall(p in 1..periods-1)(
+    lex_less(
+      [ home[w,p] | w in Weeks ] ++ [ away[w,p] | w in Weeks ],
+      [ home[w,p+1] | w in Weeks ] ++ [ away[w,p+1] | w in Weeks ]
     )
   );
 
