@@ -126,7 +126,7 @@ satisfy;
 % Output
 output [
   "{",
-  "\"sol\": ", show([ [ [home[w,p], away[w,p]] | p in Periods ] | w in Weeks ]),
+  "\"sol\": ", show([ [ [home[w,p], away[w,p]] | w in Weeks ] | p in Periods ]),
   "}"
 ];
 
