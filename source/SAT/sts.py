@@ -1,7 +1,7 @@
 from z3 import *
 
 # Parameters (set these as needed)
-n = 12 # Number of teams (even)
+n = 6 # Number of teams (even)
 use_symm_break_weeks = True
 use_symm_break_periods = True
 use_symm_break_teams = True
@@ -20,11 +20,20 @@ away = [[[Bool(f"away_{w}_{p}_{t}") for t in Teams] for p in Periods] for w in W
 
 s = Solver()
 
+def at_least_one(bool_vars):
+    return Or(bool_vars)
+
+def at_most_one(bool_vars):
+    return And([Not(And(bool_vars[i], bool_vars[j])) for i in range(len(bool_vars)) for j in range(i + 1, len(bool_vars))])
+
+def exactly_one(bool_vars):
+    return And(at_least_one(bool_vars), at_most_one(bool_vars))
+
 # Each slot has exactly one home and one away team, and they are different
 for w in Weeks:
     for p in Periods:
-        s.add(PbEq([(home[w][p][t], 1) for t in Teams], 1))
-        s.add(PbEq([(away[w][p][t], 1) for t in Teams], 1))
+        s.add(exactly_one([home[w][p][t] for t in Teams]))
+        s.add(exactly_one([away[w][p][t] for t in Teams]))
         for t in Teams:
             s.add(Implies(home[w][p][t], Not(away[w][p][t])))
 
@@ -37,7 +46,7 @@ for i in Teams:
                 for p in Periods:
                     pair_games.append(And(home[w][p][i], away[w][p][j]))
                     pair_games.append(And(home[w][p][j], away[w][p][i]))
-            s.add(PbEq([(pg, 1) for pg in pair_games], 1))
+            s.add(exactly_one(pair_games))
 
 # Each team plays once per week
 for w in Weeks:
@@ -46,7 +55,7 @@ for w in Weeks:
         for p in Periods:
             occ.append(home[w][p][t])
             occ.append(away[w][p][t])
-        s.add(PbEq([(x, 1) for x in occ], 1))
+        s.add(exactly_one(occ))
 
 # Period limit: Each team appears in same period at most twice
 for t in Teams:
