@@ -126,9 +126,9 @@ if use_symm_break_weeks:
         s.add(lex_less_bool(curr, nxt))
 
 if use_symm_break_periods:
-    for w in Weeks:
-        curr = [home[w][p][t] for p in range(periods-1) for t in Teams] + [away[w][p][t] for p in range(periods-1) for t in Teams]
-        nxt = [home[w][p+1][t] for p in range(periods-1) for t in Teams] + [away[w][p+1][t] for p in range(periods-1) for t in Teams]
+    for p in range(periods-1):
+        curr = [home[w][p][t] for w in Weeks for t in Teams] + [away[w][p][t] for w in Weeks for t in Teams]
+        nxt = [home[w][p+1][t] for w in Weeks for t in Teams] + [away[w][p+1][t] for w in Weeks for t in Teams]
         s.add(lex_less_bool(curr, nxt))
 
 # Symmetry breaking: teams (fix first week)
