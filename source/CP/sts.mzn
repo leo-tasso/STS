@@ -97,7 +97,7 @@ constraint
 constraint 
   use_symm_break_periods ->
   forall(w in Weeks)(
-    lex_lesseq(
+    lex_less(
       [ home[w,p] | p in 1..periods-1 ] ++ [ away[w,p] | p in 1..periods-1 ],
       [ home[w,p+1] | p in 1..periods-1 ] ++ [ away[w,p+1] | p in 1..periods-1 ]
     )
