@@ -50,7 +50,7 @@ constraint
   );
 
 % Home/away count for fairness
-set of int: Count = 1..n-1;
+set of int: Count = 0..n-1;
 array[Teams] of var Count: home_count;
 array[Teams] of var Count: away_count;
 

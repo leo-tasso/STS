@@ -50,7 +50,7 @@ constraint
   );
 
 % Home/away count for fairness
-set of int: Count = 1..n-1;
+set of int: Count = 0..n-1;
 array[Teams] of var Count: home_count;
 array[Teams] of var Count: away_count;
 
@@ -87,7 +87,7 @@ constraint
 %symmetry breaking weeks
 constraint 
   use_symm_break_weeks ->
-  forall(w in 1..weeks - 1)(
+  forall(w in 1..weeks-1)(
     lex_less(
       [ home[w,p] | p in Periods ] ++ [ away[w,p] | p in Periods ],
       [ home[w+1,p] | p in Periods ] ++ [ away[w+1,p] | p in Periods ]
@@ -96,10 +96,10 @@ constraint
 %symmetry breaking periods
 constraint 
   use_symm_break_periods ->
-  forall(w in Weeks)(
+  forall(p in 1..periods-1)(
     lex_less(
-      [ home[w,p] | p in 1..periods-1 ] ++ [ away[w,p] | p in 1..periods-1 ],
-      [ home[w,p+1] | p in 1..periods-1 ] ++ [ away[w,p+1] | p in 1..periods-1 ]
+      [ home[w,p] | w in Weeks ] ++ [ away[w,p] | w in Weeks ],
+      [ home[w,p+1] | w in Weeks ] ++ [ away[w,p+1] | w in Weeks ]
     )
   );
 
