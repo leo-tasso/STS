@@ -1,7 +1,8 @@
 from z3 import *
+import sat_encodings
 
 # Parameters (set these as needed)
-n = 12  # Number of teams (even)
+n = 6 # Number of teams (even)
 use_symm_break_weeks = True
 use_symm_break_periods = True
 use_symm_break_teams = True
@@ -20,24 +21,9 @@ away = [[[Bool(f"away_{w}_{p}_{t}") for t in Teams] for p in Periods] for w in W
 
 s = Solver()
 
-
-def at_least_one(bool_vars):
-    return Or(bool_vars)
-
-
-def at_most_one(bool_vars):
-    return And(
-        [
-            Not(And(bool_vars[i], bool_vars[j]))
-            for i in range(len(bool_vars))
-            for j in range(i + 1, len(bool_vars))
-        ]
-    )
-
-
-def exactly_one(bool_vars):
-    return And(at_least_one(bool_vars), at_most_one(bool_vars))
-
+exactly_one = sat_encodings.exactly_one_seq
+at_most_k = sat_encodings.at_most_k_seq
+exactly_k = sat_encodings.exactly_k_seq
 
 # Each slot has exactly one home and one away team, and they are different
 for w in Weeks:
@@ -57,7 +43,7 @@ for i in Teams:
                 for p in Periods:
                     pair_games.append(And(home[w][p][i], away[w][p][j]))
                     pair_games.append(And(home[w][p][j], away[w][p][i]))
-            s.add(exactly_one(pair_games))
+            s.add(exactly_one(pair_games, name=f"pair_{i}_{j}"))
 
 # Each team plays once per week
 for w in Weeks:
@@ -66,7 +52,7 @@ for w in Weeks:
         for p in Periods:
             occ.append(home[w][p][t])
             occ.append(away[w][p][t])
-        s.add(exactly_one(occ))
+        s.add(exactly_one(occ, name=f"team_{t}_week_{w}"))
 
 # Period limit: Each team appears in same period at most twice
 for t in Teams:
@@ -75,7 +61,7 @@ for t in Teams:
         for w in Weeks:
             occ.append(home[w][p][t])
             occ.append(away[w][p][t])
-        s.add(PbLe([(x, 1) for x in occ], 2))
+        s.add(at_most_k(occ, 2, name=f"team_{t}_period_{p}"))
 
 # Implied constraint: number of games per team
 if use_implied_matches_per_team:
@@ -85,19 +71,19 @@ if use_implied_matches_per_team:
             for p in Periods:
                 occ.append(home[w][p][t])
                 occ.append(away[w][p][t])
-        s.add(PbEq([(x, 1) for x in occ], n - 1))
+        s.add(exactly_k(occ, weeks, name=f"team_{t}_matches"))
 
 
-# TODO check with cp
+# TODO check with cp, commented because it is the same as the previous one
 # Implied constraint for total period appearances
-if use_implied_period_count:
-    for t in Teams:
-        occ = []
-        for p in Periods:
-            for w in Weeks:
-                occ.append(home[w][p][t])
-                occ.append(away[w][p][t])
-        s.add(PbEq([(x, 1) for x in occ], n - 1))
+# if use_implied_period_count:
+#     for t in Teams:
+#         occ = []
+#         for p in Periods:
+#             for w in Weeks:
+#                 occ.append(home[w][p][t])
+#                 occ.append(away[w][p][t])
+#         s.add(PbEq([(x, 1) for x in occ], n - 1))
 
 
 # Symmetry breaking: weeks (lex order on home+away vectors)
@@ -142,17 +128,17 @@ if use_symm_break_teams:
 if s.check() == sat:
     m = s.model()
     sol = []
-    for w in Weeks:
-        week = []
-        for p in Periods:
+    for p in Periods:
+        period = []
+        for w in Weeks:
             h = [
                 t + 1 for t in Teams if m.evaluate(home[w][p][t], model_completion=True)
             ]
             a = [
                 t + 1 for t in Teams if m.evaluate(away[w][p][t], model_completion=True)
             ]
-            week.append([h[0], a[0]])
-        sol.append(week)
+            period.append([h[0], a[0]])
+        sol.append(period)
     print("{")
     print(f'"sol": {sol}')
     print("}")
