@@ -108,27 +108,26 @@ def exactly_k_np(bool_vars, k, name = ""):
 def at_least_k_seq(bool_vars, k, name):
     not_bool_vars = [Not(b) for b in bool_vars]
     n = len(bool_vars)
-    return at_most_k_seq(not_bool_vars, n - k, name)
+    return at_most_k_seq(not_bool_vars, n - k, f'{name}_not')
 
 def at_most_k_seq(bool_vars, k, name):
-    x = bool_vars
+    constraints = []
     n = len(bool_vars)
-    sums = [[Bool(f"s_{i}_{j}_{name}") for i in range(n-1)] for j in range(k)]
-    
-    first = Or(Not(x[0]), sums[0][0])
-    first = And([first] + [Not(sums[0][j]) for j in range(k)])
+    s = [[Bool(f"s_{name}_{i}_{j}") for j in range(k)] for i in range(n - 1)]
+    constraints.append(Or(Not(bool_vars[0]), s[0][0]))
+    constraints += [Not(s[0][j]) for j in range(1, k)]
 
-    middle = And([And(
-        Or(Not(x[i]), sums[i][0]),
-        Or(Not(sums[i-1][0]), sums[i][i]),
-        Or(Not(x[i]), Not(sums[i-1][j-1]), sums[i][j]),
-        Or(Not(sums[i-1][j]), sums[i][j]),
-        Or(Not(x[i]), Not(sums[i-1][k])),
-    ) for j in range(k) for i in range(1, n-1)])
+    for i in range(1, n-1):
+        constraints.append(Or(Not(bool_vars[i]), s[i][0]))
+        constraints.append(Or(Not(s[i-1][0]), s[i][0]))
+        constraints.append(Or(Not(bool_vars[i]), Not(s[i-1][k-1])))
+        for j in range(1, k):
+            constraints.append(Or(Not(bool_vars[i]), Not(s[i-1][j-1]), s[i][j]))
+            constraints.append(Or(Not(s[i-1][j]), s[i][j]))
 
-    last = Or(Not(sums[n-2][k]), Not(x[n-1]))
-
-    return And(first, middle, last)
+    constraints.append(Or(Not(bool_vars[n-1]), Not(s[n-2][k-1]))) 
+      
+    return And(constraints)
 
 
 def exactly_k_seq(bool_vars, k, name):

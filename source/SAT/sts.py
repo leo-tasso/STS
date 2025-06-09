@@ -1,8 +1,7 @@
 from z3 import *
 import sat_encodings
 
-# Parameters (set these as needed)
-n = 6 # Number of teams (even)
+n = 6
 use_symm_break_weeks = True
 use_symm_break_periods = True
 use_symm_break_teams = True
@@ -21,15 +20,15 @@ away = [[[Bool(f"away_{w}_{p}_{t}") for t in Teams] for p in Periods] for w in W
 
 s = Solver()
 
-exactly_one = sat_encodings.exactly_one_seq
+exactly_one = sat_encodings.exactly_one_bw
 at_most_k = sat_encodings.at_most_k_seq
 exactly_k = sat_encodings.exactly_k_seq
 
 # Each slot has exactly one home and one away team, and they are different
 for w in Weeks:
     for p in Periods:
-        s.add(exactly_one([home[w][p][t] for t in Teams]))
-        s.add(exactly_one([away[w][p][t] for t in Teams]))
+        s.add(exactly_one([home[w][p][t] for t in Teams], name=f"home_{w}_{p}"))
+        s.add(exactly_one([away[w][p][t] for t in Teams], name=f"away_{w}_{p}"))
         for t in Teams:
             s.add(Implies(home[w][p][t], Not(away[w][p][t])))
             s.add(Implies(away[w][p][t], Not(home[w][p][t])))
