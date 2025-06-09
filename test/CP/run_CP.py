@@ -280,8 +280,13 @@ def run_minizinc_model_cli(
         model_path = MODEL_PATH if is_optimization else MODEL_PATH_NO_OPT
     if all_constraints is None:
         all_constraints = ALL_CONSTRAINTS if is_optimization else ALL_CONSTRAINTS_NO_OPT
-
-    temp_dzn_path = generate_dzn_file(n, active_constraints, all_constraints)
+    
+    all_constraints = all_constraints.copy()
+    all_constraints.append("chuffed")
+    constraints_with_chuffed = active_constraints.copy()
+    if use_chuffed:
+        constraints_with_chuffed.append("chuffed")
+    temp_dzn_path = generate_dzn_file(n, constraints_with_chuffed, all_constraints)
 
     # MiniZinc expects timeout in milliseconds
     timeout_flag = ["--time-limit", str(timeout_sec * 1000)]
@@ -698,7 +703,7 @@ def run_minizinc_with_averaging(
                     "time": timeout_sec,
                     "optimal": "false",
                     "obj": None,
-                    "sol": f"Exception: {str(exc)}",
+                    "sol": f'"Exception: {str(exc)}"',
                     "solver": "chuffed" if use_chuffed else "gecode",
                     "constraints": active_constraints,
                 }

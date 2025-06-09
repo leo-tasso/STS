@@ -15,6 +15,8 @@ bool: use_int_search;
 bool: use_restart_luby;
 bool: use_relax_and_reconstruct;
 
+bool: chuffed;
+
 set of int: Teams = 1..n;
 set of int: Weeks = 1..weeks;
 set of int: Periods = 1..periods;
@@ -117,12 +119,21 @@ set of int: Count_diff = 1..n-1;
 var Count_diff: max_diff = max([abs(home_count[t] - away_count[t]) | t in Teams]);
 solve 
 :: if use_int_search then
+    if chuffed then
      int_search(
+       [home[w, p] | w in Weeks, p in Periods] ++ [away[w, p] | w in Weeks, p in Periods],
+       first_fail,
+       indomain_min,
+       complete
+     )
+     else
+      int_search(
        [home[w, p] | w in Weeks, p in Periods] ++ [away[w, p] | w in Weeks, p in Periods],
        first_fail,
        indomain_random,
        complete
      )
+     endif
    endif
 :: if use_restart_luby then restart_luby(10000) endif
 :: if use_relax_and_reconstruct then 
