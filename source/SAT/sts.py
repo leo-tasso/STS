@@ -130,16 +130,20 @@ if s.check() == sat:
     for p in Periods:
         period = []
         for w in Weeks:
-            h = [
-                t + 1 for t in Teams if m.evaluate(home[w][p][t], model_completion=True)
-            ]
-            a = [
-                t + 1 for t in Teams if m.evaluate(away[w][p][t], model_completion=True)
-            ]
-            period.append([h[0], a[0]])
+            home_team = None
+            for t in Teams:
+                if m.evaluate(home[w][p][t], model_completion=True):
+                    home_team = t + 1
+                    break
+
+            away_team = None
+            for t in Teams:
+                if m.evaluate(away[w][p][t], model_completion=True):
+                    away_team = t + 1
+                    break
+
+            period.append([home_team, away_team])
         sol.append(period)
-    print("{")
-    print(f'"sol": {sol}')
-    print("}")
+    print(sol)
 else:
-    print("No solution found.")
+    print("unsat")
