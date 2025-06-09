@@ -73,16 +73,15 @@ if use_implied_matches_per_team:
         s.add(exactly_k(occ, weeks, name=f"team_{t}_matches"))
 
 
-# TODO check with cp, commented because it is the same as the previous one
 # Implied constraint for total period appearances
-# if use_implied_period_count:
-#     for t in Teams:
-#         occ = []
-#         for p in Periods:
-#             for w in Weeks:
-#                 occ.append(home[w][p][t])
-#                 occ.append(away[w][p][t])
-#         s.add(PbEq([(x, 1) for x in occ], n - 1))
+if use_implied_period_count:
+    for t in Teams:
+        occ = []
+        for p in Periods:
+            for w in Weeks:
+                occ.append(home[w][p][t])
+                occ.append(away[w][p][t])
+        s.add(exactly_k(occ, n - 1, name=f"team_{t}_period_total"))
 
 
 # Symmetry breaking: weeks (lex order on home+away vectors)
