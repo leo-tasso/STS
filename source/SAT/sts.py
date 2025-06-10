@@ -244,7 +244,25 @@ def solve_sts(n, constraints=None, encoding_type="bw"):
             'satisfiable': False
         }
 
-def solve_sts_dimacs(n, constraints=None, encoding_type="bw", solver=None):
+def parse_variable_mappings(dimacs_lines: list[str]) -> dict[str, int]:
+    """
+    Parse variable mappings from DIMACS format lines.
+    Args:
+        dimacs_lines (list[str]): List of lines from a DIMACS file
+    Returns:
+        dict[str, int]: Mapping from variable names to their DIMACS numbers
+    """
+    var_mappings = {}
+    for line in dimacs_lines:
+        if line.startswith('c ') and (' home' in line or ' away' in line):
+            parts = line.split()
+            if len(parts) >= 3:
+                var_num_dimacs = int(parts[1])
+                var_name_z3 = parts[2]
+                var_mappings[var_name_z3] = var_num_dimacs
+    return var_mappings
+
+def solve_sts_dimacs(n: int, constraints: dict[str, bool] =None, encoding_type="bw", solver="minisat"):
     """
     Solve the STS problem using SAT encoding with DIMACS format.
     
@@ -290,10 +308,12 @@ def solve_sts_dimacs(n, constraints=None, encoding_type="bw", solver=None):
     result_goals = tactic(goal)
     cnf_goal = result_goals[0]
     dimacs_string = cnf_goal.dimacs()
-    
+    var_mappings = parse_variable_mappings(dimacs_string.splitlines())
+
     # Write DIMACS to file
-    dimacs_path = "./sts.dimacs"
+    dimacs_path = "./dimacs.cnf"
     output_path = "./sts.out"
+
     with open(dimacs_path, 'w') as f:
         f.write(dimacs_string)
 
@@ -353,11 +373,8 @@ def solve_sts_dimacs(n, constraints=None, encoding_type="bw", solver=None):
             home_team = None
             away_team = None
             for t in Teams:
-                # Convert Bool variable names to their numeric indices in the DIMACS file
-                home_var = f"home_{w}_{p}_{t}"
-                away_var = f"away_{w}_{p}_{t}"
-                # You'll need to map these to the actual DIMACS variable numbers
-                # This mapping should match how Z3 assigned numbers to variables
+                home_var = var_mappings[f"home_{w}_{p}_{t}"]
+                away_var = var_mappings[f"away_{w}_{p}_{t}"]
                 if home_var in model_values and model_values[home_var]:
                     home_team = t + 1
                 if away_var in model_values and model_values[away_var]:
@@ -392,7 +409,7 @@ def main():
     }
     encoding_type = "bw"  # Default to bitwise encoding
     
-    result = solve_sts(n, constraints, encoding_type)
+    result = solve_sts_dimacs(n, constraints, encoding_type)
     
     if result['satisfiable']:
         print(result['solution'])
