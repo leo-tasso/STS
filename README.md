@@ -1,16 +1,34 @@
-# Sports Tournament Scheduling (STS) - Constraint Programming
+# Sports Tournament Scheduling (STS) - Constraint Programming and SAT Solver
 
-This repository contains a MiniZinc-based constraint programming solution for sports tournament scheduling, along with a Python script for running experiments with different constraint configurations.
+This repository contains both Constraint Programming (MiniZinc) and SAT-based (Z3) solutions for sports tournament scheduling, along with Python scripts for running experiments with different constraint configurations.
 
 ## Overview
 
-The system generates balanced sports tournament schedules where:
+The system provides two complementary approaches for generating balanced sports tournament schedules:
+
+**Constraint Programming (CP) Approach:**
+- Uses MiniZinc with Chuffed/Gecode solvers
+- Supports optimization objectives (minimize home/away imbalance)
+- Advanced search strategies and constraint formulations
+- Best for larger instances and when solution quality matters
+
+**SAT Solver Approach:**
+- Uses Z3 SMT solver with Boolean satisfiability
+- Focuses on finding any valid solution efficiently
+- Multiple SAT encoding strategies available
+- Best for smaller instances and constraint analysis
+
+Both approaches ensure:
 - Each pair of teams plays exactly once
 - Each team plays exactly once per week
 - Teams appear in the same time period at most twice
 - Home/away assignments are balanced
 
-## Prerequisites
+# Constraint Programming (CP) Implementation
+
+The CP implementation uses MiniZinc with Chuffed or Gecode solvers to find optimal tournament schedules.
+
+## CP Prerequisites
 
 ### Required Software
 1. **Python 3.7+** - For running the control script
@@ -29,21 +47,32 @@ The system generates balanced sports tournament schedules where:
 
 ```
 STS/
-├── source/CP/
-│   ├── sts.mzn                     # MiniZinc optimized constraint model
-│   ├── stsNoOpt.mzn               # MiniZinc non-optimized constraint model
-│   ├── use_constraints.dzn         # Available constraints definition (optimized)
-│   └── use_constraintsNoOpt.dzn   # Available constraints definition (non-optimized)
-├── test/CP/
-│   └── run_CP.py                  # Python execution script
-├── res/CP/                        # Results directory (auto-created)
-│   └── {n}.json                  # Results for n teams
-└── README.md                      # This file
+├── source/
+│   ├── CP/                        # Constraint Programming implementation
+│   │   ├── sts.mzn               # MiniZinc optimized constraint model
+│   │   ├── stsNoOpt.mzn         # MiniZinc non-optimized constraint model
+│   │   ├── use_constraints.dzn   # Available constraints definition (optimized)
+│   │   └── use_constraintsNoOpt.dzn # Available constraints definition (non-optimized)
+│   └── SAT/                      # SAT solver implementation
+│       ├── sts.py               # Core SAT implementation
+│       └── sat_encodings.py     # SAT encoding methods
+├── test/
+│   ├── CP/
+│   │   └── run_CP.py            # Python execution script for CP
+│   └── SAT/
+│       ├── run_STS.py           # Python execution script for SAT
+│       └── README.md            # SAT-specific documentation
+├── res/                         # Results directory (auto-created)
+│   ├── CP/
+│   │   └── {n}.json            # CP results for n teams
+│   └── SAT/
+│       └── {n}.json            # SAT results for n teams
+└── README.md                    # This file
 ```
 
-## Available Constraints
+## CP Available Constraints
 
-The system supports the following constraint types:
+The CP implementation supports the following constraint types:
 
 **Symmetry Breaking Constraints:**
 - `use_symm_break_weeks` - Break symmetry between weeks
@@ -59,15 +88,15 @@ The system supports the following constraint types:
 - `use_restart_luby` - Luby restart strategy for solver
 - `use_relax_and_reconstruct` - Relax-and-reconstruct search method
 
-## Usage
+## CP Usage
 
-### Basic Command Structure
+### Basic CP Command Structure
 
 ```bash
 python run_CP.py -n <teams> [mode] [constraints] [options]
 ```
 
-### Parameters
+### CP Parameters
 
 - **`-n, --teams`** (required): Number of teams (must be even)
 - **`-g, --generate`** (optional): Generate mode - run once with selected constraints
@@ -82,7 +111,7 @@ python run_CP.py -n <teams> [mode] [constraints] [options]
 - **`--runs`** (optional): Number of runs to average over for reliable measurements (default: 5)
 - **`--max-workers`** (optional): Maximum number of parallel workers for execution (default: auto-detect based on CPU count)
 
-### Execution Modes
+### CP Execution Modes
 
 #### 1. Default Mode
 Runs the optimized model with all available constraints enabled. If neither `--chuffed` nor `--gecode` is specified, the system will run with both solvers for comparison.
@@ -194,7 +223,7 @@ python run_CP.py -n 8 -s symm --gecode --timeout 600 --runs 3
 python run_CP.py -n 8 -s symm --max-workers 6
 ```
 
-### Examples
+### CP Examples
 
 ```bash
 # Quick test with minimal constraints
@@ -242,9 +271,9 @@ python run_CP.py -n 6 -g -c use_int_search use_restart_luby use_relax_and_recons
 python run_CP.py --help
 ```
 
-## Output Format
+## CP Output Format
 
-Results are saved as JSON files in `res/CP/{n}.json` where `n` is the number of teams.
+CP results are saved as JSON files in `res/CP/{n}.json` where `n` is the number of teams.
 
 The script displays execution information during runtime:
 ```
@@ -257,7 +286,7 @@ Using 8 parallel workers...
 Running MiniZinc model...
 ```
 
-### JSON Structure
+### CP JSON Structure
 
 ```json
 {
@@ -463,13 +492,351 @@ Using 8 parallel workers...
   ...
 ```
 
+# SAT Solver for Social Tournament Scheduling
+
+In addition to the Constraint Programming approach using MiniZinc, this repository also includes a SAT-based implementation using the Z3 SMT solver.
+
+## SAT Implementation Overview
+
+The SAT solver provides an alternative approach to solving Social Tournament Scheduling problems using Boolean satisfiability. This implementation:
+- Uses Z3 SMT solver for Boolean constraint solving
+- Provides similar constraint options as the CP version
+- Supports multiple SAT encoding strategies
+- Offers comparable performance analysis capabilities
+
+## SAT Prerequisites
+
+### Required Software
+1. **Python 3.7+** - For running the SAT solver
+2. **Z3 Python bindings** - Install with `pip install z3-solver`
+
+### Required Files
+- `source/SAT/sts.py` - Core SAT implementation
+- `source/SAT/sat_encodings.py` - Various SAT encoding methods (naive, sequential, bitwise, Heule)
+- `test/SAT/run_STS.py` - Python control script for SAT solver
+
+## SAT File Structure
+
+```
+STS/
+├── source/SAT/
+│   ├── sts.py                     # Core SAT implementation
+│   └── sat_encodings.py           # SAT encoding methods
+├── test/SAT/
+│   ├── run_STS.py                # Python execution script for SAT
+│   └── README.md                 # SAT-specific documentation
+├── res/SAT/                      # SAT results directory (auto-created)
+│   └── {n}.json                  # SAT results for n teams
+└── README.md                     # This file
+```
+
+## SAT Available Constraints
+
+The SAT implementation supports the following constraint types:
+
+**Symmetry Breaking Constraints:**
+- `use_symm_break_weeks` - Break symmetry between weeks using lexicographic ordering
+- `use_symm_break_periods` - Break symmetry between periods using lexicographic ordering
+- `use_symm_break_teams` - Fix team ordering in first week to break team symmetry
+
+**Implied Constraints:**
+- `use_implied_matches_per_team` - Enforce exact match count per team (redundant but can help solver)
+- `use_implied_period_count` - Enforce period appearance limits (redundant but can help solver)
+
+## SAT Encoding Types
+
+The SAT implementation supports multiple encoding strategies for Boolean constraints, each with different performance characteristics:
+
+**Available Encoding Types:**
+- **`np` (Naive Pairwise)** - Simple pairwise constraints, comprehensive but can be slow for large instances
+- **`seq` (Sequential)** - Sequential encoding with auxiliary variables, generally efficient
+- **`bw` (Bitwise)** - Bitwise encoding using binary representation, good for exactly-one constraints (default)
+- **`he` (Heule)** - Heule encoding with recursive decomposition, effective for at-most-one constraints
+
+**Encoding Performance Characteristics:**
+- **Bitwise (bw)**: Best overall performance for most instances, compact encoding
+- **Sequential (seq)**: Reliable performance, good balance of size and efficiency  
+- **Heule (he)**: Effective for constraint decomposition, scales well
+- **Naive Pairwise (np)**: Simple but can generate many constraints, use with caution on larger instances
+
+**Note**: For constraints requiring at-most-k or exactly-k encodings (where k > 1), bitwise and Heule encodings fall back to sequential encoding since they only provide at-most-one and exactly-one variants.
+
+## SAT Usage
+
+### Basic SAT Command Structure
+
+```powershell
+python run_STS.py <teams> [mode] [constraints] [options]
+```
+
+### SAT Parameters
+
+- **`teams`** (required): Number of teams (must be even, minimum 4)
+- **`--generate`** (optional): Generate mode - run with all selected constraints (default)
+- **`--test`** (optional): Test mode - try all combinations of selected constraints  
+- **`--select`** (optional): Select group mode - test combinations of constraint groups
+- **`--constraints`** (optional): List of constraints to activate (default: all)
+- **`--encoding`** (optional): SAT encoding type to use (default: bw)
+  - `np`: Naive pairwise encoding
+  - `seq`: Sequential encoding  
+  - `bw`: Bitwise encoding (default)
+  - `he`: Heule encoding
+- **`--timeout`** (optional): Solver timeout in seconds (default: 300)
+- **`--verbose`** (optional): Enable verbose output
+- **`--runs`** (optional): Number of runs to average over (default: 5)
+- **`--max-workers`** (optional): Maximum parallel workers (default: auto-detect)
+
+### SAT Execution Modes
+
+#### 1. Generate Mode (Default)
+Runs the SAT solver with specified constraints enabled:
+
+```powershell
+# Generate solution for 6 teams with all constraints (default bitwise encoding)
+python run_STS.py 6 --generate
+
+# Generate solution with specific constraints and encoding
+python run_STS.py 8 --generate --constraints use_symm_break_teams use_implied_matches_per_team --encoding seq
+
+# Generate with sequential encoding and custom timeout
+python run_STS.py 6 --generate --encoding seq --timeout 120 --runs 10
+
+# Compare different encoding types
+python run_STS.py 6 --generate --encoding np --runs 3 --verbose  # Naive pairwise
+python run_STS.py 6 --generate --encoding he --runs 3 --verbose  # Heule encoding
+```
+
+#### 2. Test Mode
+Systematically tests all combinations of specified constraints:
+
+```powershell
+# Test all combinations with sequential encoding
+python run_STS.py 6 --test --constraints use_symm_break_weeks use_symm_break_teams --encoding seq
+
+# Test with Heule encoding and verbose output 
+python run_STS.py 6 --test --constraints use_symm_break_weeks use_symm_break_teams --encoding he --verbose
+
+# Compare encoding performance across all constraint combinations
+python run_STS.py 6 --test --constraints use_symm_break_weeks --encoding bw  # Bitwise
+python run_STS.py 6 --test --constraints use_symm_break_weeks --encoding seq # Sequential
+```
+
+#### 3. Select Group Mode
+Tests all combinations within constraint groups:
+
+```powershell
+# Test all combinations of symmetry breaking constraints with Heule encoding
+python run_STS.py 8 --select symm --encoding he --timeout 300
+
+# Test all combinations of implied constraints with sequential encoding
+python run_STS.py 6 --select implied --encoding seq --runs 3
+
+# Test all constraint groups with bitwise encoding
+python run_STS.py 8 --select all --encoding bw --runs 5
+```
+
+### SAT Examples
+
+```powershell
+# Quick test with 6 teams using default bitwise encoding
+python run_STS.py 6 --generate --runs 1 --timeout 30
+
+# Test different encoding types with 6 teams
+python run_STS.py 6 --generate --encoding np --runs 1  # Naive pairwise
+python run_STS.py 6 --generate --encoding seq --runs 1 # Sequential  
+python run_STS.py 6 --generate --encoding bw --runs 1  # Bitwise (default)
+python run_STS.py 6 --generate --encoding he --runs 1  # Heule
+
+# Comprehensive encoding comparison with constraint analysis
+python run_STS.py 8 --select symm --encoding seq --runs 3 --timeout 120 --verbose
+
+# Test specific constraint combinations with Heule encoding
+python run_STS.py 10 --test --constraints use_symm_break_weeks use_symm_break_teams --encoding he --runs 5
+
+# Compare encoding performance on larger instances
+python run_STS.py 10 --test --constraints use_symm_break_weeks --encoding bw --runs 3  # Bitwise
+python run_STS.py 10 --test --constraints use_symm_break_weeks --encoding he --runs 3  # Heule
+
+# Batch test all encoding types (useful for performance analysis)
+python run_STS.py 6 --test --constraints use_symm_break_teams --encoding np --runs 1  
+python run_STS.py 6 --test --constraints use_symm_break_teams --encoding seq --runs 1
+python run_STS.py 6 --test --constraints use_symm_break_teams --encoding bw --runs 1
+python run_STS.py 6 --test --constraints use_symm_break_teams --encoding he --runs 1
+```
+
+## SAT Output Format
+
+SAT results are saved as JSON files in `res/SAT/{n}.json` where `n` is the number of teams.
+
+### SAT JSON Structure
+
+```json
+{
+  "execution_name": {
+    "time": 2.5,              // Average execution time in seconds
+    "time_std": 0.1,          // Standard deviation of execution times
+    "time_min": 2.4,          // Minimum execution time
+    "time_max": 2.6,          // Maximum execution time
+    "optimal": "true",        // Whether solution was found
+    "obj": null,              // No optimization objective in SAT
+    "sol": [                  // Tournament schedule found
+      [                       // Week 1
+        [1, 2],              // Period 1: Team 1 vs Team 2 (home, away)
+        [3, 4],              // Period 2: Team 3 vs Team 4
+        [5, 6]               // Period 3: Team 5 vs Team 6
+      ],
+      // ... more weeks
+    ],    "solver": "z3",           // Solver used (always z3 for SAT)
+    "constraints": [...],     // List of active constraints
+    "encoding_type": "he",    // SAT encoding type used (np/seq/bw/he)
+    "status": "sat",          // Solution status (sat/unsat/timeout/error)
+    "runs": 5,                // Number of runs performed
+    "sat_count": 5,           // Number of runs that found solutions
+    "unsat_count": 0,         // Number of runs that proved unsatisfiable
+    "timeout_count": 0,       // Number of runs that timed out
+    "error_count": 0          // Number of runs that had errors
+  }
+}
+```
+
+### SAT Result Interpretation
+
+- **`time`**: Average Z3 solver execution time across runs
+- **`status`**: Overall result status:
+  - `"sat"`: Solution found in at least one run
+  - `"unsat"`: Proven unsatisfiable in all runs
+  - `"timeout"`: All runs exceeded time limit
+  - `"mixed"`: Some runs succeeded, others failed
+  - `"error"`: Error occurred during solving
+- **`sol`**: Tournament schedule as [week][period][home_team, away_team] (teams numbered 1-n)
+- **`constraints`**: List of SAT constraints that were enabled
+- **`encoding_type`**: SAT encoding strategy used (np, seq, bw, or he)
+- **Run statistics**: Detailed counts of different outcome types across multiple runs
+
+## SAT Encoding Performance Analysis
+
+The choice of SAT encoding can significantly impact solving performance. Use the `--encoding` parameter to compare different approaches:
+
+### Encoding Comparison Examples
+
+```powershell
+# Compare all encodings on the same problem
+python run_STS.py 8 --generate --encoding np --runs 3  # Naive pairwise
+python run_STS.py 8 --generate --encoding seq --runs 3 # Sequential
+python run_STS.py 8 --generate --encoding bw --runs 3  # Bitwise (default)  
+python run_STS.py 8 --generate --encoding he --runs 3  # Heule
+
+# Test mode with different encodings
+python run_STS.py 6 --test --constraints use_symm_break_weeks --encoding bw
+python run_STS.py 6 --test --constraints use_symm_break_weeks --encoding he
+
+# Systematic encoding analysis with constraint groups
+python run_STS.py 8 --select symm --encoding seq --runs 5
+python run_STS.py 8 --select symm --encoding he --runs 5
+```
+
+### Encoding Selection Guidelines
+
+**For Small Instances (4-6 teams):**
+- All encodings perform well
+- Use default bitwise (`bw`) for consistency
+- Naive pairwise (`np`) acceptable but may be slower
+
+**For Medium Instances (8-10 teams):**
+- **Bitwise (`bw`)**: Generally best performance (default)
+- **Sequential (`seq`)**: Reliable alternative, good for analysis
+- **Heule (`he`)**: Good for constraint decomposition
+- **Avoid naive pairwise (`np`)**: Can become very slow
+
+**For Large Instances (12+ teams):**
+- **Bitwise (`bw`)**: Recommended for best performance
+- **Heule (`he`)**: Good alternative, scales well
+- **Sequential (`seq`)**: Fallback option if others fail
+- **Avoid naive pairwise (`np`)**: Too slow for practical use
+
+**For Performance Comparison Studies:**
+- Use multiple encodings on same instance to compare
+- Results include `encoding_type` field for analysis
+- Consider encoding when interpreting timing results
+
+## SAT vs CP Comparison
+
+Both implementations solve the same problem but use different approaches:
+
+| Aspect | CP (MiniZinc) | SAT (Z3) |
+|--------|---------------|----------|
+| **Solver Type** | Constraint Programming | Boolean Satisfiability |
+| **Optimization** | Supports objective optimization | Pure satisfiability (find any solution) |
+| **Solvers** | Chuffed, Gecode | Z3 SMT solver |
+| **Encoding** | High-level constraints | Boolean variables and clauses with multiple encoding strategies |
+| **Search Strategy** | Built-in CP search | SAT solver heuristics |
+| **Solution Quality** | Can optimize for best solution | Finds any valid solution |
+| **Performance** | Varies by problem size | Generally fast for smaller instances, depends on encoding choice |
+
+### When to Use Each Approach
+
+**Use CP (MiniZinc) when:**
+- You need optimal solutions (minimizing home/away imbalance)
+- Working with larger problem instances (12+ teams)
+- You want to compare different solvers (Chuffed vs Gecode)
+- You need advanced search strategies
+
+**Use SAT (Z3) when:**
+- Any valid solution is sufficient
+- Working with smaller instances (4-10 teams)  
+- You want to analyze Boolean constraint encoding effects
+- You prefer direct Python integration without external tools
+- You want to experiment with different SAT encoding strategies
+
+### Running Comparative Analysis
+
+You can compare both approaches on the same problem:
+
+```powershell
+# CP approach
+python test/CP/run_CP.py -n 6 -g --chuffed --runs 5
+
+# SAT approach with different encodings
+python test/SAT/run_STS.py 6 --generate --encoding bw --runs 5  # Bitwise
+python test/SAT/run_STS.py 6 --generate --encoding seq --runs 5 # Sequential
+python test/SAT/run_STS.py 6 --generate --encoding he --runs 5  # Heule
+
+# Compare results from res/CP/6.json and res/SAT/6.json
+```
+
+### Cross-Platform Encoding Analysis
+
+For comprehensive performance analysis across different encodings:
+
+```powershell
+# Create batch script to test all encodings systematically
+# Example: Test Heule encoding across multiple team sizes
+python test/SAT/run_STS.py 2 --test --encoding he --runs 1
+python test/SAT/run_STS.py 4 --test --encoding he --runs 1  
+python test/SAT/run_STS.py 6 --test --encoding he --runs 1
+python test/SAT/run_STS.py 8 --test --encoding he --runs 1
+python test/SAT/run_STS.py 10 --test --encoding he --runs 1
+```
+
 ## Troubleshooting
 
 ### Common Issues
 
-1. **"MiniZinc not found"**
+1. **"MiniZinc not found"** (CP version)
    - Install MiniZinc from https://www.minizinc.org/
    - Ensure `minizinc` command is in your system PATH
+
+2. **"No module named 'z3'"** (SAT version)
+   - Install Z3 Python bindings: `pip install z3-solver`
+
+3. **"FileNotFoundError: use_constraints.dzn" or similar** (CP version)
+   - Run the script from the repository root directory
+   - Ensure the file structure matches the expected layout
+   - Check that both optimized and non-optimized files exist:
+     - `source/CP/use_constraints.dzn` (for optimized model)
+     - `source/CP/use_constraintsNoOpt.dzn` (for non-optimized model)  
+     - `source/CP/sts.mzn` (optimized model)
+     - `source/CP/stsNoOpt.mzn` (non-optimized model)
 
 2. **"FileNotFoundError: use_constraints.dzn" or similar**
    - Run the script from the repository root directory
