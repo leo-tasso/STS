@@ -1,24 +1,24 @@
 from z3 import *
 import sat_encodings
 import time
+import subprocess
+import os
 
+def create_solver(n: int, solver_args: dict[str,], constraints: dict[str, bool] =None, encoding_type: str ="bw"):
+    """Creates a Z3 solver instance for the STS problem.
 
-def solve_sts(n, constraints=None, encoding_type="bw"):
-    """
-    Solve the Social Tennis Schedule (STS) problem using SAT encoding.
-    
+    Configures a SAT solver with constraints for the STS problem using various encoding schemes.
+    Supports symmetry breaking and implied constraints that can be enabled/disabled.
+
     Args:
         n (int): Number of teams (must be even)
-        constraints (dict): Dictionary of constraint flags, with keys:
-            - use_symm_break_weeks (bool): Apply week symmetry breaking
-            - use_symm_break_periods (bool): Apply period symmetry breaking  
-            - use_symm_break_teams (bool): Apply team symmetry breaking
-            - use_implied_matches_per_team (bool): Add implied constraint for matches per team
-            - use_implied_period_count (bool): Add implied constraint for period appearances
-        encoding_type (str): Type of SAT encoding to use ('np', 'seq', 'bw', 'he')
-    
+        solver_args (dict): Dictionary containing problem parameters:
+        constraints (dict, optional): Dictionary of constraint flags:
+            Defaults to all True if None.
+        encoding_type (str, optional): Type of SAT encoding to use ('np', 'seq', 'bw', 'he')
+
     Returns:
-        dict: Solution dictionary with 'solution', 'time', and 'satisfiable' keys
+        z3.Solver: Configured Z3 solver instance with all constraints added
     """
     # Default constraints
     if constraints is None:
@@ -29,7 +29,7 @@ def solve_sts(n, constraints=None, encoding_type="bw"):
             'use_implied_matches_per_team': True,
             'use_implied_period_count': True
         }
-      # Extract constraint flags
+    # Extract constraint flags
     use_symm_break_weeks = constraints.get('use_symm_break_weeks', True)
     use_symm_break_periods = constraints.get('use_symm_break_periods', True)
     use_symm_break_teams = constraints.get('use_symm_break_teams', True)
@@ -61,17 +61,15 @@ def solve_sts(n, constraints=None, encoding_type="bw"):
         at_most_k = sat_encodings.at_most_k_seq
         exactly_k = sat_encodings.exactly_k_seq
 
-    weeks = n - 1
-    periods = n // 2
-    Teams = range(n)
-    Weeks = range(weeks)
-    Periods = range(periods)    # Boolean variables: home[w][p][t] == True iff team t is home in (w,p)
-    home = [[[Bool(f"home_{w}_{p}_{t}") for t in Teams] for p in Periods] for w in Weeks]
-    away = [[[Bool(f"away_{w}_{p}_{t}") for t in Teams] for p in Periods] for w in Weeks]
-
     s = Solver()
 
-    # Note: encoding functions are selected based on encoding_type parameter
+    weeks = solver_args['weeks']
+    periods = solver_args['periods']
+    Teams = solver_args['Teams']
+    Weeks = solver_args['Weeks']
+    Periods = solver_args['Periods']
+    home = solver_args['home']
+    away = solver_args['away']
 
     # Each slot has exactly one home and one away team, and they are different
     for w in Weeks:
@@ -168,6 +166,45 @@ def solve_sts(n, constraints=None, encoding_type="bw"):
             for t in Teams:
                 s.add(home[0][i][t] if t == 2 * i else Not(home[0][i][t]))
                 s.add(away[0][i][t] if t == 2 * i + 1 else Not(away[0][i][t]))
+    return s
+
+def solve_sts(n, constraints=None, encoding_type="bw"):
+    """
+    Solve the STS problem using SAT encoding.
+    
+    Args:
+        n (int): Number of teams (must be even)
+        constraints (dict): Dictionary of constraint flags, with keys:
+            - use_symm_break_weeks (bool): Apply week symmetry breaking
+            - use_symm_break_periods (bool): Apply period symmetry breaking  
+            - use_symm_break_teams (bool): Apply team symmetry breaking
+            - use_implied_matches_per_team (bool): Add implied constraint for matches per team
+            - use_implied_period_count (bool): Add implied constraint for period appearances
+        encoding_type (str): Type of SAT encoding to use ('np', 'seq', 'bw', 'he')
+    
+    Returns:
+        dict: Solution dictionary with 'solution', 'time', and 'satisfiable' keys
+    """
+
+    weeks = n - 1
+    periods = n // 2
+    Teams = range(n)
+    Weeks = range(weeks)
+    Periods = range(periods)    # Boolean variables: home[w][p][t] == True iff team t is home in (w,p)
+    home = [[[Bool(f"home_{w}_{p}_{t}") for t in Teams] for p in Periods] for w in Weeks]
+    away = [[[Bool(f"away_{w}_{p}_{t}") for t in Teams] for p in Periods] for w in Weeks]
+
+    solver_args = {
+        "weeks": weeks,
+        "periods": periods,
+        "Teams": Teams,
+        "Weeks": Weeks,
+        "Periods": Periods,
+        "home": home,
+        "away": away
+    }
+    
+    s = create_solver(n, constraints, encoding_type, solver_args)
 
     # Solve
     start_time = time.time()
@@ -207,6 +244,138 @@ def solve_sts(n, constraints=None, encoding_type="bw"):
             'satisfiable': False
         }
 
+def solve_sts_dimacs(n, constraints=None, encoding_type="bw", solver=None):
+    """
+    Solve the STS problem using SAT encoding with DIMACS format.
+    
+    Args:
+        n (int): Number of teams (must be even)
+        constraints (dict): Dictionary of constraint flags, with keys:
+            - use_symm_break_weeks (bool): Apply week symmetry breaking
+            - use_symm_break_periods (bool): Apply period symmetry breaking  
+            - use_symm_break_teams (bool): Apply team symmetry breaking
+            - use_implied_matches_per_team (bool): Add implied constraint for matches per team
+            - use_implied_period_count (bool): Add implied constraint for period appearances
+        encoding_type (str): Type of SAT encoding to use ('np', 'seq', 'bw', 'he')
+        solver (str): Solver used with dimacs implementation
+    
+    Returns:
+        dict: Solution dictionary with 'solution', 'time', and 'satisfiable' keys
+    """
+
+    weeks = n - 1
+    periods = n // 2
+    Teams = range(n)
+    Weeks = range(weeks)
+    Periods = range(periods)    # Boolean variables: home[w][p][t] == True iff team t is home in (w,p)
+    home = [[[Bool(f"home_{w}_{p}_{t}") for t in Teams] for p in Periods] for w in Weeks]
+    away = [[[Bool(f"away_{w}_{p}_{t}") for t in Teams] for p in Periods] for w in Weeks]
+
+    solver_args = {
+        "weeks": weeks,
+        "periods": periods,
+        "Teams": Teams,
+        "Weeks": Weeks,
+        "Periods": Periods,
+        "home": home,
+        "away": away
+    }
+    
+    s = create_solver(n, solver_args, constraints, encoding_type)
+
+    goal = Goal()
+    goal.add(s.assertions())
+
+    tactic = Then(Tactic("simplify"), Tactic("tseitin-cnf")) # Combine tactics
+    result_goals = tactic(goal)
+    cnf_goal = result_goals[0]
+    dimacs_string = cnf_goal.dimacs()
+    
+    # Write DIMACS to file
+    dimacs_path = "./sts.dimacs"
+    output_path = "./sts.out"
+    with open(dimacs_path, 'w') as f:
+        f.write(dimacs_string)
+
+    # Run SAT solver
+    start_time = time.time()
+    try:
+        if solver == "minisat":
+            result = subprocess.run([solver, dimacs_path, output_path], 
+                                 capture_output=True, 
+                                 text=True)
+        elif solver == "glucose":
+            result = subprocess.run([solver, "-model", dimacs_path, output_path],
+                                 capture_output=True,
+                                 text=True)
+        else:
+            raise ValueError(f"Unsupported solver: {solver}")
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Solver {solver} not found. Make sure it's installed and in your PATH.")
+
+    solve_time = time.time() - start_time
+
+    # Check if solver found a solution
+    if "UNSAT" in result.stdout or "UNSATISFIABLE" in result.stdout:
+        return {
+            'solution': None,
+            'time': solve_time,
+            'satisfiable': False
+        }
+
+    # Parse solution
+    if not os.path.exists(output_path):
+        raise RuntimeError("Solver did not create output file")
+
+    with open(output_path, 'r') as f:
+        solution_lines = f.readlines()
+
+    # Parse the model line (typically starts with 'v' or contains the variable assignments)
+    model_values = {}
+    for line in solution_lines:
+        if line.startswith('v ') or not line.startswith('c'):
+            values = [int(x) for x in line.strip().split() if x != 'v' and x != '0']
+            for val in values:
+                var_num = abs(val)
+                model_values[var_num] = val > 0
+
+    # Convert solution to same format as solve_sts
+    sol = []
+    weeks = n - 1
+    periods = n // 2
+    Teams = range(n)
+    Weeks = range(weeks)
+    Periods = range(periods)
+
+    for p in Periods:
+        period = []
+        for w in Weeks:
+            home_team = None
+            away_team = None
+            for t in Teams:
+                # Convert Bool variable names to their numeric indices in the DIMACS file
+                home_var = f"home_{w}_{p}_{t}"
+                away_var = f"away_{w}_{p}_{t}"
+                # You'll need to map these to the actual DIMACS variable numbers
+                # This mapping should match how Z3 assigned numbers to variables
+                if home_var in model_values and model_values[home_var]:
+                    home_team = t + 1
+                if away_var in model_values and model_values[away_var]:
+                    away_team = t + 1
+            period.append([home_team, away_team])
+        sol.append(period)
+
+    # Clean up temporary files
+    try:
+        os.remove(output_path)
+    except:
+        pass
+
+    return {
+        'solution': sol,
+        'time': solve_time,
+        'satisfiable': True
+    }
 
 def main():
     """
