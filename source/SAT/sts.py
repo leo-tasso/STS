@@ -387,7 +387,7 @@ def main():
         'use_implied_period_count': True
     }
     encoding_type = "bw"  # Default to bitwise encoding
-    solver = "glucose"
+    solver = "z3"  # Default to Z3 solver
     if solver == "z3":
         result = solve_sts(n, constraints, encoding_type)
     else:
