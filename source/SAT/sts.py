@@ -1,4 +1,6 @@
 from z3 import *
+from pysat.formula import CNF
+from pysat.solvers import Minisat22, Glucose42
 import sat_encodings
 import time
 import subprocess
@@ -204,7 +206,7 @@ def solve_sts(n, constraints=None, encoding_type="bw"):
         "away": away
     }
     
-    s = create_solver(n, constraints, encoding_type, solver_args)
+    s = create_solver(n, solver_args, constraints, encoding_type)
 
     # Solve
     start_time = time.time()
@@ -310,54 +312,37 @@ def solve_sts_dimacs(n: int, constraints: dict[str, bool] =None, encoding_type="
     dimacs_string = cnf_goal.dimacs()
     var_mappings = parse_variable_mappings(dimacs_string.splitlines())
 
-    # Write DIMACS to file
-    dimacs_path = "./dimacs.cnf"
-    output_path = "./sts.out"
+    # Parse DIMACS into PySAT CNF object
+    cnf = CNF(from_string=dimacs_string)
 
-    with open(dimacs_path, 'w') as f:
-        f.write(dimacs_string)
+    # Select solver
+    pysat_solver = None
+    if solver == "minisat":
+        pysat_solver = Minisat22
+    elif solver == "glucose":
+        pysat_solver = Glucose42
+    else:
+        raise ValueError(f"Unsupported solver: {solver}")
 
-    # Run SAT solver
+    # Solve
     start_time = time.time()
-    try:
-        if solver == "minisat":
-            result = subprocess.run([solver, dimacs_path, output_path], 
-                                 capture_output=True, 
-                                 text=True)
-        elif solver == "glucose":
-            result = subprocess.run([solver, "-model", dimacs_path, output_path],
-                                 capture_output=True,
-                                 text=True)
-        else:
-            raise ValueError(f"Unsupported solver: {solver}")
-    except FileNotFoundError:
-        raise FileNotFoundError(f"Solver {solver} not found. Make sure it's installed and in your PATH.")
-
+    with pysat_solver(bootstrap_with=cnf.clauses) as sat_solver:
+        satisfiable = sat_solver.solve()
+        model = sat_solver.get_model() if satisfiable else None
     solve_time = time.time() - start_time
 
-    # Check if solver found a solution
-    if "UNSAT" in result.stdout or "UNSATISFIABLE" in result.stdout:
+    if not satisfiable or model is None:
         return {
             'solution': None,
             'time': solve_time,
             'satisfiable': False
         }
 
-    # Parse solution
-    if not os.path.exists(output_path):
-        raise RuntimeError("Solver did not create output file")
-
-    with open(output_path, 'r') as f:
-        solution_lines = f.readlines()
-
-    # Parse the model line (typically starts with 'v' or contains the variable assignments)
+    # Parse the model into variable assignments
     model_values = {}
-    for line in solution_lines:
-        if line.startswith('v ') or not line.startswith('c'):
-            values = [int(x) for x in line.strip().split() if x != 'v' and x != '0']
-            for val in values:
-                var_num = abs(val)
-                model_values[var_num] = val > 0
+    for val in model:
+        var_num = abs(val)
+        model_values[var_num] = val > 0
 
     # Convert solution to same format as solve_sts
     sol = []
@@ -373,20 +358,14 @@ def solve_sts_dimacs(n: int, constraints: dict[str, bool] =None, encoding_type="
             home_team = None
             away_team = None
             for t in Teams:
-                home_var = var_mappings[f"home_{w}_{p}_{t}"]
-                away_var = var_mappings[f"away_{w}_{p}_{t}"]
-                if home_var in model_values and model_values[home_var]:
+                home_var = var_mappings.get(f"home_{w}_{p}_{t}")
+                away_var = var_mappings.get(f"away_{w}_{p}_{t}")
+                if home_var is not None and home_var in model_values and model_values[home_var]:
                     home_team = t + 1
-                if away_var in model_values and model_values[away_var]:
+                if away_var is not None and away_var in model_values and model_values[away_var]:
                     away_team = t + 1
             period.append([home_team, away_team])
         sol.append(period)
-
-    # Clean up temporary files
-    try:
-        os.remove(output_path)
-    except:
-        pass
 
     return {
         'solution': sol,
@@ -408,8 +387,11 @@ def main():
         'use_implied_period_count': True
     }
     encoding_type = "bw"  # Default to bitwise encoding
-    
-    result = solve_sts_dimacs(n, constraints, encoding_type)
+    solver = "glucose"
+    if solver == "z3":
+        result = solve_sts(n, constraints, encoding_type)
+    else:
+        result = solve_sts_dimacs(n, constraints, encoding_type)
     
     if result['satisfiable']:
         print(result['solution'])
