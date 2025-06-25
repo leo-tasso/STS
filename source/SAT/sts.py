@@ -5,7 +5,8 @@ import sat_encodings
 import time
 
 def create_solver(n: int, solver_args: dict[str,], constraints: dict[str, bool] =None, encoding_type: str ="bw"):
-    """Creates a Z3 solver instance for the STS problem.
+    """
+    Creates a Z3 solver instance for the STS problem.
 
     Configures a SAT solver with constraints for the STS problem using various encoding schemes.
     Supports symmetry breaking and implied constraints that can be enabled/disabled.
@@ -119,7 +120,7 @@ def create_solver(n: int, solver_args: dict[str,], constraints: dict[str, bool] 
                     occ.append(away[w][p][t])
             s.add(exactly_k(occ, weeks, name=f"team_{t}_matches"))
 
-    # Implied constraint for total period appearances
+    # Implied constraint: total period appearances
     if use_implied_period_count:
         for t in Teams:
             occ = []
@@ -129,7 +130,7 @@ def create_solver(n: int, solver_args: dict[str,], constraints: dict[str, bool] 
                     occ.append(away[w][p][t])
             s.add(exactly_k(occ, n - 1, name=f"team_{t}_period_total"))
 
-    # Symmetry breaking: weeks (lex order on home+away vectors)
+    # Helper function for lexicographic ordering
     def lex_less_bool(curr, next):
         # curr, next: lists of Bools
         conditions = []
@@ -144,6 +145,7 @@ def create_solver(n: int, solver_args: dict[str,], constraints: dict[str, bool] 
             conditions.append(condition)
         return Or(conditions)
 
+    # Symmetry breaking: weeks
     if use_symm_break_weeks:
         for w in range(weeks - 1):
             curr = [home[w][p][t] for p in Periods for t in Teams] + [
@@ -154,6 +156,7 @@ def create_solver(n: int, solver_args: dict[str,], constraints: dict[str, bool] 
             ]
             s.add(lex_less_bool(curr, nxt))
 
+    # Symmetry breaking: periods
     if use_symm_break_periods:
         for p in range(periods-1):
             curr = [home[w][p][t] for w in Weeks for t in Teams] + [away[w][p][t] for w in Weeks for t in Teams]
@@ -168,7 +171,7 @@ def create_solver(n: int, solver_args: dict[str,], constraints: dict[str, bool] 
                 s.add(away[0][i][t] if t == 2 * i + 1 else Not(away[0][i][t]))
     return s
 
-def solve_sts(n, constraints=None, encoding_type="bw"):
+def solve_sts(n, constraints=None, encoding_type="bw", timeout: int = 300):
     """
     Solve the STS problem using SAT encoding.
     
@@ -181,6 +184,7 @@ def solve_sts(n, constraints=None, encoding_type="bw"):
             - use_implied_matches_per_team (bool): Add implied constraint for matches per team
             - use_implied_period_count (bool): Add implied constraint for period appearances
         encoding_type (str): Type of SAT encoding to use ('np', 'seq', 'bw', 'he')
+        timeout (int): Timeout in seconds
     
     Returns:
         dict: Solution dictionary with 'solution', 'time', and 'satisfiable' keys
@@ -190,7 +194,8 @@ def solve_sts(n, constraints=None, encoding_type="bw"):
     periods = n // 2
     Teams = range(n)
     Weeks = range(weeks)
-    Periods = range(periods)    # Boolean variables: home[w][p][t] == True iff team t is home in (w,p)
+    Periods = range(periods)    
+    # Boolean variables: home[w][p][t] == True iff team t is home in (w,p)
     home = [[[Bool(f"home_{w}_{p}_{t}") for t in Teams] for p in Periods] for w in Weeks]
     away = [[[Bool(f"away_{w}_{p}_{t}") for t in Teams] for p in Periods] for w in Weeks]
 
@@ -205,6 +210,8 @@ def solve_sts(n, constraints=None, encoding_type="bw"):
     }
     
     s = create_solver(n, solver_args, constraints, encoding_type)
+
+    s.set("timeout", timeout * 1000)
 
     # Solve
     start_time = time.time()
@@ -262,7 +269,7 @@ def parse_variable_mappings(dimacs_lines: list[str]) -> dict[str, int]:
                 var_mappings[var_name_z3] = var_num_dimacs
     return var_mappings
 
-def solve_sts_dimacs(n: int, constraints: dict[str, bool] =None, encoding_type="bw", solver="minisat"):
+def solve_sts_dimacs(n: int, constraints: dict[str, bool] =None, encoding_type="bw", solver="minisat", timeout: int = 300):
     """
     Solve the STS problem using SAT encoding with DIMACS format.
     
@@ -276,6 +283,7 @@ def solve_sts_dimacs(n: int, constraints: dict[str, bool] =None, encoding_type="
             - use_implied_period_count (bool): Add implied constraint for period appearances
         encoding_type (str): Type of SAT encoding to use ('np', 'seq', 'bw', 'he')
         solver (str): Solver used with dimacs implementation
+        timeout (int): Timeout in seconds
     
     Returns:
         dict: Solution dictionary with 'solution', 'time', and 'satisfiable' keys
@@ -325,7 +333,7 @@ def solve_sts_dimacs(n: int, constraints: dict[str, bool] =None, encoding_type="
     # Solve
     start_time = time.time()
     with pysat_solver(bootstrap_with=cnf.clauses) as sat_solver:
-        satisfiable = sat_solver.solve()
+        satisfiable = sat_solver.solve(timeout=timeout)
         model = sat_solver.get_model() if satisfiable else None
     solve_time = time.time() - start_time
 
