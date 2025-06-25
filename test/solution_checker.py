@@ -49,7 +49,6 @@ def fatal_errors(solution):
         fatal_errors.append(f'"n" should be even!!!')
 
     if len(solution) != n//2:
-        print("ERORRRRRR",len(solution),n//2)
         fatal_errors.append(f'the number of periods is not compliant!!!')
 
     if any([len(s) != n - 1 for s in solution]):
@@ -121,4 +120,3 @@ if __name__ == '__main__':
             message = check_solution(sol)
             status = "VALID" if type(message) == str else "INVALID"
             print(f"Approach: {approach}\n  Status: {status}\n  Reason: {message if status == 'VALID' else '\n\t  '.join(message)}\n")
-
