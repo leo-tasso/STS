@@ -3,8 +3,6 @@ from pysat.formula import CNF
 from pysat.solvers import Minisat22, Glucose42
 import sat_encodings
 import time
-import subprocess
-import os
 
 def create_solver(n: int, solver_args: dict[str,], constraints: dict[str, bool] =None, encoding_type: str ="bw"):
     """Creates a Z3 solver instance for the STS problem.
