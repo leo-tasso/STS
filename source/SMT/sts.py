@@ -1,5 +1,7 @@
 from z3 import *
 import time
+import subprocess
+import os
 
 def create_smt_solver(n: int, constraints: dict[str, bool] = None, optimize: bool = False):
     """
@@ -59,6 +61,15 @@ def create_smt_solver(n: int, constraints: dict[str, bool] = None, optimize: boo
             # Home and away teams must be different
             s.add(home[w][p] != away[w][p])
     
+
+    # Helper: pseudo-Boolean equality as sum of 0/1
+    def pb_eq_bool_sum(bool_exprs, rhs):
+        return Sum([If(b, 1, 0) for b in bool_exprs]) == rhs
+
+    # Helper: pseudo-Boolean less-or-equal as sum of 0/1
+    def pb_le_bool_sum(bool_exprs, rhs):
+        return Sum([If(b, 1, 0) for b in bool_exprs]) <= rhs
+
     # Each slot has exactly one home and one away team
     for i in Teams:
         for j in Teams:
@@ -73,8 +84,8 @@ def create_smt_solver(n: int, constraints: dict[str, bool] = None, optimize: boo
                         game2 = And(home[w][p] == j, away[w][p] == i)
                         pair_games.append(game2)
                 # Exactly one of these games occurs
-                s.add(PbEq([(g, 1) for g in pair_games], 1))
-    
+                s.add(pb_eq_bool_sum(pair_games, 1))
+
     # Each team plays once per week
     for w in Weeks:
         for t in Teams:
@@ -82,8 +93,8 @@ def create_smt_solver(n: int, constraints: dict[str, bool] = None, optimize: boo
             for p in Periods:
                 occ.append(home[w][p] == t)
                 occ.append(away[w][p] == t)
-            s.add(PbEq([(i, 1) for i in occ], 1))
-    
+            s.add(pb_eq_bool_sum(occ, 1))
+
     # Period limit: Each team appears in same period at most twice
     for t in Teams:
         for p in Periods:
@@ -91,7 +102,7 @@ def create_smt_solver(n: int, constraints: dict[str, bool] = None, optimize: boo
             for w in Weeks:
                 occ.append(home[w][p] == t)
                 occ.append(away[w][p] == t)
-            s.add(PbLe([(i, 1) for i in occ], 2))
+            s.add(pb_le_bool_sum(occ, 2))
 
     # All teams must be different in each week (no team plays twice in same week)
     for w in Weeks:
@@ -108,8 +119,8 @@ def create_smt_solver(n: int, constraints: dict[str, bool] = None, optimize: boo
                 for p in Periods:
                     total_games.append(home[w][p] == t)
                     total_games.append(away[w][p] == t) 
-            s.add(PbEq([(game, 1) for game in total_games], n - 1))
-    
+            s.add(pb_eq_bool_sum(total_games, n - 1))
+
     # Implied constraint: total period appearances
     if use_implied_period_count:
         for t in Teams:
@@ -118,7 +129,7 @@ def create_smt_solver(n: int, constraints: dict[str, bool] = None, optimize: boo
                 for w in Weeks:
                     total_period_appearances.append(home[w][p] == t)
                     total_period_appearances.append(away[w][p] == t)
-            s.add(PbEq([(app, 1) for app in total_period_appearances], n - 1))
+            s.add(pb_eq_bool_sum(total_period_appearances, n - 1))
     
     # Helper function for lexicographic ordering
     def lex_less_int(curr, next):
@@ -263,6 +274,115 @@ def solve_sts_smt(n: int, constraints: dict[str, bool] = None, optimize: bool = 
             'obj': None
         }
     
+def solve_sts_smt_smtlib(n: int, constraints: dict[str, bool] = None, optimize: bool = False, timeout: int = 300):
+    """
+    Solve the STS problem using SMT-LIB2 export and cvc5 solver.
+    Args:
+        n (int): Number of teams (must be even)
+        constraints (dict): Dictionary of constraint flags
+        optimize (bool): Whether to solve optimization version (not supported for SMT-LIB2 export)
+        timeout (int): Timeout in seconds
+    Returns:
+        dict: Solution dictionary with 'solution', 'time', and 'satisfiable' keys
+    """
+    if optimize:
+        raise NotImplementedError("SMT-LIB2 export does not support optimization for SMT version.")
+
+    s, vars_dict = create_smt_solver(n, constraints, optimize=False)
+    home = vars_dict['home']
+    away = vars_dict['away']
+    Teams = vars_dict['Teams']
+    Weeks = vars_dict['Weeks']
+    Periods = vars_dict['Periods']
+
+    # Export to SMT-LIB2 string and insert logic QF_LIA declaration
+    smt2_string = s.to_smt2()
+    smt2_lines = smt2_string.splitlines()
+    smt2_lines[0] =  "(set-logic QF_LIA)"
+    smt2_string = "\n".join(smt2_lines)
+
+    # Write SMT-LIB2 to file
+    smt2_path = "./sts_smt.smt2"
+    with open(smt2_path, 'w') as f:
+        f.write(smt2_string)
+    # TODO
+    '''
+    # Prepare cvc5 call (assume cvc5 is in PATH)
+    cmd = ["cvc5", "--lang", "smt2", "--produce-models", "--incremental", smt2_path]
+
+    # Run cvc5 with timeout
+    start_time = time.time()
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
+    except subprocess.TimeoutExpired:
+        return {
+            'solution': None,
+            'time': timeout,
+            'satisfiable': False,
+            'error': 'timeout'
+        }
+    solve_time = time.time() - start_time
+
+    stdout = result.stdout.strip()
+    if "unsat" in stdout:
+        try:
+            os.remove(smt2_path)
+        except Exception:
+            pass
+        return {
+            'solution': None,
+            'time': solve_time,
+            'satisfiable': False
+        }
+    if "sat" not in stdout:
+        try:
+            os.remove(smt2_path)
+        except Exception:
+            pass
+        return {
+            'solution': None,
+            'time': solve_time,
+            'satisfiable': False,
+            'error': f"Unknown cvc5 output: {stdout}"
+        }
+
+    # Parse model from cvc5 output
+    # cvc5 prints (define-fun home_1_1 () Int 1) etc.
+    model = {}
+    for line in stdout.splitlines():
+        line = line.strip()
+        if line.startswith("(define-fun"):
+            parts = line.split()
+            if len(parts) >= 5:
+                var = parts[1]
+                try:
+                    val = int(parts[-2])
+                except Exception:
+                    continue
+                model[var] = val
+
+    # Reconstruct solution as in solve_sts_smt
+    sol = []
+    for p in Periods:
+        period = []
+        for w in Weeks:
+            home_team = model.get(f"home_{w}_{p}", None)
+            away_team = model.get(f"away_{w}_{p}", None)
+            period.append([home_team, away_team])
+        sol.append(period)
+
+    try:
+        os.remove(smt2_path)
+    except Exception:
+        pass
+
+    return {
+        'solution': sol,
+        'time': solve_time,
+        'satisfiable': True
+    }
+    '''
+
 def main():
     """
     Main function for standalone execution with default parameters.
@@ -277,8 +397,12 @@ def main():
         'use_implied_period_count': True
     }
     optimize = True  # Default to optimization version
-    result = solve_sts_smt(n, constraints, optimize=optimize)
-
+    solver = "cvc5"
+    if solver == "z3":
+        result = solve_sts_smt(n, constraints, optimize=optimize)
+    else:
+        result = solve_sts_smt_smtlib(n, constraints, optimize=False)
+    return result
     if result['satisfiable']:
         print(result['solution'])
     else:
