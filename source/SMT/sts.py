@@ -217,6 +217,9 @@ def solve_sts_smt(n: int, constraints: dict[str, bool] = None, optimize: bool = 
         
         # Minimize maximum difference
         max_diff = Int("max_diff")
+        # Add range constraint: max_diff should be between 0 and n-1
+        s.add(And(max_diff >= 0, max_diff <= n - 1))
+        
         for t in Teams:
             diff = Abs(home_count[t] - away_count[t])
             s.add(max_diff >= diff)

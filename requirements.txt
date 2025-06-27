@@ -3,8 +3,12 @@
 # For SAT solver implementation (source/SAT/sts.py)
 z3-solver>=4.8.0
 
+# For additional SAT solvers (source/SAT/sts.py)
+python-sat>=0.1.6.dev16
+
 # For plotting and visualization (test/CP/plot_results.py)
 matplotlib>=3.5.0
+
 
 # Note: All other imports (os, json, math, tempfile, subprocess, argparse, 
 # statistics, random, itertools, concurrent.futures, re, collections) 
