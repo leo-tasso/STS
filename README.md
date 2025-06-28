@@ -2,6 +2,123 @@
 
 This repository contains both Constraint Programming (MiniZinc) and SAT-based (Z3) solutions for sports tournament scheduling, along with Python scripts for running experiments with different constraint configurations.
 
+## 🚀 Quick Start
+
+**TL;DR: Using Docker (Recommended)**
+```bash
+docker-compose up -d
+docker-compose exec sts bash
+cd /app/test/CP && python run_CP.py -n 6 --chuffed
+# Results appear in ./res folder on your host machine
+```
+
+## Quick Start with Docker
+
+The easiest way to get started is using Docker, which provides a pre-configured environment with all dependencies:
+
+### Docker Prerequisites
+- Docker Desktop or Docker Engine installed
+- Docker Compose (usually included with Docker Desktop)
+
+### Docker Usage
+
+#### Method 1: Docker Compose (Recommended)
+This is the preferred method as it automatically handles volume mounting and environment setup:
+
+```bash
+# Build and start the container
+docker-compose up -d
+
+# Connect to the running container
+docker-compose exec sts bash
+
+# Inside the container, run experiments:
+cd /app/test/CP
+python run_CP.py -n 6 --chuffed
+python run_CP.py -n 8 --gecode
+
+# Results will automatically appear in your host ./res folder
+```
+
+#### Method 2: Direct Docker Run
+If you prefer using `docker run` directly, you must manually specify volume mounts:
+
+```bash
+# Windows PowerShell
+docker run -it --rm `
+  -v "${PWD}/res:/app/res" `
+  -v "${PWD}/test:/app/test" `
+  -v "${PWD}/source:/app/source" `
+  -w /app `
+  sts-sts bash
+
+# Linux/macOS
+docker run -it --rm \
+  -v "$(pwd)/res:/app/res" \
+  -v "$(pwd)/test:/app/test" \
+  -v "$(pwd)/source:/app/source" \
+  -w /app \
+  sts-sts bash
+```
+
+#### Volume Mounting
+The Docker setup mounts key directories as volumes:
+- `./res` - Results are persisted to your host machine
+- `./test` - Test scripts can be modified on host
+- `./source` - Source code can be modified on host
+
+This allows you to edit files on your host machine and see changes immediately in the container.
+
+#### Running Experiments in Docker
+Once inside the container, you can run all the examples:
+
+```bash
+# Test MiniZinc 2.9.3 installation
+minizinc --version
+minizinc --solvers
+
+# CP experiments
+cd /app/test/CP
+python run_CP.py -n 6 --chuffed
+python run_CP.py -n 8 --gecode
+python run_CP.py --teams 6 --timeout 60
+
+# SAT experiments  
+cd /app/test/SAT
+python run_SAT.py 6 --generate
+python run_SAT.py 8 --test --encoding bw
+
+# SMT experiments
+cd /app/test/SMT
+python run_SMT.py --teams 6
+```
+
+#### Container Management
+```bash
+# Start the container
+docker-compose up -d
+
+# Stop the container
+docker-compose down
+
+# Rebuild after changes to Dockerfile
+docker-compose up --build -d
+
+# View container logs
+docker-compose logs
+
+# Clean up (removes container and volumes)
+docker-compose down --volumes
+
+# Clean up everything (including images)
+docker-compose down --volumes --rmi all
+```
+
+#### Troubleshooting Docker
+- **Files not appearing on host**: Ensure you're using `docker-compose exec sts` instead of `docker run` without volume mounts
+- **Permission issues**: On Linux, you may need to run `sudo chown -R $USER:$USER res/` after running experiments
+- **Container won't start**: Run `docker-compose down` then `docker-compose up --build -d` to rebuild
+
 ## Overview
 
 The system provides two complementary approaches for generating balanced sports tournament schedules:
@@ -618,7 +735,7 @@ python run_STS.py 6 --test --constraints use_symm_break_weeks use_symm_break_tea
 
 # Compare encoding performance across all constraint combinations
 python run_STS.py 6 --test --constraints use_symm_break_weeks --encoding bw  # Bitwise
-python run_STS.py 6 --test --constraints use_symm_break_weeks --encoding seq # Sequential
+python run_STS.py 6 --test --constraints use_symm_break_weeks --encoding he --runs 3  # Heule
 ```
 
 #### 3. Select Group Mode
