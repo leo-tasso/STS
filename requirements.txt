@@ -9,6 +9,12 @@ python-sat>=0.1.6.dev16
 # For plotting and visualization (test/CP/plot_results.py)
 matplotlib>=3.5.0
 
+# For MIP solver implementation (source/MIP/sts.py)
+pulp>=2.7.0
+
+# Optional commercial MIP solvers (uncomment if available)
+# gurobipy>=10.0.0  # Gurobi (requires license)
+# cplex>=22.1.0     # CPLEX (requires license)
 
 # Note: All other imports (os, json, math, tempfile, subprocess, argparse, 
 # statistics, random, itertools, concurrent.futures, re, collections) 
