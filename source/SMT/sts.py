@@ -1,9 +1,8 @@
 from z3 import *
 import time
 import subprocess
-import os
 
-def create_smt_solver(n: int, constraints: dict[str, bool] = None, optimize: bool = False):
+def create_smt_solver(n: int, constraints: dict[str, bool] = None, optimize: bool = False) -> tuple[Solver, dict]:
     """
     Creates a Z3 SMT solver instance for the STS problem.
     
@@ -179,7 +178,7 @@ def create_smt_solver(n: int, constraints: dict[str, bool] = None, optimize: boo
     
     return s, variables
 
-def solve_sts_smt(n: int, constraints: dict[str, bool] = None, optimize: bool = False, timeout: int = 300):
+def solve_sts_smt(n: int, constraints: dict[str, bool] = None, optimize: bool = False, timeout: int = 300) -> dict[str, ]:
     """
     Solve the STS problem using SMT.
     
@@ -256,7 +255,7 @@ def solve_sts_smt(n: int, constraints: dict[str, bool] = None, optimize: bool = 
             sol.append(period_games)
         
         result_dict = {
-            'solution': sol,
+            'sol': sol,
             'time': solve_time,
             'satisfiable': True
         }
@@ -264,17 +263,20 @@ def solve_sts_smt(n: int, constraints: dict[str, bool] = None, optimize: bool = 
         if optimize:
             objective_value = m.evaluate(max_diff).as_long()
             result_dict['obj'] = objective_value
+            result_dict['optimal'] = True
+        else:
+            result_dict['optimal'] = False
 
         return result_dict
     else:
         return {
-            'solution': None,
+            'sol': None,
             'time': solve_time,
-            'satisfiable': False,
+            'optimal': False,
             'obj': None
         }
     
-def solve_sts_smt_smtlib(n: int, constraints: dict[str, bool] = None, optimize: bool = False, timeout: int = 300):
+def solve_sts_smt_smtlib(n: int, constraints: dict[str, bool] = None, optimize: bool = False, timeout: int = 300) -> dict[str, ]:
     """
     Solve the STS problem using SMT-LIB2 export and cvc5 solver.
     Args:
@@ -289,79 +291,72 @@ def solve_sts_smt_smtlib(n: int, constraints: dict[str, bool] = None, optimize: 
         raise NotImplementedError("SMT-LIB2 export does not support optimization for SMT version.")
 
     s, vars_dict = create_smt_solver(n, constraints, optimize=False)
-    home = vars_dict['home']
-    away = vars_dict['away']
-    Teams = vars_dict['Teams']
     Weeks = vars_dict['Weeks']
     Periods = vars_dict['Periods']
 
     # Export to SMT-LIB2 string and insert logic QF_LIA declaration
+    start_time = time.time()
     smt2_string = s.to_smt2()
     smt2_lines = smt2_string.splitlines()
-    smt2_lines[0] =  "(set-logic QF_LIA)"
+    smt2_lines[0] = "(set-logic QF_LIA)"
+    smt2_lines.append("(get-model)")
     smt2_string = "\n".join(smt2_lines)
 
     # Write SMT-LIB2 to file
     smt2_path = "./sts_smt.smt2"
     with open(smt2_path, 'w') as f:
         f.write(smt2_string)
-    # TODO
-    '''
-    # Prepare cvc5 call (assume cvc5 is in PATH)
-    cmd = ["cvc5", "--lang", "smt2", "--produce-models", "--incremental", smt2_path]
+    
+    cmd = ["./cvc5-Linux/bin/cvc5", "--lang", "smt2", "--produce-models", smt2_path]
 
     # Run cvc5 with timeout
-    start_time = time.time()
+    timeout_result = {
+            'sol': None,
+            'time': timeout,
+            'optimal': False,
+            'obj': None,
+            'error': 'timeout'
+        }
     try:
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
     except subprocess.TimeoutExpired:
-        return {
-            'solution': None,
-            'time': timeout,
-            'satisfiable': False,
-            'error': 'timeout'
-        }
+        return timeout_result
+    
     solve_time = time.time() - start_time
+    if solve_time > timeout:
+        return timeout_result
 
     stdout = result.stdout.strip()
+
     if "unsat" in stdout:
-        try:
-            os.remove(smt2_path)
-        except Exception:
-            pass
         return {
-            'solution': None,
+            'sol': None,
             'time': solve_time,
-            'satisfiable': False
+            'optimal': False,
+            'obj': None
         }
     if "sat" not in stdout:
-        try:
-            os.remove(smt2_path)
-        except Exception:
-            pass
         return {
-            'solution': None,
+            'sol': None,
             'time': solve_time,
-            'satisfiable': False,
+            'optimal': False,
+            'obj': None,
             'error': f"Unknown cvc5 output: {stdout}"
         }
 
     # Parse model from cvc5 output
-    # cvc5 prints (define-fun home_1_1 () Int 1) etc.
     model = {}
     for line in stdout.splitlines():
         line = line.strip()
         if line.startswith("(define-fun"):
+            # Remove trailing ')'
+            line = line[:-1] 
             parts = line.split()
             if len(parts) >= 5:
                 var = parts[1]
-                try:
-                    val = int(parts[-2])
-                except Exception:
-                    continue
-                model[var] = val
+                value = int(parts[-1])
+                model[var] = value
 
-    # Reconstruct solution as in solve_sts_smt
     sol = []
     for p in Periods:
         period = []
@@ -371,17 +366,14 @@ def solve_sts_smt_smtlib(n: int, constraints: dict[str, bool] = None, optimize: 
             period.append([home_team, away_team])
         sol.append(period)
 
-    try:
-        os.remove(smt2_path)
-    except Exception:
-        pass
-
     return {
-        'solution': sol,
+        'sol': sol,
         'time': solve_time,
-        'satisfiable': True
+        'satisfiable': True,
+        'optimal': False,
+        'obj': None
     }
-    '''
+    
 
 def main():
     """
@@ -390,21 +382,22 @@ def main():
     """
     n = 6
     constraints = {
-        'use_symm_break_weeks': True,
+        'use_symm_break_weeks': False,
         'use_symm_break_periods': True,
         'use_symm_break_teams': True,
         'use_implied_matches_per_team': True,
         'use_implied_period_count': True
     }
-    optimize = True  # Default to optimization version
-    solver = "cvc5"
-    if solver == "z3":
+    optimize = False  # Default to sat version
+    solver = "z3"  
+    if solver == "cvc5":
         result = solve_sts_smt(n, constraints, optimize=optimize)
     else:
         result = solve_sts_smt_smtlib(n, constraints, optimize=False)
-    return result
-    if result['satisfiable']:
-        print(result['solution'])
+
+    print(result)
+    if result['sol']:
+        print(result['sol'])
     else:
         print("unsat")
 
