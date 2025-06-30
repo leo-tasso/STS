@@ -1,15 +1,8 @@
-"""
-Mixed Integer Programming (MIP) implementation for Sports Tournament Scheduling (STS) problem.
-
-This module provides functions to solve the STS problem using MIP formulation with various solvers.
-The STS problem involves scheduling matches between n teams over n-1 weeks with n/2 periods per week.
-"""
-
 import pulp
 import time
-from typing import Dict, List, Tuple, Optional, Any
+from typing import Dict, List, Tuple, Any
 
-def create_mip_model(n: int, constraints: dict[str, bool] = None, solver_name: str = "PULP_CBC_CMD") -> Tuple[pulp.LpProblem, Dict[str, Any]]:
+def create_mip_model(n: int, constraints: dict[str, bool] = None, solver_name: str = "PULP_CBC_CMD", optimize: bool = False) -> Tuple[pulp.LpProblem, Dict[str, Any]]:
     """
     Creates a MIP model for the STS problem using PuLP.
     
@@ -17,6 +10,7 @@ def create_mip_model(n: int, constraints: dict[str, bool] = None, solver_name: s
         n (int): Number of teams (must be even)
         constraints (dict): Dictionary of constraint flags
         solver_name (str): Name of the solver to use
+        optimize (bool): Whether to optimize for home/away balance
     
     Returns:
         tuple: (model, variables_dict) where model is PuLP model and variables_dict contains all variables
@@ -45,7 +39,7 @@ def create_mip_model(n: int, constraints: dict[str, bool] = None, solver_name: s
     Periods = list(range(1, periods + 1))
     
     # Create the model
-    model = pulp.LpProblem("Sports_Tournament_Scheduling", pulp.LpMinimize)
+    model = pulp.LpProblem("STS_MIP", pulp.LpMinimize)
     
     # Decision variables: x[w][p][i][j] = 1 if team i plays at home against team j in week w, period p
     x = {}
@@ -61,9 +55,36 @@ def create_mip_model(n: int, constraints: dict[str, bool] = None, solver_name: s
                     else:
                         x[w][p][i][j] = None
     
-    # Objective: Just find a feasible solution (no specific optimization goal)
-    # We could add objectives like minimizing travel, balancing home/away games, etc.
-    model += 0, "Feasibility_Problem"
+    # Home/away count for fairness
+    home_count = {t: pulp.LpVariable(f"home_count_{t}", lowBound=0, upBound=n-1, cat='Integer') for t in Teams}
+    away_count = {t: pulp.LpVariable(f"away_count_{t}", lowBound=0, upBound=n-1, cat='Integer') for t in Teams}
+
+    for t in Teams:
+        home_games = []
+        away_games = []
+        for w in Weeks:
+            for p in Periods:
+                for opp in Teams:
+                    if opp != t:
+                        home_games.append(x[w][p][t][opp])
+                        away_games.append(x[w][p][opp][t])
+        model += home_count[t] == pulp.lpSum(home_games), f"Home_Count_Team_{t}"
+        model += away_count[t] == pulp.lpSum(away_games), f"Away_Count_Team_{t}"
+
+    # Implied matches per team constraint
+    if use_implied_matches_per_team:
+        for t in Teams:
+            model += home_count[t] + away_count[t] == n - 1, f"Implied_Matches_Per_Team_{t}"
+
+    # Objective: maximize home/away balance if optimize, else feasibility
+    if optimize:
+        max_diff = pulp.LpVariable("max_diff", lowBound=0, upBound=n-1, cat='Integer')
+        for t in Teams:
+            model += home_count[t] - away_count[t] <= max_diff, f"MaxDiff_Pos_{t}"
+            model += away_count[t] - home_count[t] <= max_diff, f"MaxDiff_Neg_{t}"
+        model += max_diff, "Minimize_Max_Home_Away_Diff"
+    else:
+        model += 0, "Feasibility_Problem"
     
     # Constraint 1: Each slot (week, period) has exactly one match
     for w in Weeks:
@@ -150,7 +171,7 @@ def create_mip_model(n: int, constraints: dict[str, bool] = None, solver_name: s
     return model, variables
 
 def solve_sts_mip(n: int, constraints: dict[str, bool] = None, solver_name: str = "PULP_CBC_CMD", 
-                  timeout_sec: int = 300, verbose: bool = False) -> dict:
+                  timeout_sec: int = 300, verbose: bool = False, optimize: bool = False) -> dict:
     """
     Solves the STS problem using MIP formulation.
     
@@ -160,6 +181,7 @@ def solve_sts_mip(n: int, constraints: dict[str, bool] = None, solver_name: str 
         solver_name (str): Solver to use ('PULP_CBC_CMD', 'GUROBI_CMD', 'CPLEX_CMD', etc.)
         timeout_sec (int): Timeout in seconds
         verbose (bool): Whether to print verbose output
+        optimize (bool): Whether to optimize for home/away balance
         
     Returns:
         dict: Results dictionary with timing, solution status, and solution
@@ -176,7 +198,7 @@ def solve_sts_mip(n: int, constraints: dict[str, bool] = None, solver_name: str 
     
     try:
         # Create the model
-        model, variables = create_mip_model(n, constraints, solver_name)
+        model, variables = create_mip_model(n, constraints, solver_name, optimize=optimize)
         
         # Get solver
         if solver_name == "PULP_CBC_CMD":
@@ -225,10 +247,17 @@ def solve_sts_mip(n: int, constraints: dict[str, bool] = None, solver_name: str 
                         period_schedule.append([0, 0])  # Placeholder if no match found
                 solution.append(period_schedule)
             
+            # Extract objective value if optimize
+            obj_val = None
+            if optimize:
+                obj_val = pulp.value(model.objective)
+            else:
+                obj_val = 1  # Fixed value for feasibility
+
             return {
-                "time": int(round(solve_time)),  # Time in seconds as integer
+                "time": int(round(solve_time)),
                 "optimal": "true",
-                "obj": 1,  # Fixed objective value like CP
+                "obj": obj_val,
                 "sol": solution,
                 "solver": solver_name,
                 "constraints": [k for k, v in constraints.items() if v] if constraints else []
@@ -301,13 +330,5 @@ if __name__ == "__main__":
     print("Available MIP solvers:", get_available_solvers())
     
     # Test with small instance
-    result = solve_sts_mip(4, verbose=True)
-    print(f"Test result: {result['status']} in {result['time']}ms")
-    
-    if result['sol']:
-        print("Solution:")
-        for w, week_data in result['sol'].items():
-            print(f"Week {w}:")
-            for p, period_data in week_data.items():
-                if period_data:
-                    print(f"  Period {p}: Team {period_data['home']} (home) vs Team {period_data['away']} (away)")
+    result = solve_sts_mip(12, verbose=False, optimize=False)
+    print(f"Test result: {result} in {result['time']}ms")
