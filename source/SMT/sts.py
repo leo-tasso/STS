@@ -1,6 +1,7 @@
 from z3 import *
 import time
 import subprocess
+import os
 
 def create_smt_solver(n: int, constraints: dict[str, bool] = None, optimize: bool = False) -> tuple[Solver, dict]:
     """
@@ -307,7 +308,9 @@ def solve_sts_smt_smtlib(n: int, constraints: dict[str, bool] = None, optimize: 
     with open(smt2_path, 'w') as f:
         f.write(smt2_string)
     
-    cmd = ["./cvc5-Linux/bin/cvc5", "--lang", "smt2", "--produce-models", smt2_path]
+    # Use an environment variable for the cvc5 binary location, fallback to default
+    cvc5_bin = os.environ.get("CVC5_BIN", "./cvc5-Linux/bin/cvc5")
+    cmd = [cvc5_bin, "--lang", "smt2", "--produce-models", smt2_path]
 
     # Run cvc5 with timeout
     timeout_result = {
