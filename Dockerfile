@@ -47,6 +47,7 @@ RUN cd /tmp && \
 ENV PATH="/opt/minizinc/bin:${PATH}"
 ENV PYTHONPATH="/app"
 ENV PYTHONUNBUFFERED=1
+ENV CVC5_BIN="/app/source/SMT/cvc5/bin/cvc5"
 
 # Create app directory and set as working directory
 WORKDIR /app
