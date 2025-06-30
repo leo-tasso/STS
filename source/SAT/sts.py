@@ -309,6 +309,7 @@ def solve_sts_dimacs(n: int, constraints: dict[str, bool] =None, encoding_type="
     
     s = create_solver(n, solver_args, constraints, encoding_type)
 
+    start_time = time.time()
     goal = Goal()
     goal.add(s.assertions())
 
@@ -331,7 +332,6 @@ def solve_sts_dimacs(n: int, constraints: dict[str, bool] =None, encoding_type="
         raise ValueError(f"Unsupported solver: {solver}")
 
     # Solve
-    start_time = time.time()
     with pysat_solver(bootstrap_with=cnf.clauses) as sat_solver:
         satisfiable = sat_solver.solve(timeout=timeout)
         model = sat_solver.get_model() if satisfiable else None
