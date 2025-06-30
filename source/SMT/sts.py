@@ -309,7 +309,7 @@ def solve_sts_smt_smtlib(n: int, constraints: dict[str, bool] = None, optimize: 
         f.write(smt2_string)
     
     # Use an environment variable for the cvc5 binary location, fallback to default
-    cvc5_bin = os.environ.get("CVC5_BIN", "./cvc5-Linux/bin/cvc5")
+    cvc5_bin = os.environ.get("CVC5_BIN", "./cvc5/bin/cvc5")
     cmd = [cvc5_bin, "--lang", "smt2", "--produce-models", smt2_path]
 
     # Run cvc5 with timeout
