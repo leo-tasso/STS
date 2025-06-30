@@ -3,6 +3,7 @@ from pysat.formula import CNF
 from pysat.solvers import Minisat22, Glucose42
 import sat_encodings
 import time
+import concurrent.futures
 
 def create_solver(n: int, solver_args: dict[str,], constraints: dict[str, bool] =None, encoding_type: str ="bw"):
     """
@@ -331,10 +332,24 @@ def solve_sts_dimacs(n: int, constraints: dict[str, bool] =None, encoding_type="
     else:
         raise ValueError(f"Unsupported solver: {solver}")
 
-    # Solve
-    with pysat_solver(bootstrap_with=cnf.clauses) as sat_solver:
-        satisfiable = sat_solver.solve(timeout=timeout)
-        model = sat_solver.get_model() if satisfiable else None
+    # Solve with timeout for pysat solvers
+    def pysat_solve_with_model():
+        with pysat_solver(bootstrap_with=cnf.clauses) as sat_solver:
+            satisfiable = sat_solver.solve()
+            model = sat_solver.get_model() if satisfiable else None
+        return satisfiable, model
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+        future = executor.submit(pysat_solve_with_model)
+        try:
+            satisfiable, model = future.result(timeout=timeout)
+        except concurrent.futures.TimeoutError:
+            solve_time = time.time() - start_time
+            return {
+                'solution': None,
+                'time': solve_time,
+                'satisfiable': False
+            }
     solve_time = time.time() - start_time
 
     if not satisfiable or model is None:
@@ -393,11 +408,11 @@ def main():
         'use_implied_period_count': True
     }
     encoding_type = "bw"  # Default to bitwise encoding
-    solver = "z3"  # Default to Z3 solver
+    solver = "glucose"  # Default to Z3 solver
     if solver == "z3":
         result = solve_sts(n, constraints, encoding_type)
     else:
-        result = solve_sts_dimacs(n, constraints, encoding_type)
+        result = solve_sts_dimacs(n, constraints, encoding_type, solver=solver)
     
     if result['satisfiable']:
         print(result['solution'])
