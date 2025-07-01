@@ -146,19 +146,17 @@ def create_smt_solver(n: int, constraints: dict[str, bool] = None, optimize: boo
             conditions.append(condition)
         return Or(conditions)
     
-    # Symmetry breaking: weeks
-    if use_symm_break_weeks:
-        for w in range(1, weeks):
-            curr = [home[w][p] for p in Periods] + [away[w][p] for p in Periods]
-            next = [home[w+1][p] for p in Periods] + [away[w+1][p] for p in Periods]
-            s.add(lex_less_int(curr, next))
+    # Symmetry breaking: weeks (but only for the first pair of weeks)
+    if use_symm_break_weeks and weeks > 1:
+        curr = [home[1][p] for p in Periods] + [away[1][p] for p in Periods]
+        next = [home[2][p] for p in Periods] + [away[2][p] for p in Periods]
+        s.add(lex_less_int(curr, next))
 
-    # Symmetry breaking: periods
-    if use_symm_break_periods:
-        for p in range(1, periods):
-            curr = [home[w][p] for w in Weeks] + [away[w][p] for w in Weeks]
-            next = [home[w][p+1] for w in Weeks] + [away[w][p+1] for w in Weeks]
-            s.add(lex_less_int(curr, next))
+    # Symmetry breaking: periods (but only for the first pair of periods)
+    if use_symm_break_periods and periods > 1:
+        curr = [home[w][1] for w in Weeks] + [away[w][1] for w in Weeks]
+        next = [home[w][2] for w in Weeks] + [away[w][2] for w in Weeks]
+        s.add(lex_less_int(curr, next))
 
     # Symmetry breaking: teams (fix first week)
     if use_symm_break_teams:

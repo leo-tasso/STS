@@ -25,8 +25,8 @@ def create_solver(n: int, solver_args: dict[str,], constraints: dict[str, bool] 
     # Default constraints
     if constraints is None:
         constraints = {
-            'use_symm_break_weeks': True,
-            'use_symm_break_periods': True,
+            'use_symm_break_weeks': False,
+            'use_symm_break_periods': False,
             'use_symm_break_teams': True,
             'use_implied_matches_per_team': True,
             'use_implied_period_count': True
@@ -146,23 +146,21 @@ def create_solver(n: int, solver_args: dict[str,], constraints: dict[str, bool] 
             conditions.append(condition)
         return Or(conditions)
 
-    # Symmetry breaking: weeks
-    if use_symm_break_weeks:
-        for w in range(weeks - 1):
-            curr = [home[w][p][t] for p in Periods for t in Teams] + [
-                away[w][p][t] for p in Periods for t in Teams
-            ]
-            nxt = [home[w + 1][p][t] for p in Periods for t in Teams] + [
-                away[w + 1][p][t] for p in Periods for t in Teams
-            ]
-            s.add(lex_less_bool(curr, nxt))
+    # Symmetry breaking: weeks (but only for the first pair of weeks)
+    if use_symm_break_weeks and weeks > 1:
+        curr = [home[0][p][t] for p in Periods for t in Teams] + \
+            [away[0][p][t] for p in Periods for t in Teams]
+        nxt = [home[1][p][t] for p in Periods for t in Teams] + \
+            [away[1][p][t] for p in Periods for t in Teams]
+        s.add(lex_less_bool(curr, nxt))
 
-    # Symmetry breaking: periods
-    if use_symm_break_periods:
-        for p in range(periods-1):
-            curr = [home[w][p][t] for w in Weeks for t in Teams] + [away[w][p][t] for w in Weeks for t in Teams]
-            nxt = [home[w][p+1][t] for w in Weeks for t in Teams] + [away[w][p+1][t] for w in Weeks for t in Teams]
-            s.add(lex_less_bool(curr, nxt))
+    # Symmetry breaking: periods (but only for the first pair of periods)
+    if use_symm_break_periods and periods > 1:
+        curr = [home[w][0][t] for w in Weeks for t in Teams] + \
+            [away[w][0][t] for w in Weeks for t in Teams]
+        nxt = [home[w][1][t] for w in Weeks for t in Teams] + \
+            [away[w][1][t] for w in Weeks for t in Teams]
+        s.add(lex_less_bool(curr, nxt))
 
     # Symmetry breaking: teams (fix first week)
     if use_symm_break_teams:
@@ -399,7 +397,7 @@ def main():
     Main function for standalone execution with default parameters.
     This preserves the original behavior when sts.py is run directly.
     """
-    n = 6
+    n = 8
     constraints = {
         'use_symm_break_weeks': True,
         'use_symm_break_periods': True,
@@ -408,7 +406,7 @@ def main():
         'use_implied_period_count': True
     }
     encoding_type = "bw"  # Default to bitwise encoding
-    solver = "glucose"  # Default to Z3 solver
+    solver = "z3"  # Default to Z3 solver
     if solver == "z3":
         result = solve_sts(n, constraints, encoding_type)
     else:

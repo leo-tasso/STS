@@ -17,16 +17,12 @@ def create_mip_model(n: int, constraints: dict[str, bool] = None, optimize: bool
     # Default constraints
     if constraints is None:
         constraints = {
-            'use_symm_break_weeks': True,
-            'use_symm_break_periods': True, 
             'use_symm_break_teams': True,
-            'use_implied_matches_per_team': True,
-            'use_implied_period_count': True
+            'use_implied_matches_per_team': False,
+            'use_implied_period_count': False
         }
     
     # Extract constraint flags
-    use_symm_break_weeks = constraints.get('use_symm_break_weeks', True)
-    use_symm_break_periods = constraints.get('use_symm_break_periods', True)
     use_symm_break_teams = constraints.get('use_symm_break_teams', True)
     use_implied_matches_per_team = constraints.get('use_implied_matches_per_team', True)
     use_implied_period_count = constraints.get('use_implied_period_count', True)
@@ -137,26 +133,30 @@ def create_mip_model(n: int, constraints: dict[str, bool] = None, optimize: bool
                             period_appearances.append(x[w][p][opponent][t])  # t away
                 model += pulp.lpSum(period_appearances) <= 2, f"Period_Limit_T{t}_P{p}"
     
-    # Symmetry breaking constraints
-    if use_symm_break_weeks:
-        # Team 1 plays its first match in week 1, period 1
-        first_week_matches = []
-        for opponent in Teams[1:]:  # All teams except team 1
-            first_week_matches.append(x[1][1][1][opponent])
-            first_week_matches.append(x[1][1][opponent][1])
-        model += pulp.lpSum(first_week_matches) == 1, "Symm_Break_Week_Team1_W1_P1"
-    
-    if use_symm_break_periods:
-        # Team 1 plays at home in period 1 of week 1
-        home_matches_team1_w1_p1 = []
-        for opponent in Teams[1:]:
-            home_matches_team1_w1_p1.append(x[1][1][1][opponent])
-        model += pulp.lpSum(home_matches_team1_w1_p1) == 1, "Symm_Break_Period_Team1_Home_W1_P1"
-    
+    # For each period p in week 1, fix match: team (2p-1) at home vs team (2p) away
     if use_symm_break_teams:
-        # Team 1 plays against team 2 in week 1
-        model += x[1][1][1][2] + x[1][1][2][1] == 1, "Symm_Break_Teams_T1_vs_T2_W1"
+        for p in Periods:
+            i = 2 * p - 1
+            j = 2 * p
+            # Set x[1][p][i][j] == 1, all other x[1][p][a][b] == 0 for (a,b) != (i,j)
+            for a in Teams:
+                for b in Teams:
+                    if a != b:
+                        if a == i and b == j:
+                            model += x[1][p][a][b] == 1, f"Symm_Break_Teams_1_P{p}_T{i}_T{j}"
+                        else:
+                            model += x[1][p][a][b] == 0, f"Symm_Break_Teams_0_P{p}_T{a}_T{b}"
     
+    # Fix the order of team 1's opponents: in week w, team 1 plays against team w+1
+    for w in Weeks:
+        if w + 1 in Teams:
+            match_sum = []
+            for p in Periods:
+                # team 1 at home vs w+1, or w+1 at home vs team 1
+                match_sum.append(x[w][p][1][w+1])
+                match_sum.append(x[w][p][w+1][1])
+            model += pulp.lpSum(match_sum) == 1, f"Fix_Team1_Opponent_Week{w}_vs_{w+1}"
+
     # Store variables for later use
     variables = {
         'x': x,
@@ -216,9 +216,6 @@ def solve_sts_mip(n: int, constraints: dict[str, bool] = None, solver_name: str 
         
         end_time = time.time()
         solve_time = end_time - start_time
-        
-        # Check solution status
-        status = pulp.LpStatus[model.status]
         
         if model.status == pulp.LpStatusOptimal:
             # Extract solution
@@ -329,5 +326,5 @@ if __name__ == "__main__":
     print("Available MIP solvers:", get_available_solvers())
     
     # Test with small instance
-    result = solve_sts_mip(12, verbose=False, optimize=False)
+    result = solve_sts_mip(10, verbose=False, optimize=False)
     print(f"Test result: {result} in {result['time']}ms")
