@@ -97,6 +97,7 @@ jobs:
     - name: Set environment variables
       run: |
         echo "PYTHONPATH=${{ github.workspace }}" >> $GITHUB_ENV
+        echo "CVC5_BIN=${{ github.workspace }}/source/SMT/cvc5/bin/cvc5" >> $GITHUB_ENV
         
     - name: Clean results directory
       run: |
