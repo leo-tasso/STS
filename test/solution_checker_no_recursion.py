@@ -240,6 +240,11 @@ def main():
     invalid_solutions = 0
 
     for filename in json_files:
+        # Skip 4.json files
+        if filename == "4.json":
+            print(f"\nSkipping file: {filename} (4 is unsat)")
+            continue
+            
         filepath = os.path.join(directory, filename)
         print(f"\nChecking file: {filename}")
         
