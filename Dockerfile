@@ -3,7 +3,7 @@ FROM ubuntu:22.04
 # Prevent interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install system dependencies and Python
+# Install system dependencies, Python, and MiniZinc
 RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
@@ -30,6 +30,7 @@ RUN apt-get update && apt-get install -y \
     libgtk-3-0 \
     glpk-utils \
     libglpk-dev \
+    minizinc \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -37,16 +38,7 @@ RUN apt-get update && apt-get install -y \
 RUN ln -sf /usr/bin/python3 /usr/bin/python && \
     ln -sf /usr/bin/pip3 /usr/bin/pip
 
-# Download and install MiniZinc 2.9.3
-RUN cd /tmp && \
-    wget -q https://github.com/MiniZinc/MiniZincIDE/releases/download/2.9.3/MiniZincIDE-2.9.3-bundle-linux-x86_64.tgz && \
-    tar -xzf MiniZincIDE-2.9.3-bundle-linux-x86_64.tgz && \
-    mv MiniZincIDE-2.9.3-bundle-linux-x86_64 /opt/minizinc && \
-    chmod -R +x /opt/minizinc/bin/ && \
-    rm -f MiniZincIDE-2.9.3-bundle-linux-x86_64.tgz
-
 # Set environment variables
-ENV PATH="/opt/minizinc/bin:${PATH}"
 ENV PYTHONPATH="/app"
 ENV PYTHONUNBUFFERED=1
 ENV CVC5_BIN="/app/source/SMT/cvc5/bin/cvc5"
