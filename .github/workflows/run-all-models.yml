@@ -134,14 +134,14 @@ jobs:
         minizinc test.mzn && echo "✅ Simple test passed" || echo "❌ Simple test failed"
         rm -f test.mzn
         echo "Test CP model directly:"
-        cd test/CP
+        cd CP
         if [ -f "../../source/CP/sts.mzn" ] && [ -f "../../source/CP/use_constraints.dzn" ]; then
           echo "Testing CP model with n=2..."
           timeout 30 minizinc --solver chuffed --time-limit 5000 ../../source/CP/sts.mzn ../../source/CP/use_constraints.dzn -D "n=2;" -D "chuffed=true;" 2>&1 | head -20
         else
           echo "❌ CP model files not found"
         fi
-        cd ../..
+        cd ..
         echo "====================================="
         
         # Parse team numbers into space-separated format
