@@ -89,6 +89,17 @@ jobs:
       run: |
         echo "PYTHONPATH=${{ github.workspace }}" >> $GITHUB_ENV
         
+    - name: Clean results directory
+      run: |
+        echo "Cleaning previous results..."
+        if [ -d "res" ]; then
+          find res -name "*.json" -type f -delete
+          echo "Cleaned existing result files from res/ directory"
+        else
+          echo "res/ directory not found, creating it..."
+          mkdir -p res
+        fi
+        
     - name: Prepare input parameters
       id: params
       run: |
