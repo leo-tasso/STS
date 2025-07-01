@@ -72,7 +72,18 @@ jobs:
     - name: Install system dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential minizinc
+        sudo apt-get install -y build-essential
+        
+        # Install MiniZinc from official release (more recent than apt version)
+        MINIZINC_VERSION="2.8.5"
+        wget https://github.com/MiniZinc/MiniZincIDE/releases/download/${MINIZINC_VERSION}/MiniZincIDE-${MINIZINC_VERSION}-bundle-linux-x86_64.tgz
+        tar -xzf MiniZincIDE-${MINIZINC_VERSION}-bundle-linux-x86_64.tgz
+        sudo mv MiniZincIDE-${MINIZINC_VERSION}-bundle-linux-x86_64 /opt/minizinc
+        sudo ln -sf /opt/minizinc/bin/minizinc /usr/local/bin/minizinc
+        sudo ln -sf /opt/minizinc/bin/mzn2fzn /usr/local/bin/mzn2fzn
+        
+        # Verify installation
+        minizinc --version
         
     - name: Install Python dependencies
       run: |
