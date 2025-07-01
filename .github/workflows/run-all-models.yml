@@ -89,6 +89,22 @@ jobs:
         echo "Available solvers:"
         minizinc --solvers || echo "No solvers found"
         
+    - name: Install CVC5 SMT solver
+      run: |
+        # Create the CVC5 directory structure
+        mkdir -p source/SMT/cvc5/bin
+        
+        # Download CVC5 binary for Linux
+        CVC5_VERSION="1.0.5"
+        wget -O source/SMT/cvc5/bin/cvc5 "https://github.com/cvc5/cvc5/releases/download/cvc5-${CVC5_VERSION}/cvc5-Linux"
+        
+        # Make it executable
+        chmod +x source/SMT/cvc5/bin/cvc5
+        
+        # Verify CVC5 installation
+        echo "CVC5 version:"
+        source/SMT/cvc5/bin/cvc5 --version || echo "CVC5 installation failed"
+        
     - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip
