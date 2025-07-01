@@ -72,7 +72,14 @@ jobs:
     - name: Install system dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential minizinc
+        sudo apt-get install -y build-essential wget
+        
+        # Install MiniZinc bundle with all solvers (including chuffed)
+        MINIZINC_VERSION="2.8.5"
+        wget https://github.com/MiniZinc/MiniZincIDE/releases/download/${MINIZINC_VERSION}/MiniZincIDE-${MINIZINC_VERSION}-bundle-linux-x86_64.tgz
+        tar -xzf MiniZincIDE-${MINIZINC_VERSION}-bundle-linux-x86_64.tgz
+        sudo mv MiniZincIDE-${MINIZINC_VERSION}-bundle-linux-x86_64 /opt/minizinc
+        sudo ln -sf /opt/minizinc/bin/minizinc /usr/local/bin/minizinc
         
         # Verify MiniZinc installation
         echo "MiniZinc version:"
@@ -136,7 +143,9 @@ jobs:
         echo "Test CP model directly:"
         cd CP
         if [ -f "../../source/CP/sts.mzn" ] && [ -f "../../source/CP/use_constraints.dzn" ]; then
-          echo "Testing CP model with n=2..."
+          echo "Testing CP model with n=2 using gecode..."
+          timeout 30 minizinc --solver gecode --time-limit 5000 ../../source/CP/sts.mzn ../../source/CP/use_constraints.dzn -D "n=2;" -D "chuffed=false;" 2>&1 | head -20
+          echo "Testing CP model with n=2 using chuffed..."
           timeout 30 minizinc --solver chuffed --time-limit 5000 ../../source/CP/sts.mzn ../../source/CP/use_constraints.dzn -D "n=2;" -D "chuffed=true;" 2>&1 | head -20
         else
           echo "❌ CP model files not found"
