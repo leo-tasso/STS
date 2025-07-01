@@ -72,18 +72,15 @@ jobs:
     - name: Install system dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential
+        sudo apt-get install -y build-essential minizinc
         
-        # Install MiniZinc from official release (more recent than apt version)
-        MINIZINC_VERSION="2.8.5"
-        wget https://github.com/MiniZinc/MiniZincIDE/releases/download/${MINIZINC_VERSION}/MiniZincIDE-${MINIZINC_VERSION}-bundle-linux-x86_64.tgz
-        tar -xzf MiniZincIDE-${MINIZINC_VERSION}-bundle-linux-x86_64.tgz
-        sudo mv MiniZincIDE-${MINIZINC_VERSION}-bundle-linux-x86_64 /opt/minizinc
-        sudo ln -sf /opt/minizinc/bin/minizinc /usr/local/bin/minizinc
-        sudo ln -sf /opt/minizinc/bin/mzn2fzn /usr/local/bin/mzn2fzn
-        
-        # Verify installation
+        # Verify MiniZinc installation
+        echo "MiniZinc version:"
         minizinc --version
+        echo "MiniZinc location:"
+        which minizinc
+        echo "Available solvers:"
+        minizinc --solvers || echo "No solvers found"
         
     - name: Install Python dependencies
       run: |
@@ -126,6 +123,11 @@ jobs:
     - name: Run all STS models
       run: |
         cd test
+        
+        # Debug: Check MiniZinc is still working
+        echo "=== Pre-execution MiniZinc check ==="
+        minizinc --version
+        echo "====================================="
         
         # Parse team numbers into space-separated format
         TEAM_NUMBERS=$(echo "${{ steps.params.outputs.team_numbers }}" | tr ',' ' ')
