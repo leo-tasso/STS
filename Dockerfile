@@ -28,6 +28,8 @@ RUN apt-get update && apt-get install -y \
     libxtst6 \
     libglib2.0-0 \
     libgtk-3-0 \
+    glpk-utils \
+    libglpk-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 

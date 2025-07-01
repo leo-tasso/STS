@@ -2,14 +2,13 @@ import pulp
 import time
 from typing import Dict, List, Tuple, Any
 
-def create_mip_model(n: int, constraints: dict[str, bool] = None, solver_name: str = "PULP_CBC_CMD", optimize: bool = False) -> Tuple[pulp.LpProblem, Dict[str, Any]]:
+def create_mip_model(n: int, constraints: dict[str, bool] = None, optimize: bool = False) -> Tuple[pulp.LpProblem, Dict[str, Any]]:
     """
     Creates a MIP model for the STS problem using PuLP.
     
     Args:
         n (int): Number of teams (must be even)
         constraints (dict): Dictionary of constraint flags
-        solver_name (str): Name of the solver to use
         optimize (bool): Whether to optimize for home/away balance
     
     Returns:
@@ -198,7 +197,7 @@ def solve_sts_mip(n: int, constraints: dict[str, bool] = None, solver_name: str 
     
     try:
         # Create the model
-        model, variables = create_mip_model(n, constraints, solver_name, optimize=optimize)
+        model, variables = create_mip_model(n, constraints, optimize=optimize)
         
         # Get solver
         if solver_name == "PULP_CBC_CMD":
