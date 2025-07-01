@@ -1,0 +1,176 @@
+name: Run All STS Models
+
+on:
+  # Trigger on push to main branch
+  push:
+    branches: [ main, master ]
+  
+  # Trigger on pull requests to main branch
+  pull_request:
+    branches: [ main, master ]
+  
+  # Allow manual trigger from GitHub UI
+  workflow_dispatch:
+    inputs:
+      team_numbers:
+        description: 'Comma-separated list of team numbers to test (e.g., 2,4,6,8)'
+        required: false
+        default: '2,4,6,8'
+      mode:
+        description: 'Running mode'
+        required: false
+        default: 'generate'
+        type: choice
+        options:
+          - generate
+          - test
+          - select
+      timeout:
+        description: 'Timeout in seconds for each model'
+        required: false
+        default: '300'
+      verbose:
+        description: 'Enable verbose output'
+        required: false
+        default: false
+        type: boolean
+      models:
+        description: 'Models to run (comma-separated: CP,MIP,SAT,SMT or "all")'
+        required: false
+        default: 'all'
+
+  # Run on schedule (weekly on Sunday at 2 AM UTC)
+  schedule:
+    - cron: '0 2 * * 0'
+
+jobs:
+  run-sts-models:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.10', '3.11', '3.12']
+      fail-fast: false
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+        
+    - name: Cache Python dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+          
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential
+        
+        # Install MiniZinc for CP model
+        wget https://github.com/MiniZinc/MiniZincIDE/releases/download/2.7.5/MiniZincIDE-2.7.5-bundle-linux-x86_64.tgz
+        tar -xzf MiniZincIDE-2.7.5-bundle-linux-x86_64.tgz
+        sudo mv MiniZincIDE-2.7.5-bundle-linux-x86_64 /opt/minizinc
+        echo "/opt/minizinc/bin" >> $GITHUB_PATH
+        
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: Set environment variables
+      run: |
+        echo "PYTHONPATH=${{ github.workspace }}" >> $GITHUB_ENV
+        
+    - name: Prepare input parameters
+      id: params
+      run: |
+        # Set default values if running from push/PR
+        if [ "${{ github.event_name }}" != "workflow_dispatch" ]; then
+          echo "team_numbers=2,4,6" >> $GITHUB_OUTPUT
+          echo "mode=generate" >> $GITHUB_OUTPUT
+          echo "timeout=300" >> $GITHUB_OUTPUT
+          echo "verbose=false" >> $GITHUB_OUTPUT
+          echo "models=all" >> $GITHUB_OUTPUT
+        else
+          echo "team_numbers=${{ github.event.inputs.team_numbers }}" >> $GITHUB_OUTPUT
+          echo "mode=${{ github.event.inputs.mode }}" >> $GITHUB_OUTPUT
+          echo "timeout=${{ github.event.inputs.timeout }}" >> $GITHUB_OUTPUT
+          echo "verbose=${{ github.event.inputs.verbose }}" >> $GITHUB_OUTPUT
+          echo "models=${{ github.event.inputs.models }}" >> $GITHUB_OUTPUT
+        fi
+        
+    - name: Run all STS models
+      run: |
+        cd test
+        
+        # Parse team numbers into space-separated format
+        TEAM_NUMBERS=$(echo "${{ steps.params.outputs.team_numbers }}" | tr ',' ' ')
+        
+        # Parse models to run
+        MODELS_TO_RUN="${{ steps.params.outputs.models }}"
+        if [ "$MODELS_TO_RUN" = "all" ]; then
+          MODELS_TO_RUN="CP MIP SAT SMT"
+        else
+          MODELS_TO_RUN=$(echo "$MODELS_TO_RUN" | tr ',' ' ')
+        fi
+        
+        # Build command arguments
+        ARGS=""
+        if [ "${{ steps.params.outputs.verbose }}" = "true" ]; then
+          ARGS="$ARGS --verbose"
+        fi
+        
+        ARGS="$ARGS --mode ${{ steps.params.outputs.mode }}"
+        ARGS="$ARGS --timeout ${{ steps.params.outputs.timeout }}"
+        ARGS="$ARGS --models $MODELS_TO_RUN"
+        ARGS="$ARGS --n-values $TEAM_NUMBERS"
+        
+        echo "Running STS models with command: python run_all_models.py $ARGS"
+        python run_all_models.py $ARGS
+        
+    - name: Upload results as artifacts
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: sts-results-python-${{ matrix.python-version }}
+        path: |
+          res/
+          test/CP/plots/
+        retention-days: 30
+        
+    - name: Generate summary report
+      if: always()
+      run: |
+        cd test
+        echo "# STS Models Execution Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Python Version:** ${{ matrix.python-version }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Team Numbers:** ${{ steps.params.outputs.team_numbers }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Mode:** ${{ steps.params.outputs.mode }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Models:** ${{ steps.params.outputs.models }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Timeout:** ${{ steps.params.outputs.timeout }}s" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        # Check if result files were generated
+        echo "## Generated Results" >> $GITHUB_STEP_SUMMARY
+        if find ../res -name "*.json" -newer ../requirements.txt 2>/dev/null | head -5; then
+          echo "✅ New result files were generated:" >> $GITHUB_STEP_SUMMARY
+          find ../res -name "*.json" -newer ../requirements.txt 2>/dev/null | head -10 | while read file; do
+            echo "- \`$file\`" >> $GITHUB_STEP_SUMMARY
+          done
+        else
+          echo "⚠️ No new result files detected" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        # Check for any error patterns in logs
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "## Execution Status" >> $GITHUB_STEP_SUMMARY
+        echo "Job completed. Check the detailed logs above for any errors or warnings." >> $GITHUB_STEP_SUMMARY
