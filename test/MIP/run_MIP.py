@@ -217,7 +217,7 @@ def run_mip_with_averaging(
                 best_sol = result.get("sol")
     
     if best_sol is not None:
-        avg_result["sol"] = best_sol
+        avg_result["sol"] = str(best_sol)
     else:
         avg_result["sol"] = "unsat"
     
@@ -328,8 +328,22 @@ def write_results_to_json(results: list[dict], names: list[str], n: int) -> None
     filename = os.path.join(JSON_FOLDER, f"{n}.json")
     with open(filename, 'w') as f:
         json.dump(output_data, f, indent=2)
-    
-    print(f"Results saved to {filename}")
+
+    # Post-process: remove quotes around the sol list
+    with open(filename, "r") as f:
+        lines = f.readlines()
+
+    with open(filename, "w") as f:
+        for line in lines:
+            if '"sol": "' in line and "unsat" not in line and "timeout" not in line:
+                # Clean line: remove surrounding quotes and unescape inner quotes
+                line = line.replace('\\"', '"')  # unescape quotes inside
+                line = line.replace('"sol": "', '"sol": ').rstrip()
+                if line.endswith('",'):
+                    line = line[:-2] + ","  # remove closing quote
+                f.write(line + "\n")
+            else:
+                f.write(line)
 
 def main():
     """Main function to handle command-line arguments and execute the script."""
