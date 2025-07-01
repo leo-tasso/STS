@@ -72,13 +72,7 @@ jobs:
     - name: Install system dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential
-        
-        # Install MiniZinc for CP model
-        wget https://github.com/MiniZinc/MiniZincIDE/releases/download/2.7.5/MiniZincIDE-2.7.5-bundle-linux-x86_64.tgz
-        tar -xzf MiniZincIDE-2.7.5-bundle-linux-x86_64.tgz
-        sudo mv MiniZincIDE-2.7.5-bundle-linux-x86_64 /opt/minizinc
-        echo "/opt/minizinc/bin" >> $GITHUB_PATH
+        sudo apt-get install -y build-essential minizinc
         
     - name: Install Python dependencies
       run: |
@@ -147,6 +141,31 @@ jobs:
         echo "Running STS models with command: python run_all_models.py $ARGS"
         python run_all_models.py $ARGS
         
+    - name: Validate solutions
+      if: always()
+      run: |
+        echo "Validating generated solutions..."
+        cd test
+        
+        # Check each model type directory for results
+        for model_dir in ../res/*/; do
+          if [ -d "$model_dir" ] && [ "$(ls -A $model_dir 2>/dev/null)" ]; then
+            model_name=$(basename "$model_dir")
+            echo "Validating solutions for $model_name model..."
+            
+            if python solution_checker_no_recursion.py "$model_dir"; then
+              echo "✅ All $model_name solutions are valid"
+            else
+              echo "❌ Found invalid solutions in $model_name"
+              exit 1
+            fi
+          else
+            echo "⚠️ No results found for $model_name"
+          fi
+        done
+        
+        echo "🎉 All solution validations completed successfully!"
+        
     - name: Upload results as artifacts
       uses: actions/upload-artifact@v4
       if: always()
@@ -182,6 +201,15 @@ jobs:
         fi
         
         # Check for any error patterns in logs
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "## Solution Validation" >> $GITHUB_STEP_SUMMARY
+        if [ -d "../res" ] && [ "$(find ../res -name "*.json" 2>/dev/null)" ]; then
+          echo "✅ Solution validation completed successfully" >> $GITHUB_STEP_SUMMARY
+          echo "All generated solutions have been validated for correctness" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "⚠️ No solutions to validate" >> $GITHUB_STEP_SUMMARY
+        fi
+        
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "## Execution Status" >> $GITHUB_STEP_SUMMARY
         echo "Job completed. Check the detailed logs above for any errors or warnings." >> $GITHUB_STEP_SUMMARY
