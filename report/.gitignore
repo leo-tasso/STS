@@ -1,0 +1,45 @@
+# LaTeX auxiliary files
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
+*.nav
+*.snm
+*.vrb
+*.lof
+*.lot
+
+# Generated PDF (comment out if you want to track the PDF)
+# main.pdf
+
+# Backup files
+*~
+*.backup
+*.bak
+
+# Editor temporary files
+.*.swp
+.*.swo
+*.tmp
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# LaTeX build directories
+build/
+output/
+
+# Bibliography temporary files
+*.bib.bak
+*.bib.orig

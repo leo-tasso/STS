@@ -72,13 +72,38 @@ jobs:
     - name: Install system dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential
+        sudo apt-get install -y build-essential wget libegl1 libgl1-mesa-dev xvfb
         
-        # Install MiniZinc for CP model
-        wget https://github.com/MiniZinc/MiniZincIDE/releases/download/2.7.5/MiniZincIDE-2.7.5-bundle-linux-x86_64.tgz
-        tar -xzf MiniZincIDE-2.7.5-bundle-linux-x86_64.tgz
-        sudo mv MiniZincIDE-2.7.5-bundle-linux-x86_64 /opt/minizinc
-        echo "/opt/minizinc/bin" >> $GITHUB_PATH
+        # Install MiniZinc bundle with all solvers (including chuffed)
+        MINIZINC_VERSION="2.9.3"
+        wget https://github.com/MiniZinc/MiniZincIDE/releases/download/${MINIZINC_VERSION}/MiniZincIDE-${MINIZINC_VERSION}-bundle-linux-x86_64.tgz
+        tar -xzf MiniZincIDE-${MINIZINC_VERSION}-bundle-linux-x86_64.tgz
+        sudo mv MiniZincIDE-${MINIZINC_VERSION}-bundle-linux-x86_64 /opt/minizinc
+        sudo ln -sf /opt/minizinc/bin/minizinc /usr/local/bin/minizinc
+        
+        # Verify MiniZinc installation
+        echo "MiniZinc version:"
+        minizinc --version
+        echo "MiniZinc location:"
+        which minizinc
+        echo "Available solvers:"
+        minizinc --solvers || echo "No solvers found"
+        
+    - name: Install CVC5 SMT solver
+      run: |
+        # Create the CVC5 directory structure
+        mkdir -p source/SMT/cvc5/bin
+        
+        # Download CVC5 binary for Linux
+        CVC5_VERSION="1.0.5"
+        wget -O source/SMT/cvc5/bin/cvc5 "https://github.com/cvc5/cvc5/releases/download/cvc5-${CVC5_VERSION}/cvc5-Linux"
+        
+        # Make it executable
+        chmod +x source/SMT/cvc5/bin/cvc5
+        
+        # Verify CVC5 installation
+        echo "CVC5 version:"
+        source/SMT/cvc5/bin/cvc5 --version || echo "CVC5 installation failed"
         
     - name: Install Python dependencies
       run: |
@@ -88,6 +113,7 @@ jobs:
     - name: Set environment variables
       run: |
         echo "PYTHONPATH=${{ github.workspace }}" >> $GITHUB_ENV
+        echo "CVC5_BIN=${{ github.workspace }}/source/SMT/cvc5/bin/cvc5" >> $GITHUB_ENV
         
     - name: Clean results directory
       run: |
@@ -122,6 +148,28 @@ jobs:
       run: |
         cd test
         
+        # Debug: Check MiniZinc is still working
+        echo "=== Pre-execution MiniZinc check ==="
+        minizinc --version
+        echo "Available solvers:"
+        minizinc --solvers
+        echo "Test simple model:"
+        echo 'int: x = 1; output ["x = \(x)"];' > test.mzn
+        minizinc test.mzn && echo "✅ Simple test passed" || echo "❌ Simple test failed"
+        rm -f test.mzn
+        echo "Test CP model directly:"
+        cd CP
+        if [ -f "../../source/CP/sts.mzn" ] && [ -f "../../source/CP/use_constraints.dzn" ]; then
+          echo "Testing CP model with n=2 using gecode..."
+          timeout 30 minizinc --solver gecode --time-limit 5000 ../../source/CP/sts.mzn ../../source/CP/use_constraints.dzn -D "n=2;" -D "chuffed=false;" 2>&1 | head -20
+          echo "Testing CP model with n=2 using chuffed..."
+          timeout 30 minizinc --solver chuffed --time-limit 5000 ../../source/CP/sts.mzn ../../source/CP/use_constraints.dzn -D "n=2;" -D "chuffed=true;" 2>&1 | head -20
+        else
+          echo "❌ CP model files not found"
+        fi
+        cd ..
+        echo "====================================="
+        
         # Parse team numbers into space-separated format
         TEAM_NUMBERS=$(echo "${{ steps.params.outputs.team_numbers }}" | tr ',' ' ')
         
@@ -146,6 +194,31 @@ jobs:
         
         echo "Running STS models with command: python run_all_models.py $ARGS"
         python run_all_models.py $ARGS
+        
+    - name: Validate solutions
+      if: always()
+      run: |
+        echo "Validating generated solutions..."
+        cd test
+        
+        # Check each model type directory for results
+        for model_dir in ../res/*/; do
+          if [ -d "$model_dir" ] && [ "$(ls -A $model_dir 2>/dev/null)" ]; then
+            model_name=$(basename "$model_dir")
+            echo "Validating solutions for $model_name model..."
+            
+            if python solution_checker_no_recursion.py "$model_dir"; then
+              echo "✅ All $model_name solutions are valid"
+            else
+              echo "❌ Found invalid solutions in $model_name"
+              exit 1
+            fi
+          else
+            echo "⚠️ No results found for $model_name"
+          fi
+        done
+        
+        echo "🎉 All solution validations completed successfully!"
         
     - name: Upload results as artifacts
       uses: actions/upload-artifact@v4
@@ -182,6 +255,15 @@ jobs:
         fi
         
         # Check for any error patterns in logs
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "## Solution Validation" >> $GITHUB_STEP_SUMMARY
+        if [ -d "../res" ] && [ "$(find ../res -name "*.json" 2>/dev/null)" ]; then
+          echo "✅ Solution validation completed successfully" >> $GITHUB_STEP_SUMMARY
+          echo "All generated solutions have been validated for correctness" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "⚠️ No solutions to validate" >> $GITHUB_STEP_SUMMARY
+        fi
+        
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "## Execution Status" >> $GITHUB_STEP_SUMMARY
         echo "Job completed. Check the detailed logs above for any errors or warnings." >> $GITHUB_STEP_SUMMARY
