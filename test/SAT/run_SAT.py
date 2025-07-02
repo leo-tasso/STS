@@ -44,22 +44,19 @@ ALL_CONSTRAINTS_GROUPS = {
     "implied": select_constraints_from_group("implied"),
 }
 
-def run_sts_solver(n: int, active_constraints: list[str], encoding_type: str = "bw", timeout_sec: int = 300, verbose: bool = False, solver: str = "z3") -> dict:
+def run_sts_solver(
+    n: int,
+    active_constraints: list[str],
+    encoding_type: str = "bw",
+    timeout_sec: int = 300,
+    verbose: bool = False,
+    solver: str = "z3",
+    opt: bool = False
+) -> dict:
     """
     Runs the STS SAT solver with the specified configuration and solver.
-    
-    Args:
-        n (int): Number of teams
-        active_constraints (list[str]): List of active constraint names
-        encoding_type (str): Type of SAT encoding to use ('np', 'seq', 'bw', 'he')
-        timeout_sec (int): Timeout in seconds
-        verbose (bool): Whether to print verbose output
-        solver (str): Which solver to use: 'z3', 'minisat', 'glucose'
-        
-    Returns:
-        dict: Results dictionary with timing, solution status, and solution
+    If opt is True and solver is z3, runs the optimization version.
     """
-    
     constraints = {
         'use_symm_break_weeks': "use_symm_break_weeks" in active_constraints,
         'use_symm_break_periods': "use_symm_break_periods" in active_constraints,
@@ -67,44 +64,83 @@ def run_sts_solver(n: int, active_constraints: list[str], encoding_type: str = "
         'use_implied_matches_per_team': "use_implied_matches_per_team" in active_constraints,
         'use_implied_period_count': "use_implied_period_count" in active_constraints
     }
-    
+
     if verbose:
         print(f"Running SAT solver with n={n}")
         print(f"Active constraints: {active_constraints}")
         print(f"Encoding type: {encoding_type}")
         print(f"Solver: {solver}")
+        print(f"Optimization: {opt}")
 
     try:
         if solver == "z3":
-            result = sts.solve_sts(n, constraints, encoding_type)
+            if opt:
+                result = sts.solve_sts_optimize(n, constraints, encoding_type, timeout_sec)
+                obj = result.get('obj', None)
+                sol = result.get('solution', None)
+                print(f"Z3 optimization result: {result}")
+                status = "sat" if result.get('obj', -1) > 0 else "unsat"
+                return {
+                    "time": int(round(result.get('time', timeout_sec))),
+                    "optimal": obj == 1 ,
+                    "obj": obj,
+                    "sol": sol if status == "sat" else "unsat",
+                    "solver": solver,
+                    "constraints": active_constraints,
+                    "encoding_type": encoding_type,
+                    "status": status
+                }
+            else:
+                result = sts.solve_sts(n, constraints, encoding_type)
+                if result['satisfiable']:
+                    return {
+                        "time": int(round(result['time'])),
+                        "optimal": "true",
+                        "obj": None,
+                        "sol": result['solution'],
+                        "solver": solver,
+                        "constraints": active_constraints,
+                        "encoding_type": encoding_type,
+                        "status": "sat"
+                    }
+                else:
+                    return {
+                        "time": int(round(result['time'])),
+                        "optimal": "false",
+                        "obj": None,
+                        "sol": "unsat",
+                        "solver": solver,
+                        "constraints": active_constraints,
+                        "encoding_type": encoding_type,
+                        "status": "unsat"
+                    }
         elif solver in ("minisat", "glucose"):
             result = sts.solve_sts_dimacs(n, constraints, encoding_type, solver)
+            if result['satisfiable']:
+                return {
+                    "time": int(round(result['time'])),
+                    "optimal": "true",
+                    "obj": None,
+                    "sol": result['solution'],
+                    "solver": solver,
+                    "constraints": active_constraints,
+                    "encoding_type": encoding_type,
+                    "status": "sat"
+                }
+            else:
+                return {
+                    "time": int(round(result['time'])),
+                    "optimal": "false",
+                    "obj": None,
+                    "sol": "unsat",
+                    "solver": solver,
+                    "constraints": active_constraints,
+                    "encoding_type": encoding_type,
+                    "status": "unsat"
+                }
         else:
             raise ValueError(f"Unknown solver: {solver}")
 
-        if result['satisfiable']:
-            return {
-                "time": int(round(result['time'])),
-                "optimal": "true",
-                "obj": None,
-                "sol": result['solution'],
-                "solver": solver,
-                "constraints": active_constraints,
-                "encoding_type": encoding_type,
-                "status": "sat"
-            }
-        else:
-            return {
-                "time": int(round(result['time'])),
-                "optimal": "false",
-                "obj": None,
-                "sol": "unsat",
-                "solver": solver,
-                "constraints": active_constraints,
-                "encoding_type": encoding_type,
-                "status": "unsat"
-            }
-            
     except Exception as e:
         return {
             "time": int(round(timeout_sec)),
@@ -117,8 +153,17 @@ def run_sts_solver(n: int, active_constraints: list[str], encoding_type: str = "
             "status": "error"
         }
 
-def run_sts_with_averaging(n: int, active_constraints: list[str], encoding_type: str = "bw", timeout_sec: int = 300,
-                          verbose: bool = False, num_runs: int = 5, max_workers: int = None, solver: str = "z3") -> dict:
+def run_sts_with_averaging(
+    n: int,
+    active_constraints: list[str],
+    encoding_type: str = "bw",
+    timeout_sec: int = 300,
+    verbose: bool = False,
+    num_runs: int = 5,
+    max_workers: int = None,
+    solver: str = "z3",
+    opt: bool = False
+) -> dict:
     """
     Runs the STS solver multiple times and averages the timing results.
     
@@ -136,14 +181,14 @@ def run_sts_with_averaging(n: int, active_constraints: list[str], encoding_type:
         dict: Averaged results dictionary
     """
     if verbose:
-        print(f"Running {num_runs} iterations with constraints: {active_constraints} and solver: {solver}")
-    
+        print(f"Running {num_runs} iterations with constraints: {active_constraints} and solver: {solver} (opt={opt})")
+
     results = []
-    
+
     # Run sequentially to avoid Z3 thread safety issues
     for i in range(num_runs):
         try:
-            result = run_sts_solver(n, active_constraints, encoding_type, timeout_sec, verbose=False, solver=solver)
+            result = run_sts_solver(n, active_constraints, encoding_type, timeout_sec, verbose=False, solver=solver, opt=opt)
             results.append(result)
             if verbose:
                 print(f"  Run {i+1}/{num_runs}: {result['status']} in {result['time']}s")
@@ -160,7 +205,7 @@ def run_sts_with_averaging(n: int, active_constraints: list[str], encoding_type:
                 "encoding_type": encoding_type,
                 "status": "error"
             })
-    
+
     # Calculate statistics
     times = [r["time"] for r in results if r["status"] != "error"]
     sat_count = sum(1 for r in results if r["status"] == "sat")
@@ -170,9 +215,10 @@ def run_sts_with_averaging(n: int, active_constraints: list[str], encoding_type:
     
     # Take the first SAT solution if any
     solution = next((r["sol"] for r in results if r["status"] == "sat"), "no_solution")
-    
+    obj = next((r.get("obj", None) for r in results if r["status"] == "sat"), None)
+
     if times:
-        avg_time = statistics.mean(times)
+        avg_time = int(statistics.mean(times))
         std_time = statistics.stdev(times) if len(times) > 1 else 0.0
         min_time = min(times) 
         max_time = max(times)
@@ -199,7 +245,7 @@ def run_sts_with_averaging(n: int, active_constraints: list[str], encoding_type:
         "time_min": min_time,
         "time_max": max_time,
         "optimal": optimal,
-        "obj": None,
+        "obj": obj,
         "sol": solution,
         "solver": solver,
         "constraints": active_constraints,
@@ -212,9 +258,19 @@ def run_sts_with_averaging(n: int, active_constraints: list[str], encoding_type:
         "error_count": error_count
     }
 
-def run_sts_with_averaging_all_solvers(n, active_constraints, encoding_type="bw", timeout_sec=300, verbose=False, num_runs=5, max_workers=None):
+def run_sts_with_averaging_all_solvers(
+    n,
+    active_constraints,
+    encoding_type="bw",
+    timeout_sec=300,
+    verbose=False,
+    num_runs=5,
+    max_workers=None,
+    opt=False
+):
     """
     Run all solvers (z3, minisat, glucose) and return a dict of results keyed by solver name.
+    Passes opt flag to Z3 only.
     """
     solvers = ["z3", "minisat", "glucose"]
     results = {}
@@ -222,7 +278,7 @@ def run_sts_with_averaging_all_solvers(n, active_constraints, encoding_type="bw"
         if verbose:
             print(f"Running with solver: {solver}")
         results[solver] = run_sts_with_averaging(
-            n, active_constraints, encoding_type, timeout_sec, verbose, num_runs, max_workers, solver=solver
+            n, active_constraints, encoding_type, timeout_sec, verbose, num_runs, max_workers, solver=solver, opt=(opt if solver == "z3" else False)
         )
     return results
 
@@ -363,6 +419,7 @@ def write_results_to_json(results: list[dict], names: list[str], n: int):
         output_data[name] = result
         output_data[name]["sol"] = str(result.get("sol", "unknown"))
 
+    print(output_data)
     with open(filename, "w") as f:
         json.dump(output_data, f, indent=2)
 
@@ -494,7 +551,11 @@ Examples:
         default=None,
         help="Maximum number of parallel workers (default: auto-detect based on CPU count)"
     )
-    
+    parser.add_argument(
+        "--opt",
+        action="store_true",
+        help="Solve the optimization version (minimize max home/away difference, Z3 only)"
+    )
     args = parser.parse_args()
     
     # Validate number of teams
@@ -516,7 +577,7 @@ Examples:
     
     results = []
     names = []
-    
+
     if args.test:
         # Test mode: try all possible combinations of the selected constraints
         print("Test mode: Running all possible combinations of selected constraints...")
@@ -544,6 +605,7 @@ Examples:
                 verbose=args.verbose,
                 num_runs=args.runs,
                 max_workers=args.max_workers,
+                opt=args.opt,
             )
             for solver_name, result in all_solver_results.items():
                 results.append(result)
@@ -558,10 +620,11 @@ Examples:
                 num_runs=args.runs,
                 max_workers=args.max_workers,
                 solver=args.solver,
+                opt=args.opt,
             )
             results.append(result)
             names.append("generate_all_constraints")
-    
+
     # Save results
     write_results_to_json(results, names, args.teams)
     print(f"Results saved to {JSON_FOLDER}/{args.teams}.json")

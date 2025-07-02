@@ -391,6 +391,157 @@ def solve_sts_dimacs(n: int, constraints: dict[str, bool] =None, encoding_type="
         'time': solve_time,
         'satisfiable': True
     }
+def solve_sts_optimize(n, constraints=None, encoding_type="bw", timeout: int = 300) -> dict:
+    """
+    Solve the optimization version of STS problem: minimize max difference between home and away games.
+    
+    Uses binary search to find the minimum possible maximum imbalance between home and away games
+    for any team. Since we're using SAT, all constraints are expressed using only boolean variables.
+    
+    Args:
+        n (int): Number of teams (must be even)
+        constraints (dict): Dictionary of constraint flags (same as solve_sts)
+        encoding_type (str): Type of SAT encoding to use ('np', 'seq', 'bw', 'he')
+        timeout (int): Timeout in seconds for each SAT call
+    
+    Returns:
+        dict: Solution dictionary with 'sol', 'time', 'satisfiable', and 'obj' keys
+    """
+
+    weeks = n - 1
+    periods = n // 2
+    Teams = range(n)
+    Weeks = range(weeks)
+    Periods = range(periods)
+    
+    # Boolean variables
+    home = [[[Bool(f"home_{w}_{p}_{t}") for t in Teams] for p in Periods] for w in Weeks]
+    away = [[[Bool(f"away_{w}_{p}_{t}") for t in Teams] for p in Periods] for w in Weeks]
+    
+    solver_args = {
+        "weeks": weeks,
+        "periods": periods,
+        "Teams": Teams,
+        "Weeks": Weeks,
+        "Periods": Periods,
+        "home": home,
+        "away": away
+    }
+    
+    # Create solver with basic STS constraints
+    s = create_solver(n, solver_args, constraints, encoding_type)
+
+    low = 1
+    high = n - 1
+    
+    best_solution = None
+    best_max_diff = None
+    
+    start_time = time.time()
+
+    while low <= high:
+        mid = (low + high) // 2
+        time_left = timeout - math.ceil(time.time() - start_time)
+        # Try to find a solution with max difference <= mid
+        result = solve_sts_with_max_diff(n, s, home, away, mid, time_left)
+        if result['solution']:
+            best_solution = result['solution']
+            best_max_diff = mid
+            high = mid - 1  # Try to find better solution
+        else:
+            # No solution with imbalance <= mid
+            low = mid + 1   # Need to allow higher imbalance
+        
+        # Check if we've exceeded total timeout
+        if time.time() - start_time > timeout : 
+            break
+    
+    total_time = time.time() - start_time
+    
+    return {
+        'solution': best_solution,
+        'time': total_time if total_time < timeout else timeout,
+        'satisfiable': total_time < timeout,
+        'obj': best_max_diff
+    }
+
+
+def solve_sts_with_max_diff(n, s, home, away, max_diff, time_left: int = 300):
+    """
+    Solve STS with constraint that no team has the difference between home and away games > max_diff.
+    
+    Args:
+        n (int): Number of teams (must be even)
+        s (z3.Solver): Z3 solver instance with basic STS constraints
+        home (list): 3D list of boolean variables for home games
+        away (list): 3D list of boolean variables for away games
+        max_diff (int): Maximum allowed difference for any team
+        time_left (int): Time left in seconds for solving
+    
+    Returns:
+        dict: Solution dictionary with 'sol', 'time'
+    """
+    weeks = n - 1
+    periods = n // 2
+    Teams = range(n)
+    Weeks = range(weeks)
+    Periods = range(periods)
+
+    for t in Teams:
+        home_games = []
+        for w in Weeks:
+            for p in Periods:
+                home_games.append(home[w][p][t])
+        
+        min_home_count = max(0, (weeks - max_diff) // 2)
+        max_home_count = min(weeks, (weeks + max_diff) // 2)
+        
+        if min_home_count > 0:
+            s.add(sat_encodings.at_least_k_seq(home_games, min_home_count, name=f"team_{t}_min_home"))
+        if max_home_count < weeks:
+            s.add(sat_encodings.at_most_k_seq(home_games, max_home_count, name=f"team_{t}_max_home"))
+    
+    # Solve with timeout
+    s.set("timeout", time_left * 1000)
+    
+    start_time = time.time()
+    result = s.check()
+    solve_time = time.time() - start_time
+    
+    if result == sat:
+        m = s.model()
+        sol = []
+        for p in Periods:
+            period = []
+            for w in Weeks:
+                home_team = None
+                for t in Teams:
+                    if m.evaluate(home[w][p][t], model_completion=True):
+                        home_team = t + 1
+                        break
+
+                away_team = None
+                for t in Teams:
+                    if m.evaluate(away[w][p][t], model_completion=True):
+                        away_team = t + 1
+                        break
+
+                period.append([home_team, away_team])
+            sol.append(period)
+        
+        return {
+            'solution': sol,
+            'time': solve_time,
+            'satisfiable': True
+        }
+    else:
+        return {
+            'solution': None,
+            'time': solve_time,
+            'satisfiable': False
+        }
+
+
 
 def main():
     """
@@ -409,6 +560,7 @@ def main():
     solver = "z3"  # Default to Z3 solver
     if solver == "z3":
         result = solve_sts(n, constraints, encoding_type)
+        #result = solve_sts_optimize(n, constraints, encoding_type)
     else:
         result = solve_sts_dimacs(n, constraints, encoding_type, solver=solver)
     
