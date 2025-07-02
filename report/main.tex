@@ -75,108 +75,240 @@ Student ID:   \\
 
 \maketitle
 
-\begin{abstract}
-This project addresses the Sports Tournament Scheduling (STS) problem through a comprehensive multi-paradigm optimization approach. We develop and compare four distinct solution methodologies: Constraint Programming (CP) using MiniZinc, Mixed Integer Programming (MIP) with PuLP, Boolean Satisfiability (SAT) solving with Z3, and Satisfiability Modulo Theories (SMT) solving. 
-
-The STS problem involves scheduling $n$ teams in a round-robin tournament over $n-1$ weeks with $n/2$ concurrent time periods per week, ensuring each pair of teams plays exactly once while respecting structural constraints. Our implementation incorporates advanced techniques including symmetry breaking, implied constraints, and multiple encoding schemes for SAT solving.
-
-Experimental evaluation on instances ranging from 4 to 14 teams reveals distinct performance characteristics: MIP excels for small-to-medium instances with proven optimality, CP provides superior modeling flexibility and optimization capabilities, SAT offers efficient satisfiability checking with encoding-dependent performance, and SMT combines expressiveness with moderate scalability. The study provides practical guidance for paradigm selection based on problem characteristics and computational requirements.
-\end{abstract}
-
 \tableofcontents
 \newpage
 
 \section{Introduction}
 
-Sports tournament scheduling represents a classical combinatorial optimization problem with significant practical applications in organizing competitive events. The challenge of creating fair, balanced schedules while satisfying operational constraints has attracted considerable attention from the optimization community due to its computational complexity and real-world relevance.
+This report presents a comprehensive study of the Sports Tournament Scheduling (STS) problem, focusing on the development and comparison of multiple optimization models. The aim is to provide a unified framework for modeling, analyzing, and solving the STS problem, enabling a fair and systematic evaluation of different solution paradigms. All models considered in this work share a common formalization, which is described in this section.
 
-The Sports Tournament Scheduling (STS) problem, specifically the round-robin variant studied in this work, requires organizing tournaments where each team plays against every other team exactly once. This seemingly simple requirement generates a complex web of constraints that must be satisfied while optimizing various objectives such as minimizing schedule length or balancing workload distribution.
+\subsection{Common Model Formalization}
 
-\subsection{Motivation and Objectives}
-
-Modern optimization offers multiple paradigms for tackling combinatorial problems, each with distinct advantages and limitations. Understanding when and how to apply different solution approaches is crucial for practitioners facing complex scheduling challenges. This study provides a comprehensive comparison of four major optimization paradigms applied to the STS problem:
-
+\paragraph{Input Parameters.}
+The STS problem is defined by the following parameters, which are common to all models:
 \begin{itemize}
-    \item \textbf{Constraint Programming (CP)}: Leveraging declarative modeling and constraint propagation
-    \item \textbf{Mixed Integer Programming (MIP)}: Utilizing mathematical optimization with linear programming relaxations
-    \item \textbf{Boolean Satisfiability (SAT)}: Employing propositional logic and modern SAT solving techniques
-    \item \textbf{Satisfiability Modulo Theories (SMT)}: Combining SAT with arithmetic reasoning
+    \item $n$: Number of teams (even integer)
+    \item $w = n-1$: Number of weeks
+    \item $p = n/2$: Number of periods (matches per week)
+    \item Teams are indexed by $t \in \{1, 2, \ldots, n\}$
+    \item Weeks are indexed by $w \in \{1, 2, \ldots, n-1\}$
+    \item Periods are indexed by $p \in \{1, 2, \ldots, n/2\}$
 \end{itemize}
 
-Our primary objectives include: (1) developing efficient implementations across all paradigms, (2) conducting systematic performance evaluation, (3) identifying the strengths and limitations of each approach, and (4) providing practical guidance for paradigm selection.
+\paragraph{Objective Variable and Bounds.}
+For the optimization variant, the objective is to minimize the maximum imbalance in home and away games for any team:
+\[
+M = \max_{t \in \{1, \ldots, n\}} |h_t - a_t|
+\]
+where $h_t$ and $a_t$ denote the number of home and away games played by team $t$, respectively. The upper bound for $M$ is $n-1$, even if the practical upper bound is lower, because it's impossible that every team plays only away games or home games. The theoretical lower bound for $M$ is $1$ for even $n$, since $h_t$ and $a_t$ cannot be equal.
 
-\subsection{Contributions}
+\paragraph{Constraints.}
+All models enforce the following core constraints:
+\begin{enumerate}
+    \item Each pair of teams plays exactly once during the tournament.
+    \item Each team plays exactly once per week.
+    \item Each period in each week hosts exactly one match.
+    \item No team plays against itself.
+    \item Each team appears in the same period at most twice across all weeks.
+\end{enumerate}
 
-This work makes several key contributions to the sports scheduling literature:
-
+\paragraph{Pre-processing and Symmetry Breaking.}
+To improve solver efficiency, all models may include pre-processing steps such as:
 \begin{itemize}
-    \item \textbf{Comprehensive Multi-Paradigm Study}: First systematic comparison of CP, MIP, SAT, and SMT approaches for STS
-    \item \textbf{Advanced Modeling Techniques}: Implementation of symmetry breaking, implied constraints, and multiple encoding schemes
-    \item \textbf{Reproducible Framework}: Docker-based infrastructure enabling result reproducibility and extension
-    \item \textbf{Practical Guidelines}: Evidence-based recommendations for paradigm selection based on problem characteristics
+    \item Translating the model into a solver-independent language (such as DIMACS or SMT-LIB), which may require additional pre-processing time before the actual solving phase. 
+    \item Fixing the schedule of the first week to break team symmetries.
+    \item Lexicographic ordering of weeks and/or periods to break week and period symmetries.
+    \item Adding implied constraints (e.g., total matches per team).
 \end{itemize}
 
-\subsection{Related Work}
+\section{CP model}
 
-Sports scheduling has been extensively studied in the operations research literature. Rasmussen and Trick~\cite{sports_scheduling} provide a comprehensive survey of round-robin scheduling approaches, highlighting both exact and heuristic methods. The application of different optimization paradigms to tournament scheduling has been explored individually but rarely compared systematically.
+\subsection{Decision Variables}
 
-Constraint programming approaches have been particularly successful for sports scheduling due to their natural ability to handle complex constraints and provide flexible modeling capabilities~\cite{constraint_programming}. Mixed integer programming formulations have proven effective for smaller instances with strong lower bounds from linear programming relaxations~\cite{mip_book}.
+The MiniZinc CP model represents the tournament schedule using two primary arrays of integer decision variables:
 
-More recently, SAT-based approaches have gained attention due to advances in modern SAT solvers and efficient encoding techniques~\cite{sat_handbook}. SMT solving represents a natural extension, combining the Boolean reasoning of SAT with arithmetic theories relevant to scheduling problems~\cite{smt_survey}.
-
-Our work differs from previous studies by providing a systematic comparison across all four paradigms using identical problem instances and evaluation criteria, enabling fair assessment of relative strengths and limitations.
-
-\section{Problem Description}
-
-\subsection{Problem Statement}
-
-The Sports Tournament Scheduling (STS) problem is a fundamental combinatorial optimization challenge that requires creating balanced tournament schedules. Given $n$ teams (where $n$ is even), the objective is to organize a round-robin tournament over $n-1$ weeks with $n/2$ concurrent time periods per week, such that each pair of teams plays exactly once.
-
-\subsection{Formal Problem Definition}
-
-\textbf{Input:}
 \begin{itemize}
-    \item $n$ teams numbered $1, 2, \ldots, n$ where $n$ is even
-    \item $w = n-1$ weeks numbered $1, 2, \ldots, w$
-    \item $p = n/2$ time periods per week numbered $1, 2, \ldots, p$
+    \item \textbf{home[$w$, $p$]}: For each week $w \in \{1, \ldots, n-1\}$ and period $p \in \{1, \ldots, n/2\}$, \texttt{home[$w$, $p$]} is an integer variable indicating the team assigned as the home team in that slot.
+    \item \textbf{away[$w$, $p$]}: For each week $w \in \{1, \ldots, n-1\}$ and period $p \in \{1, \ldots, n/2\}$, \texttt{away[$w$, $p$]} is an integer variable indicating the team assigned as the away team in that slot.
 \end{itemize}
 
-\textbf{Output:}
-A tournament schedule represented as a 3-dimensional structure $S[week][period] = (home\_team, away\_team)$.
+Both variables take values in $\{1, \ldots, n\}$ and together define the assignment of teams to each match in the tournament schedule. All additional variables and constraints in the model are defined in terms of these primary decision variables, as described in the common formalization.
+
+\subsection{Objective Function}
+
+The objective variable and its theoretical bounds are described in Section~1. In the MiniZinc model, the objective is implemented as the variable \texttt{max\_diff}, which represents the maximum absolute difference between the number of home and away games for any team:
+\[
+\texttt{max\_diff} = \max_{t \in \text{Teams}} \left|\,\texttt{home\_count}[t] - \texttt{away\_count}[t]\,\right|
+\]
+where the auxiliary variables \texttt{home\_count}[t] and \texttt{away\_count}[t] are defined as follows:
+\begin{itemize}
+    \item \texttt{home\_count}[t]: the total number of times team $t$ appears as the home team across all weeks and periods,
+    \[
+    \texttt{home\_count}[t] = \sum_{w \in \text{Weeks}} \sum_{p \in \text{Periods}} [\texttt{home}[w,p] = t]
+    \]
+    \item \texttt{away\_count}[t]: the total number of times team $t$ appears as the away team across all weeks and periods,
+    \[
+    \texttt{away\_count}[t] = \sum_{w \in \text{Weeks}} \sum_{p \in \text{Periods}} [\texttt{away}[w,p] = t]
+    \]
+\end{itemize}
+
+The auxiliary variables \texttt{home\_count}[t] and \texttt{away\_count}[t] are computed efficiently using the \texttt{global\_cardinality} constraint in MiniZinc.
+
+The model minimizes \texttt{max\_diff} using the following directive:
+\begin{verbatim}
+solve minimize max_diff;
+\end{verbatim}
 
 \subsection{Constraints}
 
-The STS problem must satisfy the following hard constraints:
+\paragraph{Main Problem Constraints}
 
-\begin{enumerate}
-    \item \textbf{Pairwise Constraint}: Each pair of teams $(i,j)$ with $i \neq j$ plays exactly once throughout the tournament
-    \item \textbf{Weekly Constraint}: Each team plays exactly once per week
-    \item \textbf{Period Constraint}: Each team appears in the same time period at most twice across all weeks
-    \item \textbf{Slot Constraint}: Each time slot (week, period) contains exactly one match
-    \item \textbf{Distinctness}: In each match, the home and away teams must be different
-\end{enumerate}
+\begin{itemize} 
+    \item \textbf{Each pair of teams plays exactly once.}  
+    For every unordered pair of distinct teams $(i, j)$, there must be exactly one match where $i$ plays against $j$ (either as home or away):
+    \begin{equation*}
+        \sum_{w \in \text{Weeks}} \sum_{p \in \text{Periods}} \left( [\texttt{home}[w,p] = i \land \texttt{away}[w,p] = j] + [\texttt{home}[w,p] = j \land \texttt{away}[w,p] = i] \right) = 1
+    \end{equation*}
 
-\subsection{Optimization Objective}
+    \item \textbf{Each team plays exactly once per week.}  
+    In every week $w$, each team must appear exactly once, either as home or away. This is enforced by requiring that all teams assigned in week $w$ are distinct:
+    \begin{equation*}
+        \text{The set } \{\texttt{home}[w,p],\ \texttt{away}[w,p] : p \in \text{Periods}\} \text{ contains all teams without repetition.}
+    \end{equation*}
+    This constraint is implemented using \texttt{all\_different} for every week $w$.
 
-For optimization variants, we seek to minimize the maximum imbalance in home/away game assignments:
+    \item \textbf{Each team appears in the same period at most twice.}  
+    To model this constraint, we define the variable \texttt{period\_count}[t, p] as follows:
+    \begin{equation*}
+        \texttt{period\_count}[t, p] = \sum_{w \in \text{Weeks}} \left( [\texttt{home}[w,p] = t] + [\texttt{away}[w,p] = t] \right)
+    \end{equation*}
+    This expression is implemented in MiniZinc using the \texttt{global\_cardinality} constraint, used to enforce the final constraint as:
+    \begin{equation*}
+        \texttt{period\_count}[t, p] \leq 2
+    \end{equation*}
 
-\begin{equation}
-\text{minimize} \max_{t \in \{1,\ldots,n\}} |h_t - a_t|
-\end{equation}
 
-where $h_t$ and $a_t$ represent the number of home and away games for team $t$, respectively.
 
-\subsection{Motivation and Applications}
+\paragraph{Implied Constraints}
+These constraints are semantically redundant, but they can be useful to reduce the search space.
 
-Tournament scheduling problems appear in numerous real-world contexts including:
 \begin{itemize}
-    \item Professional sports league organization
-    \item Academic examination scheduling
-    \item Resource allocation in distributed systems
-    \item Workflow scheduling in manufacturing
+    \item \textbf{Total matches per team:}  
+    Each team $t$ must play exactly $n-1$ matches in total (as home or away):
+    \begin{equation*}
+        \texttt{home\_count}[t] + \texttt{away\_count}[t] = n - 1
+    \end{equation*}
+
+    \item \textbf{Total period appearances per team:}  
+    Each team $t$ must appear in some period exactly $n - 1$ times over the tournament, exploiting the previously defined variable \texttt{period\_count}:
+    \begin{equation*}
+        \sum_{p \in \text{Periods}} \texttt{period\_count}[t, p] = n - 1
+    \end{equation*}
 \end{itemize}
 
-The STS problem serves as an excellent benchmark for comparing different optimization paradigms due to its well-defined structure and scalable complexity.
+\paragraph{Symmetry Breaking Constraints}
+
+The STS problem exhibits several symmetries (e.g., relabeling teams, reordering weeks or periods) that can lead to redundant search. Symmetry breaking constraints reduce the number of equivalent solutions and improve solver efficiency:
+
+\begin{itemize}
+    \item \textbf{Week symmetry:}  
+    Weeks can be permuted without changing the problem. To break this symmetry, we impose lexicographic ordering between consecutive weeks:
+    \begin{equation*}
+        (\texttt{home}[w,1], \ldots, \texttt{home}[w,p], \texttt{away}[w,1], \ldots, \texttt{away}[w,p]) <_{\text{lex}} (\texttt{home}[w+1,1], \ldots, \texttt{away}[w+1,p])
+    \end{equation*}
+    for all $w \in \{1, 2, \ldots, n-2\}$.
+
+    \item \textbf{Period symmetry:}  
+    Periods within a week can be permuted. We enforce lexicographic ordering between periods:
+    \begin{equation*}
+        (\texttt{home}[1,p], \ldots, \texttt{home}[w,p], \texttt{away}[1,p], \ldots, \texttt{away}[w,p]) <_{\text{lex}} (\texttt{home}[1,p+1], \ldots, \texttt{away}[w,p+1])
+    \end{equation*}
+    for all $p \in \{1, 2, \ldots, n/2-1\}$.
+
+    \item \textbf{Team symmetry:}  
+    Teams can be relabeled. We fix the first week schedule to a canonical order:
+    \begin{equation*}
+        \texttt{home}[1, i] = 2i - 1,\quad \texttt{away}[1, i] = 2i
+    \end{equation*}
+    for all $p$ in periods.
+\end{itemize}
+
+\subsection{Validation}
+
+To validate the MiniZinc model, we conducted a systematic experimental study using two different solvers: \textbf{Gecode} and \textbf{Chuffed}. Both solvers were run on the same set of problem instances to allow for a fair comparison. The experiments were designed to assess the impact of symmetry breaking and implied constraints, as well as the effect of different search strategies.
+
+\paragraph{Experimental Design}
+The validation of the MiniZinc model was performed using the two already mentioned solvers with common search strategies: \texttt{first\_fail} heuristic to select the variable with the smallest domain, \texttt{relax\_and\_reconstruct(85)} to escape local minima by fixing $85\%$ of the found solution and reconstructing the remaining part of it. \\One search strategy differs per solver: Gecode employed also the \texttt{indomain\_random} to assign a randomly chosen value from the selected variable; Chuffed was tested \texttt{indomain\_min}, as \texttt{indomain\_random} is not supported. \\
+Restart strategies were tried with Gecode because of the available randomization, but they didn't help the search, so they were not included in the final table results.\\
+TODO Experiments were conducted on a machine with an Intel Core i7 processor and 16GB RAM, running MiniZinc 2.9.3 with Gecode 6.3.0 and Chuffed 0.13.2 on a Docker container from Ubuntu 22.04.\\
+For each instance, we evaluated the following configurations:
+\begin{itemize}
+    \item Chuffed with/without symmetry breaking constraints,
+    \item Chuffed with/without implied constraints,
+    \item Chuffed with/without search strategies,
+    \item Gecode with/without symmetry breaking constraints,
+    \item Gecode with/without implied constraints,
+    \item Gecode with/without search strategies.
+\end{itemize}
+
+\paragraph{Experimental Results}
+
+The results obtained using the described search strategies are reported in the following tables and in the Chuffed plot to assess the effectiveness of symmetry breaking constraints, implied constraints, and search strategies.
+
+\begin{table}[H]
+\centering
+\label{tab:symm}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{ID} & \textbf{Chuffed + SB} & \textbf{Chuffed w/o SB} & \textbf{Gecode + SB} & \textbf{Gecode w/o SB} \\
+\midrule
+6 & 100 & 120 & 80 & 80 \\
+8 & 50 & 60 & \texttt{N/A} & \texttt{N/A} \\
+10 & \texttt{UNSAT} & \texttt{UNSAT} & \texttt{N/A} & \texttt{N/A} \\
+12 & \texttt{UNSAT} & \texttt{UNSAT} & \texttt{N/A} & \texttt{N/A} \\
+\bottomrule
+\end{tabular}
+\caption{Results using Gecode and Chuffed with and without symmetry breaking.}
+\end{table}
+
+\begin{table}[H]
+\centering
+\label{tab:implied}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{ID} & \textbf{Chuffed + IC} & \textbf{Chuffed w/o IC} & \textbf{Gecode + IC} & \textbf{Gecode w/o IC} \\
+\midrule
+6 & 100 & 120 & 80 & 80 \\
+8 & 50 & 60 & \texttt{N/A} & \texttt{N/A} \\
+10 & \texttt{UNSAT} & \texttt{UNSAT} & \texttt{N/A} & \texttt{N/A} \\
+12 & \texttt{UNSAT} & \texttt{UNSAT} & \texttt{N/A} & \texttt{N/A} \\
+\bottomrule
+\end{tabular}
+\caption{Results using Gecode and Chuffed with and without implied constraints.}
+\end{table}
+
+\begin{table}[H]
+\centering
+\label{tab:search}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{ID} & \textbf{Chuffed + SS} & \textbf{Chuffed w/o SS} & \textbf{Gecode + SS} & \textbf{Gecode w/o SS} \\
+\midrule
+6 & 100 & 120 & 80 & 80 \\
+8 & 50 & 60 & \texttt{N/A} & \texttt{N/A} \\
+10 & \texttt{UNSAT} & \texttt{UNSAT} & \texttt{N/A} & \texttt{N/A} \\
+12 & \texttt{UNSAT} & \texttt{UNSAT} & \texttt{N/A} & \texttt{N/A} \\
+\bottomrule
+\end{tabular}
+\caption{Results using Gecode and Chuffed with and without search strategies.}
+\end{table}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{chuffed_plot.png}
+    \caption{Chuffed solver: solving time for different constraint configurations.}
+    \label{fig:chuffed_plot}
+\end{figure}
 
 \section{Methodology}
 
@@ -218,30 +350,6 @@ Our experimental methodology includes:
 This section presents the mathematical formulations for each optimization paradigm, detailing variable definitions, constraint specifications, and modeling approaches.
 
 This section details how the STS problem is modeled in each optimization paradigm, highlighting the different approaches to variable representation, constraint formulation, and objective specification.
-
-\subsection{Constraint Programming Model (MiniZinc)}
-
-The CP model uses integer decision variables to represent team assignments:
-
-\begin{align}
-&\text{Variables:} \\
-&\quad home[w,p] \in \{1, 2, \ldots, n\} \quad \forall w \in \text{Weeks}, p \in \text{Periods} \\
-&\quad away[w,p] \in \{1, 2, \ldots, n\} \quad \forall w \in \text{Weeks}, p \in \text{Periods}
-\end{align}
-
-\textbf{Core Constraints:}
-\begin{align}
-&home[w,p] \neq away[w,p] \quad \forall w,p \\
-&\text{all\_different}([home[w,p], away[w,p] \mid p \in \text{Periods}]) \quad \forall w \\
-&\sum_{w,p} [home[w,p] = i \land away[w,p] = j] = 1 \quad \forall i < j
-\end{align}
-
-\textbf{Global Constraints:}
-\begin{itemize}
-    \item \texttt{all\_different}: Ensures team uniqueness within weeks
-    \item \texttt{global\_cardinality}: Controls team appearances per period
-    \item \texttt{table}: Enforces valid match combinations
-\end{itemize}
 
 \subsection{Mixed Integer Programming Model (PuLP)}
 
