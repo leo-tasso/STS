@@ -132,7 +132,8 @@ The MiniZinc CP model represents the tournament schedule using two primary array
     \item \textbf{away[$w$, $p$]}: For each week $w \in \{1, \ldots, n-1\}$ and period $p \in \{1, \ldots, n/2\}$, \texttt{away[$w$, $p$]} is an integer variable indicating the team assigned as the away team in that slot.
 \end{itemize}
 
-Both variables take values in $\{1, \ldots, n\}$ and together define the assignment of teams to each match in the tournament schedule. All additional variables and constraints in the model are defined in terms of these primary decision variables, as described in the common formalization.
+Both variables take values in $\{1, \ldots, n\}$ and together define the assignment of teams to each match in the tournament schedule. All additional variables and constraints in the model are defined in terms of these primary decision variables, as described in the common formalization. \\
+Another design of the decision variables was tested: \texttt{matches}, an array for each possible match ID that takes values in $\{1..slots\},\ slots = (n-1)\times(n/2)$, but it led to a more complex implementation with not-so-evident improvements only for $n=12$. Also, the addition of channeling constraints between \texttt{matches}, \texttt{home} and \texttt{away} didn't help.
 
 \subsection{Objective Function}
 
@@ -186,7 +187,7 @@ solve minimize max_diff;
     \begin{equation*}
         \texttt{period\_count}[t, p] \leq 2
     \end{equation*}
-
+\end{itemize}
 
 
 \paragraph{Implied Constraints}
@@ -231,6 +232,8 @@ The STS problem exhibits several symmetries (e.g., relabeling teams, reordering 
         \texttt{home}[1, i] = 2i - 1,\quad \texttt{away}[1, i] = 2i
     \end{equation*}
     for all $p$ in periods.
+    \\
+    This approach was already used for a similar problem, as shown in \cite{teamsymm}.
 \end{itemize}
 
 \subsection{Validation}
@@ -238,114 +241,217 @@ The STS problem exhibits several symmetries (e.g., relabeling teams, reordering 
 To validate the MiniZinc model, we conducted a systematic experimental study using two different solvers: \textbf{Gecode} and \textbf{Chuffed}. Both solvers were run on the same set of problem instances to allow for a fair comparison. The experiments were designed to assess the impact of symmetry breaking and implied constraints, as well as the effect of different search strategies.
 
 \paragraph{Experimental Design}
-The validation of the MiniZinc model was performed using the two already mentioned solvers with common search strategies: \texttt{first\_fail} heuristic to select the variable with the smallest domain, \texttt{relax\_and\_reconstruct(85)} to escape local minima by fixing $85\%$ of the found solution and reconstructing the remaining part of it. \\One search strategy differs per solver: Gecode employed also the \texttt{indomain\_random} to assign a randomly chosen value from the selected variable; Chuffed was tested \texttt{indomain\_min}, as \texttt{indomain\_random} is not supported. \\
+The validation of the MiniZinc model was performed using the two already mentioned solvers with common search strategies: \texttt{first\_fail} heuristic to select the variable with the smallest domain, \texttt{relax\_and\_reconstruct(85)} to escape local minima by fixing $85\%$ of the found solution and reconstructing the remaining part of it. \\One search strategy differs per solver: Gecode employed also the \texttt{indomain\_random} to assign a randomly chosen value from the selected variable; Chuffed was tested using \texttt{indomain\_min}, as \texttt{indomain\_random} is not supported. \\
 Restart strategies were tried with Gecode because of the available randomization, but they didn't help the search, so they were not included in the final table results.\\
 TODO Experiments were conducted on a machine with an Intel Core i7 processor and 16GB RAM, running MiniZinc 2.9.3 with Gecode 6.3.0 and Chuffed 0.13.2 on a Docker container from Ubuntu 22.04.\\
 For each instance, we evaluated the following configurations:
 \begin{itemize}
-    \item Chuffed with/without symmetry breaking constraints,
-    \item Chuffed with/without implied constraints,
-    \item Chuffed with/without search strategies,
-    \item Gecode with/without symmetry breaking constraints,
-    \item Gecode with/without implied constraints,
-    \item Gecode with/without search strategies.
-\end{itemize}
+    \item Chuffed and Gecode with/without symmetry breaking constraints,
+    \item Chuffed and Gecode with/without implied constraints,
+    \item Chuffed and Gecode with/without search strategies.
+\end{itemize} 
+Also, other strategies were used, but they didn't improve either the performance or the complexity of the implemented model: we tried \texttt{bounds} and \texttt{domain} to make the solver use specific kinds of constraint propagation; a change in the order of the variables, i.e. swapping the weeks with the periods in both \texttt{home} and \texttt{away} arrays.
 
 \paragraph{Experimental Results}
 
 The results obtained using the described search strategies are reported in the following tables and in the Chuffed plot to assess the effectiveness of symmetry breaking constraints, implied constraints, and search strategies.
 
 \begin{table}[H]
-\centering
-\label{tab:symm}
-\begin{tabular}{@{}lcccc@{}}
+\label{tab:chuffed}
+\small
+\begin{tabular}{@{}lcccccc@{}}
 \toprule
-\textbf{ID} & \textbf{Chuffed + SB} & \textbf{Chuffed w/o SB} & \textbf{Gecode + SB} & \textbf{Gecode w/o SB} \\
+ID & Chuffed + SB & Chuffed w/o SB & Chuffed + IC & Chuffed w/o IC & Chuffed + SS & Chuffed w/o SS \\
 \midrule
-6 & 100 & 120 & 80 & 80 \\
-8 & 50 & 60 & \texttt{N/A} & \texttt{N/A} \\
-10 & \texttt{UNSAT} & \texttt{UNSAT} & \texttt{N/A} & \texttt{N/A} \\
-12 & \texttt{UNSAT} & \texttt{UNSAT} & \texttt{N/A} & \texttt{N/A} \\
+6 & 100 & 120 & 80 & 80 & 80 & 80\\
+8 & 50 & 60 & \texttt{N/A} & \texttt{N/A} & 80 & 80 \\
+10 & \texttt{UNSAT} & \texttt{UNSAT} & \texttt{N/A} & \texttt{N/A} & 80 & 80\\
+12 & \texttt{UNSAT} & \texttt{UNSAT} & \texttt{N/A} & \texttt{N/A} & 80 & 80\\
+14 & \texttt{UNSAT} & \texttt{UNSAT} & \texttt{N/A} & \texttt{N/A} & 80 & 80\\
 \bottomrule
 \end{tabular}
-\caption{Results using Gecode and Chuffed with and without symmetry breaking.}
+\caption{Results using Chuffed with the possible combinations of active constraints.}
 \end{table}
 
 \begin{table}[H]
 \centering
-\label{tab:implied}
-\begin{tabular}{@{}lcccc@{}}
-\toprule
-\textbf{ID} & \textbf{Chuffed + IC} & \textbf{Chuffed w/o IC} & \textbf{Gecode + IC} & \textbf{Gecode w/o IC} \\
-\midrule
-6 & 100 & 120 & 80 & 80 \\
-8 & 50 & 60 & \texttt{N/A} & \texttt{N/A} \\
-10 & \texttt{UNSAT} & \texttt{UNSAT} & \texttt{N/A} & \texttt{N/A} \\
-12 & \texttt{UNSAT} & \texttt{UNSAT} & \texttt{N/A} & \texttt{N/A} \\
-\bottomrule
-\end{tabular}
-\caption{Results using Gecode and Chuffed with and without implied constraints.}
-\end{table}
-
-\begin{table}[H]
-\centering
+\small
 \label{tab:search}
-\begin{tabular}{@{}lcccc@{}}
+\begin{tabular}{@{}lcccccc@{}}
 \toprule
-\textbf{ID} & \textbf{Chuffed + SS} & \textbf{Chuffed w/o SS} & \textbf{Gecode + SS} & \textbf{Gecode w/o SS} \\
+ID & Gecode + SB & Gecode w/o SB & Gecode + IC & Gecode w/o IC & Gecode + SS & Gecode w/o SS \\
 \midrule
-6 & 100 & 120 & 80 & 80 \\
-8 & 50 & 60 & \texttt{N/A} & \texttt{N/A} \\
-10 & \texttt{UNSAT} & \texttt{UNSAT} & \texttt{N/A} & \texttt{N/A} \\
-12 & \texttt{UNSAT} & \texttt{UNSAT} & \texttt{N/A} & \texttt{N/A} \\
+6 & 100 & 120 & 80 & 80 & 80 & 80\\
+8 & 50 & 60 & \texttt{N/A} & \texttt{N/A} & 80 & 80 \\
+10 & \texttt{UNSAT} & \texttt{UNSAT} & \texttt{N/A} & \texttt{N/A} & 80 & 80\\
+12 & \texttt{UNSAT} & \texttt{UNSAT} & \texttt{N/A} & \texttt{N/A} & 80 & 80\\
+14 & \texttt{UNSAT} & \texttt{UNSAT} & \texttt{N/A} & \texttt{N/A} & 80 & 80\\
 \bottomrule
 \end{tabular}
-\caption{Results using Gecode and Chuffed with and without search strategies.}
+\caption{Results using Gecode with the possible combinations of active constraints.}
 \end{table}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{chuffed_plot.png}
+    \includegraphics[width=1\textwidth]{chuffed_plot.png}
     \caption{Chuffed solver: solving time for different constraint configurations.}
     \label{fig:chuffed_plot}
 \end{figure}
 
-\section{Methodology}
+\section{SAT Model}
 
-\subsection{Multi-Paradigm Approach}
-
-This study investigates four distinct optimization paradigms, each offering unique modeling capabilities and computational characteristics:
-
+\subsection{Decision variables}
+The core decision variables in the SAT model are 3D arrays: 
 \begin{itemize}
-    \item \textbf{Constraint Programming (CP)}: Declarative modeling with powerful global constraints and search strategies
-    \item \textbf{Mixed Integer Programming (MIP)}: Mathematical optimization with binary variables and linear constraints
-    \item \textbf{Boolean Satisfiability (SAT)}: Propositional logic solving with multiple encoding schemes
-    \item \textbf{Satisfiability Modulo Theories (SMT)}: Integration of SAT with arithmetic and other theories
+    \item \textbf{home[$w$, $p$, $t$]}: Boolean variables where \textbf{home[$w$, $p$, $t$]} is true if and only if team $t$ plays at home in week $w$ during period $p$.
+
+\textbf{away[$w$, $p$, $t$]}: Boolean variables where \textbf{away[$w$, $p$, $t$]} is true if and only if team $t$ plays away in week $w$ during period $p$.
+\end{itemize}
+Other auxiliary variables are added for the encodings of the cardinality constraints, that will be discussed in Section~3.3.
+
+\subsection{Objective Function}
+
+To optimize an objective function in SAT we use a \emph{binary search} approach over possible values of the objective. For each candidate value, we encode the constraint ``no team has a home/away imbalance greater than $d$'' as SAT clauses, and check satisfiability.
+\\The objective is:
+\[
+\min \max_{t} |H_t - A_t|
+\]
+Since $H_t + A_t = w$ for all $t$, minimizing $|H_t - A_t|$ is equivalent to bounding $H_t$ within $[\lfloor w/2 \rfloor - d/2, \lceil w/2 \rceil + d/2]$ for some $d$.
+\\
+The sum $H_t = \sum_{w,p} \textbf{home[$w$, $p$, $t$]}$ is the number of home games for team $t$.
+To enforce the objective, for a given candidate $d$, we add for each team $t$:
+\[
+\texttt{min\_home} \leq H_t \leq \texttt{max\_home}
+\]
+where
+\[
+\texttt{min\_home} = \max\left(0, \frac{w - d}{2}\right), \quad
+\texttt{max\_home} = \min\left(w, \frac{w + d}{2}\right)
+\]
+During the binary search, $d$ becomes smaller, approaching $1$, then \texttt{min\_home} and \texttt{max\_home} approach $w/2$, leading to a more balanced scheduling.
+
+\subsection{Constraints}
+
+\paragraph{Main Problem Constraints}
+\begin{itemize}
+    \item \textbf{Each slot has exactly one home and one away team, and they are different:}
+    \begin{align*}
+        &\forall w, p: \quad \texttt{exactly\_one}(\{\forall t: \space \textbf{home[$w$, $p$, $t$]}\}) \\
+        &\forall w, p: \quad \texttt{exactly\_one}(\{\forall t: \space \textbf{away[$w$, $p$, $t$]}\}) \\
+        &\forall w, p, t: \quad \textbf{home[$w$, $p$, $t$]} \implies \neg \textbf{away[$w$, $p$, $t$]}
+    \end{align*}
+    This ensures each slot is filled by one home and one away team, and a team cannot be both in the same slot.
+
+    \item \textbf{Each pair of teams plays exactly once:}
+    \begin{align*}
+        &\forall i < j: \quad \texttt{exactly\_one}(\{ \forall w, p: \space \textbf{home[$w$, $p$, $i$]} \land \textbf{away[$w$, $p$, $j$]}, \textbf{home[$w$, $p$, $j$]} \land \textbf{away[$w$, $p$, $i$]}\})
+    \end{align*}
+    This ensures every pair of teams meets exactly once, with one as home and one as away.
+
+    \item \textbf{Each team plays once per week:}
+    \begin{align*}
+        &\forall w, t: \quad \texttt{exactly\_one}(\{\forall p: \space \textbf{home[$w$, $p$, $t$]}, \textbf{away[$w$, $p$, $t$]}\})
+    \end{align*}
+    Each team appears in exactly one match per week.
+
+    \item \textbf{Period limit: Each team appears in the same period at most twice:}
+    \begin{align*}
+        &\forall t, p: \quad \texttt{at\_most\_k}(\{\forall w: \textbf{home[$w$, $p$, $t$]}, \textbf{away[$w$, $p$, $t$]}\}, 2)
+    \end{align*}
+    No team is scheduled in the same period more than twice.
 \end{itemize}
 
-\subsection{Technology Stack and Tools}
-
+\paragraph{Implied Constraints}
 \begin{itemize}
-    \item \textbf{Constraint Programming}: MiniZinc 2.9.3 with Chuffed and Gecode solvers
-    \item \textbf{Mixed Integer Programming}: Python PuLP library with CBC, Gurobi, and CPLEX solvers
-    \item \textbf{SAT Solving}: Z3 SMT solver with custom Boolean encodings
-    \item \textbf{SMT Solving}: Z3 with integer arithmetic and optimization extensions
-    \item \textbf{Infrastructure}: Docker containerization for reproducible experiments
-    \item \textbf{Analysis}: Python-based result processing and statistical evaluation
+    \item \textbf{Number of games per team:}
+    \begin{align*}
+        &\forall t: \quad \texttt{exactly\_k}(\{\forall w,p: \textbf{home[$w$, $p$, $t$]}, \textbf{away[$w$, $p$, $t$]}\}, n-1)
+    \end{align*}
+    Each team plays $n-1$ games (one per week).
+
+    \item \textbf{Total period appearances:}
+    \begin{align*}
+        &\forall t: \quad \texttt{exactly\_k}(\{\forall w,p: \space \textbf{home[$w$, $p$, $t$]}, \textbf{away[$w$, $p$, $t$]}\}, n-1)
+    \end{align*}
+    Each team appears in periods a total of $n-1$ times.
 \end{itemize}
 
-\subsection{Experimental Design}
-
-Our experimental methodology includes:
+\paragraph{Symmetry Breaking Constraints}
+The lexicographical order constraints used in the CP model are enforced only on the first pair of weeks and periods, because applying them on the whole schedule would lead to an explosion of constraints and to an overall time performance decrease.
 \begin{itemize}
-    \item \textbf{Instance Sizes}: Tournament sizes from 4 to 14 teams
-    \item \textbf{Constraint Configurations}: Systematic evaluation of symmetry breaking and implied constraints
-    \item \textbf{Statistical Reliability}: Multiple runs (5 repetitions) with statistical analysis
-    \item \textbf{Timeout Limits}: 300-second timeout per solver execution
-    \item \textbf{Performance Metrics}: Solving time, solution quality, and success rate
+    \item \textbf{Weeks:} Lexicographically order the first two weeks to break symmetry:
+\begin{align*}
+    &\texttt{lex\_less}(
+        [\forall t, p:\space\textbf{ home[$0$, $p$, $t$]}, \textbf{away[$0$, $p$, $t$]}], \\
+    &\quad\quad\quad\quad
+        [\forall t, p: \textbf{home[$1$, $p$, $t$]}, \textbf{away[$1$, $p$, $t$]}]
+    )
+\end{align*}
+
+\item \textbf{Periods:} Lexicographically order the first two periods to break symmetry:
+\begin{align*}
+    &\texttt{lex\_less}(
+        [\forall w, t : \textbf{home[$w$, $0$, $t$]}, \textbf{away[$w$, $0$, $t$]}], \\
+    &\quad\quad\quad\quad
+        [\forall w, t: \textbf{home[$w$, $1$, $t$]}, \textbf{away[$w$, $1$, $t$]}]
+    )
+\end{align*}
+
+
+    \item \textbf{Teams:} Fix the assignment in the first week:
+    \begin{align*}
+        &\forall i: \quad \textbf{home[$0$, $i$, $2i$]} \land \textbf{away[$0$, $i$, $2i+1$]}
+    \end{align*}
+    This removes equivalent solutions due to team relabeling.
 \end{itemize}
 
-\section{Models}
+
+\paragraph{Encoding Methods}
+\begin{itemize}
+    \item \textbf{Exactly-one, at-most-k, and exactly-k constraints:} These are encoded using various SAT encodings, selectable in the CLI by the user:
+    \begin{itemize}
+        \item \texttt{np}: Naive pairwise encoding.
+        \item \texttt{seq}: Sequential counter encoding (used for at-most-k and exactly-k).
+        \item \texttt{bw}: Bitwise encoding for exactly-one.
+        \item \texttt{he}: Heule encoding for exactly-one.
+    \end{itemize}
+    The sequential counter encoding is used for cardinality constraints (at-most-k, at-least-k, exactly-k) for efficiency. Indeed, Section~3.4 will study in more detail the differences in time performance among the encoding methods.
+\end{itemize}
+
+\subsection{Validation}
+
+\paragraph{Model Validation with Z3.}
+The primary implementation of the STS model uses the Z3 SMT solver. All constraints are encoded as Z3 Boolean formulas, and the model is validated by checking satisfiability and extracting a solution using Z3's API.
+
+\paragraph{Solver-Independent Validation via DIMACS.} The Z3 model can also be exported to the standard DIMACS CNF format, which is supported by most SAT solvers. This is achieved by:
+\begin{itemize}
+    \item Using Z3's \texttt{tseitin-cnf} tactic \cite{tseitin} to convert the Z3 Boolean model into CNF.
+    \item Exporting the CNF to DIMACS format, including variable mappings, i.e. the mapping from the assigned integer value to the Z3 boolean variable.
+    \item Parsing the DIMACS file and solving it with external SAT solvers (e.g., Minisat, Glucose) via the PySAT library.
+    \item Decoding the resulting model back into the tournament schedule using the variable mappings.
+\end{itemize}
+This approach allows the same model to be validated with different SAT solvers, ensuring correctness and robustness of the encoding.
+
+\paragraph{Results} The following table shows the time performance of the different solvers with different encoding methods.
+\begin{table}[H]
+\centering
+\small
+\label{tab:sat}
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+ID & Gecode + SB & Gecode w/o SB & Gecode + IC & Gecode w/o IC & Gecode + SS & Gecode w/o SS \\
+\midrule
+6 & 100 & 120 & 80 & 80 & 80 & 80\\
+8 & 50 & 60 & \texttt{N/A} & \texttt{N/A} & 80 & 80 \\
+10 & \texttt{UNSAT} & \texttt{UNSAT} & \texttt{N/A} & \texttt{N/A} & 80 & 80\\
+12 & \texttt{UNSAT} & \texttt{UNSAT} & \texttt{N/A} & \texttt{N/A} & 80 & 80\\
+14 & \texttt{UNSAT} & \texttt{UNSAT} & \texttt{N/A} & \texttt{N/A} & 80 & 80\\
+\bottomrule
+\end{tabular}
+\caption{Results using Gecode with the possible combinations of active constraints.}
+\end{table}
+
+\section{SMT Model}
 
 This section presents the mathematical formulations for each optimization paradigm, detailing variable definitions, constraint specifications, and modeling approaches.
 
@@ -374,33 +480,6 @@ where $x_{w,p,i,j} = 1$ if team $i$ plays at home against team $j$ in week $w$, 
 h_i &= \sum_{w,p,j: j \neq i} x_{w,p,i,j} \quad \forall i \\
 a_i &= \sum_{w,p,j: j \neq i} x_{w,p,j,i} \quad \forall i \\
 &|h_i - a_i| \leq M \quad \forall i
-\end{align}
-
-\subsection{SAT Model (Z3)}
-
-The SAT model uses Boolean variables with multiple encoding schemes:
-
-\begin{align}
-&\text{Variables:} \\
-&\quad home_{w,p,t} \in \{0,1\} \quad \forall w,p,t \\
-&\quad away_{w,p,t} \in \{0,1\} \quad \forall w,p,t
-\end{align}
-
-where $home_{w,p,t} = 1$ if team $t$ plays at home in week $w$, period $p$.
-
-\textbf{Encoding Schemes:}
-\begin{itemize}
-    \item \textbf{Naive Pairwise (NP)}: Direct pairwise constraints for each constraint type
-    \item \textbf{Sequential (SEQ)}: Auxiliary variables with sequential ordering
-    \item \textbf{Bitwise (BW)}: Logarithmic encoding using bit representation
-    \item \textbf{Heule (HE)}: Optimized encoding for cardinality constraints
-\end{itemize}
-
-\textbf{Core SAT Constraints:}
-\begin{align}
-&\text{ExactlyOne}(\{home_{w,p,t} \mid t \in \text{Teams}\}) \quad \forall w,p \\
-&\text{ExactlyOne}(\{away_{w,p,t} \mid t \in \text{Teams}\}) \quad \forall w,p \\
-&\neg(home_{w,p,t} \land away_{w,p,t}) \quad \forall w,p,t
 \end{align}
 
 \subsection{SMT Model (Z3)}
@@ -801,56 +880,13 @@ I would like to thank the course instructors and teaching assistants for their g
 \bibliographystyle{plain}
 \begin{thebibliography}{99}
 
-\bibitem{minizinc}
-Nethercote, N., Stuckey, P.J., Becket, R., Brand, S., Duck, G.J., Tack, G.
-\newblock {MiniZinc: Towards a standard CP modelling language}.
-\newblock {\em Principles and Practice of Constraint Programming}, pages 529--543, 2007.
-
-\bibitem{pulp}
-Mitchell, S., O'Sullivan, M., Dunning, I.
-\newblock {PuLP: A linear programming toolkit for python}.
-\newblock {\em The Python Papers}, 2(1):44--47, 2011.
-
-\bibitem{z3}
-de Moura, L., Bjørner, N.
-\newblock {Z3: An efficient SMT solver}.
-\newblock {\em Tools and Algorithms for the Construction and Analysis of Systems}, pages 337--340, 2008.
-
-\bibitem{sports_scheduling}
-Rasmussen, R.V., Trick, M.A.
-\newblock {Round robin scheduling -- a survey}.
-\newblock {\em European Journal of Operational Research}, 188(3):617--636, 2008.
-
-\bibitem{constraint_programming}
-Rossi, F., van Beek, P., Walsh, T.
-\newblock {\em Handbook of Constraint Programming}.
-\newblock Elsevier, 2006.
-
-\bibitem{mip_book}
-Wolsey, L.A.
-\newblock {\em Integer Programming}.
-\newblock Wiley, 1998.
-
-\bibitem{sat_handbook}
-Biere, A., Heule, M., van Maaren, H., Walsh, T.
-\newblock {\em Handbook of Satisfiability}.
-\newblock IOS Press, 2009.
-
-\bibitem{smt_survey}
-Barrett, C., Sebastiani, R., Seshia, S.A., Tinelli, C.
-\newblock {Satisfiability modulo theories}.
-\newblock {\em Handbook of Satisfiability}, pages 825--885, 2009.
-
-\bibitem{symmetry_breaking}
-Crawford, J., Ginsberg, M., Luks, E., Roy, A.
-\newblock {Symmetry-breaking predicates for search problems}.
-\newblock {\em Principles of Knowledge Representation and Reasoning}, pages 148--159, 1996.
-
-\bibitem{tournament_graphs}
-Harary, F., Moser, L.
-\newblock {The theory of round robin tournaments}.
-\newblock {\em The American Mathematical Monthly}, 73(3):231--246, 1966.
+\bibitem{teamsymm}
+A Sport Scheduling problem example by \textit{csplib}.\\
+\url{https://www.csplib.org/Problems/prob026/models/SportsScheduling.py.html}
+\bibitem{tseitin}
+\textit{G. S. Tseitin}, "On the complexity of derivation in propositional calculus," Studies in Constructive Mathematics and Mathematical Logic, Part II, pp. 115–125, 1968.
 
 \end{thebibliography}
 
 \end{document}
+
