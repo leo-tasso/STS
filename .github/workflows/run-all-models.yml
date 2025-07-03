@@ -201,18 +201,39 @@ jobs:
         echo "Validating generated solutions..."
         cd test
         
-        # Check each model type directory for results
+        # Check each model type directory for results (excluding archive folders)
         for model_dir in ../res/*/; do
           if [ -d "$model_dir" ] && [ "$(ls -A $model_dir 2>/dev/null)" ]; then
             model_name=$(basename "$model_dir")
+            
+            # Skip archive directories
+            if [[ "$model_name" == "archive" ]]; then
+              echo "⏭️ Skipping archive directory: $model_name"
+              continue
+            fi
+            
             echo "Validating solutions for $model_name model..."
             
-            if python solution_checker_no_recursion.py "$model_dir"; then
-              echo "✅ All $model_name solutions are valid"
+            # Create a temporary directory to hold only non-archive files for validation
+            temp_dir=$(mktemp -d)
+            
+            # Copy all JSON files except those in archive subdirectories
+            find "$model_dir" -name "*.json" -not -path "*/archive/*" -exec cp {} "$temp_dir/" \; 2>/dev/null || true
+            
+            if [ "$(ls -A "$temp_dir" 2>/dev/null)" ]; then
+              if python solution_checker_no_recursion.py "$temp_dir"; then
+                echo "✅ All $model_name solutions are valid"
+              else
+                echo "❌ Found invalid solutions in $model_name"
+                rm -rf "$temp_dir"
+                exit 1
+              fi
             else
-              echo "❌ Found invalid solutions in $model_name"
-              exit 1
+              echo "⚠️ No non-archive results found for $model_name"
             fi
+            
+            # Clean up temporary directory
+            rm -rf "$temp_dir"
           else
             echo "⚠️ No results found for $model_name"
           fi
