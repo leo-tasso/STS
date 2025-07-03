@@ -15,6 +15,8 @@ bool: use_int_search;
 bool: use_restart_luby;
 bool: use_relax_and_reconstruct;
 
+bool: chuffed;
+
 set of int: Teams = 1..n;
 set of int: Weeks = 1..weeks;
 set of int: Periods = 1..periods;
@@ -55,9 +57,17 @@ array[Teams] of var Count: home_count;
 array[Teams] of var Count: away_count;
 
 constraint
-  forall(t in Teams)(
-    home_count[t] = sum([bool2int(home[w, p] = t) | w in Weeks, p in Periods]) /\
-    away_count[t] = sum([bool2int(away[w, p] = t) | w in Weeks, p in Periods])
+  global_cardinality(
+    [home[w,p] | w in Weeks, p in Periods],
+    Teams,
+    [home_count[t] | t in Teams]
+  );
+
+constraint
+  global_cardinality(
+    [away[w,p] | w in Weeks, p in Periods], 
+    Teams,
+    [away_count[t] | t in Teams]
   );
 
 % Implied constraint: number of games per team
@@ -79,7 +89,7 @@ constraint
 %symmetry breaking weeks
 constraint 
   use_symm_break_weeks ->
-  forall(w in 1..weeks - 1)(
+  forall(w in 1..weeks-1)(
     lex_less(
       [ home[w,p] | p in Periods ] ++ [ away[w,p] | p in Periods ],
       [ home[w+1,p] | p in Periods ] ++ [ away[w+1,p] | p in Periods ]
@@ -125,7 +135,7 @@ solve
      )
      endif
    endif
-:: if use_restart_luby then restart_luby(10000) endif
+:: if (use_restart_luby /\ chuffed) then restart_luby(10000) endif
 :: if use_relax_and_reconstruct then 
      relax_and_reconstruct([home[w, p] | w in Weeks, p in Periods] ++ [away[w, p] | w in Weeks, p in Periods], 85)
    endif
