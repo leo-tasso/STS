@@ -1,0 +1,58 @@
+{
+  "generate_all_constraints_chuffed": {
+    "time": 300,
+    "optimal": "false",
+    "obj": null,
+    "sol": "=====UNKNOWN===== (likely timeout)",
+    "solver": "chuffed",
+    "constraints": [
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "generate_all_constraints_gecode": {
+    "time": 300,
+    "optimal": "false",
+    "obj": null,
+    "sol": "=====UNKNOWN===== (likely timeout)",
+    "solver": "gecode",
+    "constraints": [
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  }
+}

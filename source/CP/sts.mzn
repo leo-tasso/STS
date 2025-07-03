@@ -135,7 +135,7 @@ solve
      )
      endif
    endif
-:: if use_restart_luby then restart_luby(10000) endif
+:: if (use_restart_luby /\ chuffed) then restart_luby(10000) endif
 :: if use_relax_and_reconstruct then 
      relax_and_reconstruct([home[w, p] | w in Weeks, p in Periods] ++ [away[w, p] | w in Weeks, p in Periods], 85)
    endif
