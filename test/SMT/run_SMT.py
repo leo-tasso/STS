@@ -63,11 +63,16 @@ def run_sts_solver(
         else:
             result = sts.solve_sts_smt_smtlib(n, constraints, optimize=False, timeout=timeout_sec)
         
+        # If result is unsat or timeout, set sol to []
+        sol_val = result['sol']
+        if isinstance(sol_val, str) and (sol_val == "unsat" or "timeout" in sol_val or "error" in sol_val):
+            sol_val = []
+        
         return {
             "time": int(result['time']),
             "optimal": result['optimal'],
             "obj": result.get('obj', None),
-            "sol": result['sol'],
+            "sol": sol_val,
             "solver": solver,
             "constraints": active_constraints
         }
@@ -77,7 +82,7 @@ def run_sts_solver(
             "time": timeout_sec,
             "optimal": False,
             "obj": None,
-            "sol": f"error: {str(e)}",
+            "sol": [],  # Return [] for unsat/timeout
             "solver": solver,
             "constraints": active_constraints
         }
@@ -129,6 +134,9 @@ def run_sts_with_averaging(
     # Take first solution found if any
     solution = next((r["sol"] for r in results if r["sol"]), None)
     objective = next((r["obj"] for r in results if r["optimal"]), None)
+    # If no solution found, set to []
+    if not solution or (isinstance(solution, str) and (solution == "unsat" or "timeout" in solution or "error" in solution)):
+        solution = []
     
     return {
         "time": int(avg_time),

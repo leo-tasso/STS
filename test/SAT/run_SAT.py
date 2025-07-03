@@ -84,7 +84,7 @@ def run_sts_solver(
                     "time": int(round(result.get('time', timeout_sec))),
                     "optimal": obj == 1 ,
                     "obj": obj,
-                    "sol": sol if status == "sat" else "unsat",
+                    "sol": sol if status == "sat" else [],  # Return [] for unsat/timeout
                     "solver": solver,
                     "constraints": active_constraints,
                     "encoding_type": encoding_type,
@@ -108,7 +108,7 @@ def run_sts_solver(
                         "time": int(round(result['time'])),
                         "optimal": "false",
                         "obj": None,
-                        "sol": "unsat",
+                        "sol": [],  # Return [] for unsat/timeout
                         "solver": solver,
                         "constraints": active_constraints,
                         "encoding_type": encoding_type,
@@ -132,7 +132,7 @@ def run_sts_solver(
                     "time": int(round(result['time'])),
                     "optimal": "false",
                     "obj": None,
-                    "sol": "unsat",
+                    "sol": [],  # Return [] for unsat/timeout
                     "solver": solver,
                     "constraints": active_constraints,
                     "encoding_type": encoding_type,
@@ -146,7 +146,7 @@ def run_sts_solver(
             "time": int(round(timeout_sec)),
             "optimal": "false", 
             "obj": None,
-            "sol": f"error: {str(e)}",
+            "sol": [],  # Return [] for unsat/timeout
             "solver": solver,
             "constraints": active_constraints,
             "encoding_type": encoding_type,
@@ -235,9 +235,12 @@ def run_sts_with_averaging(
     elif unsat_count == num_runs:
         overall_status = "unsat"
         optimal = "false"
+        solution = []  # Return [] for unsat/timeout
     else:
         overall_status = "mixed" if sat_count > 0 else "timeout"
         optimal = "false"
+        if overall_status == "timeout":
+            solution = []  # Return [] for unsat/timeout
     
     return {
         "time": avg_time,

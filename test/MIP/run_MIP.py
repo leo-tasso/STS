@@ -118,7 +118,7 @@ def run_mip_with_averaging(
                         "time": timeout_sec,
                         "optimal": "false",
                         "obj": None,
-                        "sol": "ERROR PARSING STDOUT",
+                        "sol": [],
                         "solver": solver_name,
                         "constraints": active_constraints,
                         "error": str(e)
@@ -136,7 +136,7 @@ def run_mip_with_averaging(
                     "time": timeout_sec,
                     "optimal": "false",
                     "obj": None,
-                    "sol": "ERROR PARSING STDOUT",
+                    "sol": [],
                     "solver": solver_name,
                     "constraints": active_constraints,
                     "error": str(e)
@@ -150,7 +150,7 @@ def run_mip_with_averaging(
     
     # Process results
     for result in results:
-        if result.get("sol") not in ["unsat", "=====UNKNOWN===== (likely timeout)", "ERROR PARSING STDOUT"]:
+        if result.get("sol") != [] and result.get("sol") not in ["unsat", "=====UNKNOWN===== (likely timeout)", "ERROR PARSING STDOUT"]:
             successful_runs += 1
             if isinstance(result.get("time"), (int, float)):
                 valid_times.append(result["time"])
@@ -159,6 +159,8 @@ def run_mip_with_averaging(
         else:
             error_msg = result.get("error", result.get("sol", "Unknown error"))
             errors.append(error_msg)
+            # Set sol to [] for unsat/timeout
+            result["sol"] = []
     
     # Create averaged result
     avg_result = {
@@ -208,7 +210,7 @@ def run_mip_with_averaging(
     best_obj = None
     best_sol = None
     for result in results:
-        if result.get("sol") not in ["unsat", "=====UNKNOWN===== (likely timeout)", "ERROR PARSING STDOUT"]:
+        if result.get("sol") != [] and result.get("sol") not in ["unsat", "=====UNKNOWN===== (likely timeout)", "ERROR PARSING STDOUT"]:
             obj_val = result.get("obj")
             if obj_val is not None and (best_obj is None or obj_val < best_obj):  # Assuming minimization
                 best_obj = obj_val
@@ -219,10 +221,7 @@ def run_mip_with_averaging(
     if best_sol is not None:
         avg_result["sol"] = str(best_sol)
     else:
-        avg_result["sol"] = "unsat"
-    
-    if best_obj is not None:
-        avg_result["obj"] = best_obj
+        avg_result["sol"] = []  # Return empty list for unsat/timeout
     
     # Add run information and statistics
     avg_result["runs_info"] = {

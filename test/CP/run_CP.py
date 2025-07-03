@@ -112,7 +112,7 @@ def clean_minizinc_stdout(
             "time": timeout_sec,
             "optimal": "false",
             "obj": None,
-            "sol": '"error empty stdout"',
+            "sol": [],
             "solver": solver,
             "constraints": active_constraints,
         }
@@ -121,7 +121,7 @@ def clean_minizinc_stdout(
             "time": timeout_sec,
             "optimal": "false",
             "obj": None,
-            "sol": error_message if error_message != None else "unkown error",
+            "sol": [],
             "solver": solver,
             "constraints": active_constraints,
         }
@@ -132,7 +132,7 @@ def clean_minizinc_stdout(
             "time": None,
             "optimal": "false",
             "obj": None,
-            "sol": "unsat",
+            "sol": [],
             "solver": solver,
             "constraints": active_constraints,
         }
@@ -143,7 +143,7 @@ def clean_minizinc_stdout(
             "time": timeout_sec,
             "optimal": "false",
             "obj": None,
-            "sol": "=====UNKNOWN===== (likely timeout)",
+            "sol": [],  # Return empty list for unsat/timeout
             "solver": solver,
             "constraints": active_constraints,
         }
@@ -207,7 +207,7 @@ def clean_minizinc_stdout(
             "time": timeout_sec,
             "optimal": "false",
             "obj": None,
-            "sol": '"JSONDecodeError"',
+            "sol": [],  # Return empty list for unsat/timeout
             "solver": solver,
             "constraints": active_constraints,
         }
@@ -409,7 +409,7 @@ def write_results_to_json(results: list[dict], names: list[str], n: int):
 
     with open(filename, "w") as f:
         for line in lines:
-            if '"sol": "' in line and "unsat" not in line and "timeout" not in line:
+            if '"sol": "' in line:
                 # Clean line: remove surrounding quotes and unescape inner quotes
                 line = line.replace('\\"', '"')  # unescape quotes inside
                 line = line.replace('"sol": "', '"sol": ').rstrip()
@@ -715,8 +715,7 @@ def run_minizinc_with_averaging(
     
     for result in results:
         # Check if this run was successful (not error, timeout, or unsat)
-        if (result.get("sol") not in ["unsat", "=====UNKNOWN===== (likely timeout)", "JSONDecodeError", "ERROR PARSING STDOUT"] 
-            and not isinstance(result.get("sol"), str) or "error" not in result.get("sol", "").lower()):
+        if (result.get("sol") != []):
             
             successful_runs += 1
             
@@ -787,7 +786,7 @@ def run_minizinc_with_averaging(
     best_obj = None
     best_sol = None
     for result in results:
-        if result.get("sol") not in ["unsat", "=====UNKNOWN===== (likely timeout)", "JSONDecodeError", "ERROR PARSING STDOUT"]:
+        if result.get("sol") != []:
             if is_optimization:
                 obj_val = result.get("obj")
                 if obj_val is not None and (best_obj is None or obj_val < best_obj):  # Assuming minimization
