@@ -68,7 +68,8 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# Copy project files
+# Copy project files (force rebuild of this layer)
+ARG CACHEBUST=1
 COPY . .
 
 # Convert Windows line endings to Unix for MiniZinc files
