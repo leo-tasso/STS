@@ -6,7 +6,7 @@
     "time_max": 2070,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "glucose",
     "constraints": [
       "use_symm_break_weeks",

@@ -6,7 +6,7 @@
     "time_max": 0,
     "optimal": false,
     "obj": null,
-    "sol": None,
+    "sol": [],
     "solver": "z3",
     "constraints": [
       "use_symm_break_weeks",
@@ -25,7 +25,7 @@
     "time_max": 0,
     "optimal": false,
     "obj": null,
-    "sol": None,
+    "sol": [],
     "solver": "z3",
     "constraints": [
       "use_symm_break_weeks",
@@ -44,7 +44,7 @@
     "time_max": 0,
     "optimal": false,
     "obj": null,
-    "sol": None,
+    "sol": [],
     "solver": "cvc5",
     "constraints": [
       "use_symm_break_weeks",
@@ -63,7 +63,7 @@
     "time_max": 0,
     "optimal": false,
     "obj": null,
-    "sol": None,
+    "sol": [],
     "solver": "z3",
     "constraints": [
       "use_implied_matches_per_team",
@@ -81,7 +81,7 @@
     "time_max": 0,
     "optimal": false,
     "obj": null,
-    "sol": None,
+    "sol": [],
     "solver": "z3",
     "constraints": [
       "use_implied_matches_per_team",
@@ -99,7 +99,7 @@
     "time_max": 0,
     "optimal": false,
     "obj": null,
-    "sol": None,
+    "sol": [],
     "solver": "cvc5",
     "constraints": [
       "use_implied_matches_per_team",
@@ -117,7 +117,7 @@
     "time_max": 0,
     "optimal": false,
     "obj": null,
-    "sol": None,
+    "sol": [],
     "solver": "z3",
     "constraints": [
       "use_symm_break_weeks",
@@ -138,7 +138,7 @@
     "time_max": 0,
     "optimal": false,
     "obj": null,
-    "sol": None,
+    "sol": [],
     "solver": "z3",
     "constraints": [
       "use_symm_break_weeks",
@@ -159,7 +159,7 @@
     "time_max": 0,
     "optimal": false,
     "obj": null,
-    "sol": None,
+    "sol": [],
     "solver": "cvc5",
     "constraints": [
       "use_symm_break_weeks",
