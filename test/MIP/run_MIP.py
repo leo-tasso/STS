@@ -62,6 +62,7 @@ def run_mip_with_averaging(
     verbose: bool = False,
     num_runs: int = 5,
     max_workers: int = None,
+    optimize: bool = False,
 ) -> dict:
     """
     Runs the MIP solver multiple times and averages the results for reliable measurements.
@@ -74,6 +75,7 @@ def run_mip_with_averaging(
         verbose (bool): Whether to print verbose output
         num_runs (int): Number of runs to average
         max_workers (int): Maximum number of parallel workers
+        optimize (bool): Whether to optimize for home/away balance
         
     Returns:
         dict: Averaged results
@@ -100,7 +102,7 @@ def run_mip_with_averaging(
     def single_run(run_id):
         if verbose:
             print(f"  Run {run_id + 1}/{num_runs}")
-        return sts.solve_sts_mip(n, constraints, solver_name, timeout_sec, verbose)
+        return sts.solve_sts_mip(n, constraints, solver_name, timeout_sec, verbose, optimize)
     
     # Execute runs in parallel if max_workers allows
     if max_workers != 1:
@@ -251,6 +253,7 @@ def run_test_mode(
     verbose: bool = False,
     num_runs: int = 5,
     max_workers: int = None,
+    optimize: bool = False,
 ) -> tuple[list[dict], list[str]]:
     """
     Runs all possible combinations of the selected constraints.
@@ -274,7 +277,7 @@ def run_test_mode(
             print(f"\nCombination {i+1}/{len(all_combinations)}: {combo}")
         
         result = run_mip_with_averaging(
-            n, combo, solver_name, timeout_sec, verbose, num_runs, max_workers
+            n, combo, solver_name, timeout_sec, verbose, num_runs, max_workers, optimize
         )
         results.append(result)
         
@@ -299,6 +302,7 @@ def run_select_mode(
     verbose: bool = False,
     num_runs: int = 5,
     max_workers: int = None,
+    optimize: bool = False,
 ) -> tuple[list[dict], list[str]]:
     """
     Runs all possible combinations of constraints in the selected group.
@@ -313,7 +317,7 @@ def run_select_mode(
     
     print(f"Selected group '{group_name}' contains: {selected_constraints}")
     
-    return run_test_mode(n, selected_constraints, solver_name, timeout_sec, verbose, num_runs, max_workers)
+    return run_test_mode(n, selected_constraints, solver_name, timeout_sec, verbose, num_runs, max_workers, optimize)
 
 def write_results_to_json(results: list[dict], names: list[str], n: int) -> None:
     """
@@ -429,6 +433,13 @@ def main():
         help="Maximum number of parallel workers (default: auto-detect based on CPU count)",
     )
 
+    # Optimize flag for home/away balance
+    parser.add_argument(
+        "--optimize",
+        action="store_true",
+        help="Enable optimization for home/away balance",
+    )
+
     args = parser.parse_args()
     
     # Validate constraint names
@@ -455,6 +466,7 @@ def main():
     print(f"Solver: {args.solver}")
     print(f"Timeout: {args.timeout} seconds")
     print(f"Runs per measurement: {args.runs}")
+    print(f"Optimize for home/away balance: {args.optimize}")
     if args.select:
         print(f"Selected constraint group: {args.select}")
     else:
@@ -468,14 +480,14 @@ def main():
         print("Test mode: Running all possible combinations of selected constraints...")
         print(f"Each combination will be run {args.runs} times for reliable measurements.")
         results, names = run_test_mode(
-            args.teams, args.constraints, args.solver, args.timeout, args.verbose, args.runs, args.max_workers
+            args.teams, args.constraints, args.solver, args.timeout, args.verbose, args.runs, args.max_workers, args.optimize
         )
     elif args.select:
         # Select group mode: run with all possible combinations of the selected constraint group
         print("Select group mode: Running all possible combinations of selected group constraint...")
         print(f"Each combination will be run {args.runs} times for reliable measurements.")
         results, names = run_select_mode(
-            args.teams, args.select, args.solver, args.timeout, args.verbose, args.runs, args.max_workers
+            args.teams, args.select, args.solver, args.timeout, args.verbose, args.runs, args.max_workers, args.optimize
         )
     else:
         # Generate mode: run once with all selected constraints active
@@ -489,6 +501,7 @@ def main():
             verbose=args.verbose,
             num_runs=args.runs,
             max_workers=args.max_workers,
+            optimize=args.optimize,
         )
         results.append(result)
         names.append("generate_all_constraints")
