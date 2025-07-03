@@ -222,7 +222,11 @@ def run_mip_with_averaging(
         avg_result["sol"] = str(best_sol)
     else:
         avg_result["sol"] = []  # Return empty list for unsat/timeout
-    
+
+    # If sol is empty, obj must be None
+    if avg_result["sol"] == []:
+        avg_result["obj"] = None
+
     # Add run information and statistics
     avg_result["runs_info"] = {
         "total_runs": num_runs,
