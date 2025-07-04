@@ -6,7 +6,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "z3",
     "constraints": [],
     "encoding_type": "bw",
@@ -24,7 +24,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "minisat",
     "constraints": [],
     "encoding_type": "bw",
@@ -42,7 +42,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "glucose",
     "constraints": [],
     "encoding_type": "bw",
@@ -60,7 +60,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "z3",
     "constraints": [
       "use_symm_break_weeks"
@@ -80,7 +80,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "minisat",
     "constraints": [
       "use_symm_break_weeks"
@@ -100,7 +100,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "glucose",
     "constraints": [
       "use_symm_break_weeks"
@@ -120,7 +120,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "z3",
     "constraints": [
       "use_symm_break_periods"
@@ -140,7 +140,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "minisat",
     "constraints": [
       "use_symm_break_periods"
@@ -160,7 +160,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "glucose",
     "constraints": [
       "use_symm_break_periods"
@@ -180,7 +180,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "z3",
     "constraints": [
       "use_symm_break_teams"
@@ -200,7 +200,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "minisat",
     "constraints": [
       "use_symm_break_teams"
@@ -220,7 +220,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "glucose",
     "constraints": [
       "use_symm_break_teams"
@@ -240,7 +240,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "z3",
     "constraints": [
       "use_symm_break_weeks",
@@ -261,7 +261,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "minisat",
     "constraints": [
       "use_symm_break_weeks",
@@ -282,7 +282,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "glucose",
     "constraints": [
       "use_symm_break_weeks",
@@ -303,7 +303,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "z3",
     "constraints": [
       "use_symm_break_weeks",
@@ -324,7 +324,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "minisat",
     "constraints": [
       "use_symm_break_weeks",
@@ -345,7 +345,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "glucose",
     "constraints": [
       "use_symm_break_weeks",
@@ -366,7 +366,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "z3",
     "constraints": [
       "use_symm_break_periods",
@@ -387,7 +387,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "minisat",
     "constraints": [
       "use_symm_break_periods",
@@ -408,7 +408,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "glucose",
     "constraints": [
       "use_symm_break_periods",
@@ -429,7 +429,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "z3",
     "constraints": [
       "use_symm_break_weeks",
@@ -451,7 +451,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "minisat",
     "constraints": [
       "use_symm_break_weeks",
@@ -473,7 +473,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "glucose",
     "constraints": [
       "use_symm_break_weeks",
@@ -495,7 +495,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "z3",
     "constraints": [],
     "encoding_type": "bw",
@@ -513,7 +513,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "minisat",
     "constraints": [],
     "encoding_type": "bw",
@@ -531,7 +531,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "glucose",
     "constraints": [],
     "encoding_type": "bw",
@@ -549,7 +549,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "z3",
     "constraints": [
       "use_implied_matches_per_team"
@@ -569,7 +569,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "minisat",
     "constraints": [
       "use_implied_matches_per_team"
@@ -589,7 +589,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "glucose",
     "constraints": [
       "use_implied_matches_per_team"
@@ -609,7 +609,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "z3",
     "constraints": [
       "use_implied_period_count"
@@ -629,7 +629,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "minisat",
     "constraints": [
       "use_implied_period_count"
@@ -649,7 +649,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "glucose",
     "constraints": [
       "use_implied_period_count"
@@ -669,7 +669,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "z3",
     "constraints": [
       "use_implied_matches_per_team",
@@ -690,7 +690,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "minisat",
     "constraints": [
       "use_implied_matches_per_team",
@@ -711,7 +711,7 @@
     "time_max": 0,
     "optimal": "false",
     "obj": null,
-    "sol": no_solution,
+    "sol": [],
     "solver": "glucose",
     "constraints": [
       "use_implied_matches_per_team",
