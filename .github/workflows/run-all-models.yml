@@ -1,5 +1,8 @@
 name: Run All STS Models
 
+# This workflow runs all STS models (CP, MIP, SAT, SMT) and validates solutions.
+# Solution validation is now integrated into the run_all_models.py script by default.
+
 on:
   # Trigger on push to main branch
   push:
@@ -38,6 +41,11 @@ on:
         description: 'Models to run (comma-separated: CP,MIP,SAT,SMT or "all")'
         required: false
         default: 'all'
+      skip_validation:
+        description: 'Skip solution validation (validation is included by default)'
+        required: false
+        default: false
+        type: boolean
 
   # Run on schedule (weekly on Sunday at 2 AM UTC)
   schedule:
@@ -136,12 +144,14 @@ jobs:
           echo "timeout=300" >> $GITHUB_OUTPUT
           echo "verbose=false" >> $GITHUB_OUTPUT
           echo "models=all" >> $GITHUB_OUTPUT
+          echo "skip_validation=false" >> $GITHUB_OUTPUT
         else
           echo "team_numbers=${{ github.event.inputs.team_numbers }}" >> $GITHUB_OUTPUT
           echo "mode=${{ github.event.inputs.mode }}" >> $GITHUB_OUTPUT
           echo "timeout=${{ github.event.inputs.timeout }}" >> $GITHUB_OUTPUT
           echo "verbose=${{ github.event.inputs.verbose }}" >> $GITHUB_OUTPUT
           echo "models=${{ github.event.inputs.models }}" >> $GITHUB_OUTPUT
+          echo "skip_validation=${{ github.event.inputs.skip_validation }}" >> $GITHUB_OUTPUT
         fi
         
     - name: Run all STS models
@@ -187,6 +197,10 @@ jobs:
           ARGS="$ARGS --verbose"
         fi
         
+        if [ "${{ steps.params.outputs.skip_validation }}" = "true" ]; then
+          ARGS="$ARGS --no-validate"
+        fi
+        
         ARGS="$ARGS --mode ${{ steps.params.outputs.mode }}"
         ARGS="$ARGS --timeout ${{ steps.params.outputs.timeout }}"
         ARGS="$ARGS --models $MODELS_TO_RUN"
@@ -194,52 +208,6 @@ jobs:
         
         echo "Running STS models with command: python run_all_models.py $ARGS"
         python run_all_models.py $ARGS
-        
-    - name: Validate solutions
-      if: always()
-      run: |
-        echo "Validating generated solutions..."
-        cd test
-        
-        # Check each model type directory for results (excluding archive folders)
-        for model_dir in ../res/*/; do
-          if [ -d "$model_dir" ] && [ "$(ls -A $model_dir 2>/dev/null)" ]; then
-            model_name=$(basename "$model_dir")
-            
-            # Skip archive directories
-            if [[ "$model_name" == "archive" ]]; then
-              echo "⏭️ Skipping archive directory: $model_name"
-              continue
-            fi
-            
-            echo "Validating solutions for $model_name model..."
-            
-            # Create a temporary directory to hold only non-archive files for validation
-            temp_dir=$(mktemp -d)
-            
-            # Copy all JSON files except those in archive subdirectories
-            find "$model_dir" -name "*.json" -not -path "*/archive/*" -exec cp {} "$temp_dir/" \; 2>/dev/null || true
-            
-            if [ "$(ls -A "$temp_dir" 2>/dev/null)" ]; then
-              if python solution_checker.py "$temp_dir"; then
-                echo "✅ All $model_name solutions are valid"
-              else
-                echo "❌ Found invalid solutions in $model_name"
-                rm -rf "$temp_dir"
-                exit 1
-              fi
-            else
-              echo "⚠️ No non-archive results found for $model_name"
-            fi
-            
-            # Clean up temporary directory
-            rm -rf "$temp_dir"
-          else
-            echo "⚠️ No results found for $model_name"
-          fi
-        done
-        
-        echo "🎉 All solution validations completed successfully!"
         
     - name: Upload results as artifacts
       uses: actions/upload-artifact@v4
@@ -262,6 +230,7 @@ jobs:
         echo "**Mode:** ${{ steps.params.outputs.mode }}" >> $GITHUB_STEP_SUMMARY
         echo "**Models:** ${{ steps.params.outputs.models }}" >> $GITHUB_STEP_SUMMARY
         echo "**Timeout:** ${{ steps.params.outputs.timeout }}s" >> $GITHUB_STEP_SUMMARY
+        echo "**Validation:** ${{ steps.params.outputs.skip_validation == 'true' && 'Disabled' || 'Enabled (integrated)' }}" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         
         # Check if result files were generated
@@ -278,11 +247,11 @@ jobs:
         # Check for any error patterns in logs
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "## Solution Validation" >> $GITHUB_STEP_SUMMARY
-        if [ -d "../res" ] && [ "$(find ../res -name "*.json" 2>/dev/null)" ]; then
-          echo "✅ Solution validation completed successfully" >> $GITHUB_STEP_SUMMARY
-          echo "All generated solutions have been validated for correctness" >> $GITHUB_STEP_SUMMARY
+        if [ "${{ steps.params.outputs.skip_validation }}" = "true" ]; then
+          echo "⚠️ Solution validation was skipped" >> $GITHUB_STEP_SUMMARY
         else
-          echo "⚠️ No solutions to validate" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Solution validation was performed as part of the main execution" >> $GITHUB_STEP_SUMMARY
+          echo "The run_all_models.py script includes integrated validation that checks all generated solutions for correctness" >> $GITHUB_STEP_SUMMARY
         fi
         
         echo "" >> $GITHUB_STEP_SUMMARY

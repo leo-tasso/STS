@@ -265,8 +265,129 @@ class STSModelRunner:
         print(f"Results saved to: {output_path}")
         return output_path
     
-    def print_summary(self, results: Dict):
-        """Print a summary of results."""
+    def validate_solutions(self, models: List[str], verbose: bool = False) -> Dict:
+        """
+        Validate solutions in the res folder using solution_checker.py.
+        
+        Args:
+            models: List of models to validate
+            verbose: Enable verbose output
+            
+        Returns:
+            Dictionary with validation results
+        """
+        print("\n" + "="*60)
+        print("SOLUTION VALIDATION")
+        print("="*60)
+        
+        # Path to solution checker
+        checker_path = os.path.join(self.base_dir, 'solution_checker.py')
+        if not os.path.exists(checker_path):
+            print(f"Warning: Solution checker not found at {checker_path}")
+            return {"error": "Solution checker not found"}
+        
+        # Base results directory
+        res_dir = os.path.join(self.base_dir, '..', 'res')
+        if not os.path.exists(res_dir):
+            print(f"Warning: Results directory not found at {res_dir}")
+            return {"error": "Results directory not found"}
+        
+        validation_results = {}
+        overall_valid = True
+        python_exe = self._get_python_executable()
+        
+        for model in models:
+            model_dir = os.path.join(res_dir, model)
+            if not os.path.exists(model_dir):
+                print(f"No results directory for {model}: {model_dir}")
+                validation_results[model] = {"status": "no_results", "details": "Directory not found"}
+                continue
+            
+            # Check if there are any JSON files
+            json_files = [f for f in os.listdir(model_dir) if f.endswith('.json')]
+            if not json_files:
+                print(f"No JSON files found for {model}")
+                validation_results[model] = {"status": "no_files", "details": "No JSON files found"}
+                continue
+            
+            print(f"Validating {model} solutions...")
+            
+            try:
+                # Run solution checker
+                cmd = [python_exe, checker_path, model_dir]
+                result = subprocess.run(
+                    cmd,
+                    capture_output=True,
+                    text=True,
+                    timeout=60,  # 1 minute timeout for validation
+                    cwd=self.base_dir
+                )
+                
+                if result.returncode != 0:
+                    print(f"  ✗ {model}: Solution checker failed")
+                    if verbose:
+                        print(f"    STDERR: {result.stderr}")
+                    validation_results[model] = {
+                        "status": "checker_failed",
+                        "return_code": result.returncode,
+                        "stderr": result.stderr,
+                        "stdout": result.stdout
+                    }
+                    overall_valid = False
+                    continue
+                
+                # Parse output to check for invalid solutions
+                output_lines = result.stdout.strip().split('\n')
+                invalid_found = False
+                details = []
+                
+                current_file = None
+                for line in output_lines:
+                    if line.startswith('File: '):
+                        current_file = line.replace('File: ', '').strip()
+                    elif 'Status: INVALID' in line:
+                        invalid_found = True
+                        if current_file:
+                            details.append(f"Invalid solution in {current_file}")
+                        else:
+                            details.append("Invalid solution found")
+                
+                if invalid_found:
+                    print(f"  ✗ {model}: Invalid solutions found")
+                    if verbose:
+                        for detail in details:
+                            print(f"    {detail}")
+                    validation_results[model] = {
+                        "status": "invalid",
+                        "details": details,
+                        "full_output": result.stdout
+                    }
+                    overall_valid = False
+                else:
+                    print(f"  ✓ {model}: All solutions valid")
+                    validation_results[model] = {
+                        "status": "valid",
+                        "files_checked": len(json_files),
+                        "full_output": result.stdout if verbose else None
+                    }
+                
+            except subprocess.TimeoutExpired:
+                print(f"  ✗ {model}: Validation timeout")
+                validation_results[model] = {"status": "timeout", "details": "Validation timed out"}
+                overall_valid = False
+            except Exception as e:
+                print(f"  ✗ {model}: Validation error: {e}")
+                validation_results[model] = {"status": "error", "details": str(e)}
+                overall_valid = False
+        
+        validation_results["overall_valid"] = overall_valid
+        
+        print(f"\nValidation complete. Overall status: {'VALID' if overall_valid else 'INVALID'}")
+        
+        return validation_results
+
+    def print_summary(self, results: Dict, validation_results: Dict = None):
+        """Print a summary of results and validation."""
         summary = results["summary"]
         
         print("\n" + "="*60)
@@ -296,6 +417,31 @@ class STSModelRunner:
             failed = [r for r in model_results if not r.get("success", False)]
             if failed:
                 print(f"      Failed n values: {[r.get('n') for r in failed]}")
+        
+        # Print validation summary if available
+        if validation_results:
+            print(f"\nVALIDATION SUMMARY:")
+            print("-"*40)
+            overall_status = "VALID" if validation_results.get("overall_valid", False) else "INVALID"
+            print(f"Overall validation status: {overall_status}")
+            
+            for model, result in validation_results.items():
+                if model == "overall_valid":
+                    continue
+                    
+                status = result.get("status", "unknown")
+                if status == "valid":
+                    files_checked = result.get("files_checked", 0)
+                    print(f"{model:>4}: ✓ Valid ({files_checked} files checked)")
+                elif status == "invalid":
+                    details_count = len(result.get("details", []))
+                    print(f"{model:>4}: ✗ Invalid ({details_count} issues found)")
+                elif status == "no_results":
+                    print(f"{model:>4}: - No results to validate")
+                elif status == "no_files":
+                    print(f"{model:>4}: - No JSON files found")
+                else:
+                    print(f"{model:>4}: ? {status.title()}")
 
 
 def main():
@@ -319,6 +465,9 @@ Examples:
   
   # Run sequentially (not in parallel)
   python run_all_models.py --no-parallel
+  
+  # Skip solution validation
+  python run_all_models.py --no-validate
         """
     )
     
@@ -387,6 +536,12 @@ Examples:
         "--no-parallel",
         action="store_true",
         help="Run models sequentially instead of in parallel"
+    )
+    
+    parser.add_argument(
+        "--no-validate",
+        action="store_true",
+        help="Skip solution validation at the end"
     )
     
     parser.add_argument(
@@ -467,12 +622,25 @@ Examples:
         additional_args=additional_args
     )
     
+    # Validate solutions if not disabled
+    validation_results = None
+    if not args.no_validate:
+        validation_results = runner.validate_solutions(args.models, args.verbose)
+    
     # Print summary
-    runner.print_summary(results)
+    runner.print_summary(results, validation_results)
     
     # Save results
     if not args.no_save:
+        # Include validation results in the saved data
+        if validation_results:
+            results["validation"] = validation_results
         runner.save_results(results, args.output)
+    
+    # Return appropriate exit code
+    if validation_results and not validation_results.get("overall_valid", True):
+        print("\nExiting with code 1 due to invalid solutions.")
+        return 1
     
     return 0
 

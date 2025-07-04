@@ -21,7 +21,7 @@ def get_weeks(periods, n):
 def fatal_errors(solution, obj, time, optimal, teams):
     fatal_errors = []
 
-    if len(solution) == 0 and (time != 300 or opt or obj!='None'):
+    if len(solution) == 0 and (time != 300 or optimal or obj!='None'):
         fatal_errors.append('The solution cannot be empty!!!')
         return fatal_errors
 
