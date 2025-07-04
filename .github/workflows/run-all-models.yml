@@ -221,7 +221,7 @@ jobs:
             find "$model_dir" -name "*.json" -not -path "*/archive/*" -exec cp {} "$temp_dir/" \; 2>/dev/null || true
             
             if [ "$(ls -A "$temp_dir" 2>/dev/null)" ]; then
-              if python solution_checker_no_recursion.py "$temp_dir"; then
+              if python solution_checker.py "$temp_dir"; then
                 echo "✅ All $model_name solutions are valid"
               else
                 echo "❌ Found invalid solutions in $model_name"
