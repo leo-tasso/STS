@@ -18,14 +18,12 @@ def create_mip_model(n: int, constraints: dict[str, bool] = None, optimize: bool
     if constraints is None:
         constraints = {
             'use_symm_break_teams': True,
-            'use_implied_matches_per_team': False,
-            'use_implied_period_count': False
+            'use_implied_matches_per_team': False
         }
     
     # Extract constraint flags
     use_symm_break_teams = constraints.get('use_symm_break_teams', True)
     use_implied_matches_per_team = constraints.get('use_implied_matches_per_team', True)
-    use_implied_period_count = constraints.get('use_implied_period_count', True)
     
     weeks = n - 1
     periods = n // 2
@@ -121,17 +119,16 @@ def create_mip_model(n: int, constraints: dict[str, bool] = None, optimize: bool
                         games_per_week.append(x[w][p][opponent][t])  # t away
             model += pulp.lpSum(games_per_week) == 1, f"One_Game_Per_Week_W{w}_T{t}"
     
-    # Constraint 5: Each team appears in each period at most twice across all weeks (optional strengthening)
-    if use_implied_period_count:
-        for t in Teams:
-            for p in Periods:
-                period_appearances = []
-                for w in Weeks:
-                    for opponent in Teams:
-                        if opponent != t:
-                            period_appearances.append(x[w][p][t][opponent])  # t at home
-                            period_appearances.append(x[w][p][opponent][t])  # t away
-                model += pulp.lpSum(period_appearances) <= 2, f"Period_Limit_T{t}_P{p}"
+    # Constraint 5: Each team appears in each period at most twice across all weeks (always applied)
+    for t in Teams:
+        for p in Periods:
+            period_appearances = []
+            for w in Weeks:
+                for opponent in Teams:
+                    if opponent != t:
+                        period_appearances.append(x[w][p][t][opponent])  # t at home
+                        period_appearances.append(x[w][p][opponent][t])  # t away
+            model += pulp.lpSum(period_appearances) <= 2, f"Period_Limit_T{t}_P{p}"
     
     # For each period p in week 1, fix match: team (2p-1) at home vs team (2p) away
     if use_symm_break_teams:

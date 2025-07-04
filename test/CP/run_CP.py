@@ -110,8 +110,8 @@ def clean_minizinc_stdout(
     if stdout is None or stdout.strip() == "":
         return {
             "time": timeout_sec,
-            "optimal": "false",
-            "obj": None,
+            "optimal": False,
+            "obj": "None",
             "sol": [],
             "solver": solver,
             "constraints": active_constraints,
@@ -119,8 +119,8 @@ def clean_minizinc_stdout(
     if error:
         return {
             "time": timeout_sec,
-            "optimal": "false",
-            "obj": None,
+            "optimal": False,
+            "obj": "None",
             "sol": [],
             "solver": solver,
             "constraints": active_constraints,
@@ -129,9 +129,9 @@ def clean_minizinc_stdout(
     unsat = "UNSATISFIABLE" in stdout
     if unsat:
         return {
-            "time": None,
-            "optimal": "false",
-            "obj": None,
+            "time": 300,
+            "optimal": False,
+            "obj": "None",
             "sol": [],
             "solver": solver,
             "constraints": active_constraints,
@@ -141,8 +141,8 @@ def clean_minizinc_stdout(
     if "=====UNKNOWN=====" in stdout or stdout.count("{") != stdout.count("}"):
         return {
             "time": timeout_sec,
-            "optimal": "false",
-            "obj": None,
+            "optimal": False,
+            "obj": "None",
             "sol": [],  # Return empty list for unsat/timeout
             "solver": solver,
             "constraints": active_constraints,
@@ -185,8 +185,8 @@ def clean_minizinc_stdout(
                 # No JSON output - likely timeout
                 return {
                     "time": timeout_sec,
-                    "optimal": "false",
-                    "obj": None,
+                    "optimal": False,
+                    "obj": "None",
                     "sol": "ERROR PARSING STDOUT",
                     "solver": solver,
                     "constraints": active_constraints,
@@ -205,8 +205,8 @@ def clean_minizinc_stdout(
         print(stdout)
         return {
             "time": timeout_sec,
-            "optimal": "false",
-            "obj": None,
+            "optimal": False,
+            "obj": "None",
             "sol": [],  # Return empty list for unsat/timeout
             "solver": solver,
             "constraints": active_constraints,
@@ -230,7 +230,7 @@ def clean_minizinc_stdout(
 
     ordered_output = {
         "time": time_elapsed,
-        "optimal": "true" if time_elapsed < timeout_sec else "false",
+        "optimal": True if time_elapsed < timeout_sec else False,
         "obj": cleaned_output.get("obj") if optimization_version else None,
         "sol": str(cleaned_output.get("sol", "unknown")),
         "solver": solver,
@@ -473,9 +473,9 @@ def run_test_mode(
                 print(f"Error running combination {combo_list}: {e}")
                 # Add error result
                 error_result = {
-                    "time": None,
-                    "optimal": "false",
-                    "obj": None,
+                    "time": 300,
+                    "optimal": False,
+                    "obj": "None",
                     "sol": None,
                     "error": str(e),
                 }
@@ -585,8 +585,8 @@ def run_selected_group(
                 print(f"Error running combination {combo}: {e}")
                 error_result = {
                     "time": None,
-                    "optimal": "false",
-                    "obj": None,
+                    "optimal": False,
+                    "obj": "None",
                     "sol": None,
                     "error": str(e),
                 }
@@ -701,8 +701,8 @@ def run_minizinc_with_averaging(
                 # Create error result
                 results[run_num] = {
                     "time": timeout_sec,
-                    "optimal": "false",
-                    "obj": None,
+                    "optimal": False,
+                    "obj": "None",
                     "sol": f'"Exception: {str(exc)}"',
                     "solver": "chuffed" if use_chuffed else "gecode",
                     "constraints": active_constraints,
@@ -779,8 +779,8 @@ def run_minizinc_with_averaging(
             obj_stats["stdev"] = 0
     
     # Determine if solution is optimal (majority of runs were optimal and within time limit)
-    optimal_runs = sum(1 for r in results if r.get("optimal") == "true" or r.get("optimal") is True)
-    avg_result["optimal"] = "true" if optimal_runs > num_runs / 2 else "false"
+    optimal_runs = sum(1 for r in results if r.get("optimal") == True or r.get("optimal") is True)
+    avg_result["optimal"] = True if optimal_runs > num_runs / 2 else False
     
     # Use the best solution found across all runs
     best_obj = None

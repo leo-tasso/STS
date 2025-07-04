@@ -69,9 +69,9 @@ def run_sts_solver(
             sol_val = []
         
         return {
-            "time": int(result['time']),
+            "time": 300 if sol_val == "unsat" else int(result['time']),
             "optimal": result['optimal'],
-            "obj": result.get('obj', None),
+            "obj": result.get('obj', "None"),
             "sol": sol_val,
             "solver": solver,
             "constraints": active_constraints
@@ -81,7 +81,7 @@ def run_sts_solver(
         return {
             "time": timeout_sec,
             "optimal": False,
-            "obj": None,
+            "obj": "None",
             "sol": [],  # Return [] for unsat/timeout
             "solver": solver,
             "constraints": active_constraints
@@ -138,13 +138,16 @@ def run_sts_with_averaging(
     if not solution or (isinstance(solution, str) and (solution == "unsat" or "timeout" in solution or "error" in solution)):
         solution = []
     
+    # If solution is unsat, set time to 300
+    final_time = 300 if not solution else int(avg_time)
+    
     return {
-        "time": int(avg_time),
+        "time": final_time,
         "time_std": std_time,
         "time_min": min_time,
         "time_max": max_time,
         "optimal": optimal_count > 0,
-        "obj": objective,
+        "obj": objective if objective is not None else "None",
         "sol": solution,
         "solver": solver,
         "constraints": active_constraints,

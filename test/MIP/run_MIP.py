@@ -27,8 +27,7 @@ ALL_CONSTRAINTS = [
     "use_symm_break_weeks",
     "use_symm_break_periods", 
     "use_symm_break_teams",
-    "use_implied_matches_per_team",
-    "use_implied_period_count"
+    "use_implied_matches_per_team"
 ]
 
 def select_constraints_from_group(group_name: str, all_constraints: list[str] = ALL_CONSTRAINTS) -> list[str]:
@@ -118,8 +117,8 @@ def run_mip_with_averaging(
                     # Add error result
                     results.append({
                         "time": timeout_sec,
-                        "optimal": "false",
-                        "obj": None,
+                        "optimal": False,
+                        "obj": "None",
                         "sol": [],
                         "solver": solver_name,
                         "constraints": active_constraints,
@@ -136,8 +135,8 @@ def run_mip_with_averaging(
                     print(f"Run {i+1} failed with error: {e}")
                 results.append({
                     "time": timeout_sec,
-                    "optimal": "false",
-                    "obj": None,
+                    "optimal": False,
+                    "obj": "None",
                     "sol": [],
                     "solver": solver_name,
                     "constraints": active_constraints,
@@ -202,11 +201,11 @@ def run_mip_with_averaging(
         else:
             obj_stats["stdev"] = 0
     else:
-        avg_result["obj"] = None  # No objective when not optimizing
+        avg_result["obj"] = "None"  # No objective when not optimizing
     
     # Determine if solution is optimal (majority of runs were optimal and within time limit)
-    optimal_runs = sum(1 for r in results if r.get("optimal") == "true")
-    avg_result["optimal"] = "true" if optimal_runs > num_runs / 2 else "false"
+    optimal_runs = sum(1 for r in results if r.get("optimal") == True)
+    avg_result["optimal"] = True if optimal_runs > num_runs / 2 else False
     
     # Use the best solution found across all runs
     best_obj = None
@@ -227,7 +226,7 @@ def run_mip_with_averaging(
 
     # If sol is empty, obj must be None
     if avg_result["sol"] == []:
-        avg_result["obj"] = None
+        avg_result["obj"] = "None"
 
     # Add run information and statistics
     avg_result["runs_info"] = {
@@ -292,7 +291,7 @@ def run_test_mode(
         names.append(name)
         
         if not verbose:
-            status = "optimal" if result.get("optimal") == "true" else "failed"
+            status = "optimal" if result.get("optimal") == True else False
             print(f"  {name}: {status} (avg: {result.get('time', 'N/A')}s)")
     
     return results, names

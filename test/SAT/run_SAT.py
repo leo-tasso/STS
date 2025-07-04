@@ -83,7 +83,7 @@ def run_sts_solver(
                 return {
                     "time": int(round(result.get('time', timeout_sec))),
                     "optimal": obj == 1 ,
-                    "obj": obj,
+                    "obj": obj if obj is not None else "None",
                     "sol": sol if status == "sat" else [],  # Return [] for unsat/timeout
                     "solver": solver,
                     "constraints": active_constraints,
@@ -96,7 +96,7 @@ def run_sts_solver(
                     return {
                         "time": int(round(result['time'])),
                         "optimal": "true",
-                        "obj": None,
+                        "obj": "None",
                         "sol": result['solution'],
                         "solver": solver,
                         "constraints": active_constraints,
@@ -105,9 +105,9 @@ def run_sts_solver(
                     }
                 else:
                     return {
-                        "time": int(round(result['time'])),
-                        "optimal": "false",
-                        "obj": None,
+                        "time": 300,
+                        "optimal": False,
+                        "obj": "None",
                         "sol": [],  # Return [] for unsat/timeout
                         "solver": solver,
                         "constraints": active_constraints,
@@ -120,7 +120,7 @@ def run_sts_solver(
                 return {
                     "time": int(round(result['time'])),
                     "optimal": "true",
-                    "obj": None,
+                    "obj": "None",
                     "sol": result['solution'],
                     "solver": solver,
                     "constraints": active_constraints,
@@ -130,8 +130,8 @@ def run_sts_solver(
             else:
                 return {
                     "time": int(round(result['time'])),
-                    "optimal": "false",
-                    "obj": None,
+                    "optimal": False,
+                    "obj": "None",
                     "sol": [],  # Return [] for unsat/timeout
                     "solver": solver,
                     "constraints": active_constraints,
@@ -144,8 +144,8 @@ def run_sts_solver(
     except Exception as e:
         return {
             "time": int(round(timeout_sec)),
-            "optimal": "false", 
-            "obj": None,
+            "optimal": False, 
+            "obj": "None",
             "sol": [],  # Return [] for unsat/timeout
             "solver": solver,
             "constraints": active_constraints,
@@ -197,8 +197,8 @@ def run_sts_with_averaging(
                 print(f"  Run {i+1}/{num_runs}: Error - {str(e)}")
             results.append({
                 "time": int(round(timeout_sec)),
-                "optimal": "false",
-                "obj": None,
+                "optimal": False,
+                "obj": "None",
                 "sol": f"error: {str(e)}",
                 "solver": solver,
                 "constraints": active_constraints,
@@ -234,11 +234,11 @@ def run_sts_with_averaging(
         optimal = "true"
     elif unsat_count == num_runs:
         overall_status = "unsat"
-        optimal = "false"
+        optimal = False
         solution = []  # Return [] for unsat/timeout
     else:
         overall_status = "mixed" if sat_count > 0 else "timeout"
-        optimal = "false"
+        optimal = False
         if overall_status == "timeout":
             solution = []  # Return [] for unsat/timeout
     
@@ -248,7 +248,7 @@ def run_sts_with_averaging(
         "time_min": min_time,
         "time_max": max_time,
         "optimal": optimal,
-        "obj": obj,
+        "obj": obj if obj is not None else "None",
         "sol": solution,
         "solver": solver,
         "constraints": active_constraints,
