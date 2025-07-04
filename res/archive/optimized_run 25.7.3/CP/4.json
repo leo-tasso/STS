@@ -3,7 +3,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "chuffed",
     "constraints": [
       "use_implied_matches_per_team",
@@ -25,7 +25,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "chuffed",
     "constraints": [
       "use_symm_break_weeks",
@@ -48,7 +48,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "chuffed",
     "constraints": [
       "use_symm_break_periods",
@@ -71,7 +71,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "chuffed",
     "constraints": [
       "use_symm_break_teams",
@@ -94,7 +94,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "chuffed",
     "constraints": [
       "use_symm_break_weeks",
@@ -118,7 +118,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "chuffed",
     "constraints": [
       "use_symm_break_weeks",
@@ -142,7 +142,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "chuffed",
     "constraints": [
       "use_symm_break_periods",
@@ -166,7 +166,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "chuffed",
     "constraints": [
       "use_symm_break_weeks",
@@ -191,7 +191,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "chuffed",
     "constraints": [
       "use_symm_break_weeks",
@@ -214,7 +214,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "chuffed",
     "constraints": [
       "use_symm_break_weeks",
@@ -238,7 +238,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "chuffed",
     "constraints": [
       "use_symm_break_weeks",
@@ -262,7 +262,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "chuffed",
     "constraints": [
       "use_symm_break_weeks",
@@ -287,7 +287,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "chuffed",
     "constraints": [
       "use_symm_break_weeks",
@@ -309,7 +309,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "chuffed",
     "constraints": [
       "use_symm_break_weeks",
@@ -332,7 +332,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "chuffed",
     "constraints": [
       "use_symm_break_weeks",
@@ -355,7 +355,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "chuffed",
     "constraints": [
       "use_symm_break_weeks",
@@ -378,7 +378,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "chuffed",
     "constraints": [
       "use_symm_break_weeks",
@@ -402,7 +402,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "chuffed",
     "constraints": [
       "use_symm_break_weeks",
@@ -426,7 +426,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "chuffed",
     "constraints": [
       "use_symm_break_weeks",
@@ -450,7 +450,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "chuffed",
     "constraints": [
       "use_symm_break_weeks",
@@ -475,7 +475,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "gecode",
     "constraints": [
       "use_implied_matches_per_team",
@@ -497,7 +497,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "gecode",
     "constraints": [
       "use_symm_break_weeks",
@@ -520,7 +520,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "gecode",
     "constraints": [
       "use_symm_break_periods",
@@ -543,7 +543,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "gecode",
     "constraints": [
       "use_symm_break_teams",
@@ -566,7 +566,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "gecode",
     "constraints": [
       "use_symm_break_weeks",
@@ -590,7 +590,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "gecode",
     "constraints": [
       "use_symm_break_weeks",
@@ -614,7 +614,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "gecode",
     "constraints": [
       "use_symm_break_periods",
@@ -638,7 +638,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "gecode",
     "constraints": [
       "use_symm_break_weeks",
@@ -663,7 +663,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "gecode",
     "constraints": [
       "use_symm_break_weeks",
@@ -686,7 +686,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "gecode",
     "constraints": [
       "use_symm_break_weeks",
@@ -710,7 +710,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "gecode",
     "constraints": [
       "use_symm_break_weeks",
@@ -734,7 +734,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "gecode",
     "constraints": [
       "use_symm_break_weeks",
@@ -759,7 +759,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "gecode",
     "constraints": [
       "use_symm_break_weeks",
@@ -781,7 +781,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "gecode",
     "constraints": [
       "use_symm_break_weeks",
@@ -804,7 +804,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "gecode",
     "constraints": [
       "use_symm_break_weeks",
@@ -827,7 +827,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "gecode",
     "constraints": [
       "use_symm_break_weeks",
@@ -850,7 +850,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "gecode",
     "constraints": [
       "use_symm_break_weeks",
@@ -874,7 +874,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "gecode",
     "constraints": [
       "use_symm_break_weeks",
@@ -898,7 +898,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "gecode",
     "constraints": [
       "use_symm_break_weeks",
@@ -922,7 +922,7 @@
     "time": null,
     "optimal": "false",
     "obj": null,
-    "sol": "unsat",
+    "sol": [],
     "solver": "gecode",
     "constraints": [
       "use_symm_break_weeks",

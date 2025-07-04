@@ -191,24 +191,42 @@ def write_results_to_json(results: list[dict], names: list[str], n: int):
             else:
                 f.write(line)
 
-def run_all_solver_optimize_combinations(n, constraints, timeout, verbose, runs, solver_list):
+def run_all_solver_optimize_combinations(
+    n: int,
+    constraints: list[str],
+    timeout: int,
+    verbose: bool,
+    runs: int,
+    solver_list: list[str],
+    optimize: bool
+) -> tuple[list[dict], list[str]]:
     """
-    Run all solvers (z3, cvc5) with both optimize True and False.
-    Returns: (results, names)
+    Runs the specified SMT solvers (from solver_list) with the given constraints and optimization flag.
+
+    Args:
+        n (int): Number of teams.
+        constraints (list[str]): List of active constraint names.
+        timeout (int): Timeout in seconds for each run.
+        verbose (bool): Whether to print verbose output.
+        runs (int): Number of runs to average over.
+        solver_list (list[str]): List of solver names to use (e.g., ['z3', 'cvc5']).
+        optimize (bool): Whether to use the optimization version (only supported by z3).
+
+    Returns:
+        tuple[list[dict], list[str]]: A tuple containing a list of result dictionaries and a list of corresponding names.
     """
     results = []
     names = []
     for solver in solver_list:
-        for optimize in [False, True]:
-            # cvc5 does not support optimize
-            if solver == "cvc5" and optimize:
-                continue
-            result = run_sts_with_averaging(
-                n, constraints, optimize, timeout, verbose, runs, solver
-            )
-            opt_str = "opt" if optimize else "sat"
-            names.append(f"{solver}_{opt_str}_" + "_".join(constraints) if constraints else f"{solver}_{opt_str}_no_constraints")
-            results.append(result)
+        # cvc5 does not support optimize
+        if solver == "cvc5" and optimize:
+            continue
+        result = run_sts_with_averaging(
+            n, constraints, optimize, timeout, verbose, runs, solver
+        )
+        opt_str = "opt" if optimize else "sat"
+        names.append(f"{solver}_{opt_str}_" + "_".join(constraints) if constraints else f"{solver}_{opt_str}_no_constraints")
+        results.append(result)
     return results, names
 
 def main():
@@ -291,7 +309,7 @@ def main():
             for combo in combinations(args.constraints, r):
                 combo_list = list(combo)
                 res, nms = run_all_solver_optimize_combinations(
-                    args.teams, combo_list, args.timeout, args.verbose, args.runs, solver_list
+                    args.teams, combo_list, args.timeout, args.verbose, args.runs, solver_list, args.optimize
                 )
                 results.extend(res)
                 names.extend(nms)
@@ -301,14 +319,14 @@ def main():
         for group in groups:
             constraints = ALL_CONSTRAINTS_GROUPS[group]
             res, nms = run_all_solver_optimize_combinations(
-                args.teams, constraints, args.timeout, args.verbose, args.runs, solver_list
+                args.teams, constraints, args.timeout, args.verbose, args.runs, solver_list, args.optimize
             )
             results.extend(res)
             names.extend(nms)
 
     else:  # generate mode (default)
         res, nms = run_all_solver_optimize_combinations(
-            args.teams, args.constraints, args.timeout, args.verbose, args.runs, solver_list
+            args.teams, args.constraints, args.timeout, args.verbose, args.runs, solver_list, args.optimize
         )
         results.extend(res)
         names.extend(nms)
