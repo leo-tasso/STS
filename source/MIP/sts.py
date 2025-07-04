@@ -247,8 +247,6 @@ def solve_sts_mip(n: int, constraints: dict[str, bool] = None, solver_name: str 
             obj_val = None
             if optimize:
                 obj_val = pulp.value(model.objective)
-            else:
-                obj_val = 1  # Fixed value for feasibility
 
             return {
                 "time": int(round(solve_time)),

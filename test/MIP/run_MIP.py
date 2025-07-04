@@ -202,7 +202,7 @@ def run_mip_with_averaging(
         else:
             obj_stats["stdev"] = 0
     else:
-        avg_result["obj"] = 1  # Default objective like CP
+        avg_result["obj"] = None  # No objective when not optimizing
     
     # Determine if solution is optimal (majority of runs were optimal and within time limit)
     optimal_runs = sum(1 for r in results if r.get("optimal") == "true")
