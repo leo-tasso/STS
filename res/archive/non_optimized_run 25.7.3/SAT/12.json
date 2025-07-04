@@ -1,13 +1,13 @@
 {
   "generate_all_constraints": {
-    "time": 300,
-    "time_std": 0.0,
-    "time_min": 300,
-    "time_max": 300,
+    "time": 1362,
+    "time_std": 556.3202315213783,
+    "time_min": 775,
+    "time_max": 2070,
     "optimal": "false",
     "obj": null,
-    "sol": [],
-    "solver": "z3",
+    "sol": no_solution,
+    "solver": "glucose",
     "constraints": [
       "use_symm_break_weeks",
       "use_symm_break_periods",
@@ -16,11 +16,11 @@
       "use_implied_period_count"
     ],
     "encoding_type": "bw",
-    "status": "timeout",
-    "runs": 1,
+    "status": "unsat",
+    "runs": 5,
     "sat_count": 0,
-    "unsat_count": 0,
+    "unsat_count": 5,
     "timeout_count": 0,
-    "error_count": 1
+    "error_count": 0
   }
 }

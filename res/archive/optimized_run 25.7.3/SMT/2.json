@@ -1,23 +1,4 @@
 {
-  "z3_sat_use_symm_break_weeks_use_symm_break_periods_use_symm_break_teams": {
-    "time": 0,
-    "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
-    "optimal": false,
-    "obj": null,
-    "sol": [[[1, 2]]],
-    "solver": "z3",
-    "constraints": [
-      "use_symm_break_weeks",
-      "use_symm_break_periods",
-      "use_symm_break_teams"
-    ],
-    "optimize": false,
-    "runs": 5,
-    "sat_count": 5,
-    "optimal_count": 0
-  },
   "z3_opt_use_symm_break_weeks_use_symm_break_periods_use_symm_break_teams": {
     "time": 0,
     "time_std": 0.0,
@@ -25,7 +6,14 @@
     "time_max": 0,
     "optimal": true,
     "obj": 1,
-    "sol": [[[1, 2]]],
+    "sol": [
+      [
+        [
+          1,
+          2
+        ]
+      ]
+    ],
     "solver": "z3",
     "constraints": [
       "use_symm_break_weeks",
@@ -36,43 +24,6 @@
     "runs": 5,
     "sat_count": 5,
     "optimal_count": 5
-  },
-  "cvc5_sat_use_symm_break_weeks_use_symm_break_periods_use_symm_break_teams": {
-    "time": 0,
-    "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
-    "optimal": false,
-    "obj": null,
-    "sol": [[[1, 2]]],
-    "solver": "cvc5",
-    "constraints": [
-      "use_symm_break_weeks",
-      "use_symm_break_periods",
-      "use_symm_break_teams"
-    ],
-    "optimize": false,
-    "runs": 5,
-    "sat_count": 5,
-    "optimal_count": 0
-  },
-  "z3_sat_use_implied_matches_per_team_use_implied_period_count": {
-    "time": 0,
-    "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
-    "optimal": false,
-    "obj": null,
-    "sol": [[[2, 1]]],
-    "solver": "z3",
-    "constraints": [
-      "use_implied_matches_per_team",
-      "use_implied_period_count"
-    ],
-    "optimize": false,
-    "runs": 5,
-    "sat_count": 5,
-    "optimal_count": 0
   },
   "z3_opt_use_implied_matches_per_team_use_implied_period_count": {
     "time": 0,
@@ -81,7 +32,14 @@
     "time_max": 0,
     "optimal": true,
     "obj": 1,
-    "sol": [[[1, 2]]],
+    "sol": [
+      [
+        [
+          1,
+          2
+        ]
+      ]
+    ],
     "solver": "z3",
     "constraints": [
       "use_implied_matches_per_team",
@@ -91,45 +49,6 @@
     "runs": 5,
     "sat_count": 5,
     "optimal_count": 5
-  },
-  "cvc5_sat_use_implied_matches_per_team_use_implied_period_count": {
-    "time": 0,
-    "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
-    "optimal": false,
-    "obj": null,
-    "sol": [[[1, 2]]],
-    "solver": "cvc5",
-    "constraints": [
-      "use_implied_matches_per_team",
-      "use_implied_period_count"
-    ],
-    "optimize": false,
-    "runs": 5,
-    "sat_count": 5,
-    "optimal_count": 0
-  },
-  "z3_sat_use_symm_break_weeks_use_symm_break_periods_use_symm_break_teams_use_implied_matches_per_team_use_implied_period_count": {
-    "time": 0,
-    "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
-    "optimal": false,
-    "obj": null,
-    "sol": [[[1, 2]]],
-    "solver": "z3",
-    "constraints": [
-      "use_symm_break_weeks",
-      "use_symm_break_periods",
-      "use_symm_break_teams",
-      "use_implied_matches_per_team",
-      "use_implied_period_count"
-    ],
-    "optimize": false,
-    "runs": 5,
-    "sat_count": 5,
-    "optimal_count": 0
   },
   "z3_opt_use_symm_break_weeks_use_symm_break_periods_use_symm_break_teams_use_implied_matches_per_team_use_implied_period_count": {
     "time": 0,
@@ -138,7 +57,14 @@
     "time_max": 0,
     "optimal": true,
     "obj": 1,
-    "sol": [[[1, 2]]],
+    "sol": [
+      [
+        [
+          1,
+          2
+        ]
+      ]
+    ],
     "solver": "z3",
     "constraints": [
       "use_symm_break_weeks",
@@ -151,26 +77,5 @@
     "runs": 5,
     "sat_count": 5,
     "optimal_count": 5
-  },
-  "cvc5_sat_use_symm_break_weeks_use_symm_break_periods_use_symm_break_teams_use_implied_matches_per_team_use_implied_period_count": {
-    "time": 0,
-    "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
-    "optimal": false,
-    "obj": null,
-    "sol": [[[1, 2]]],
-    "solver": "cvc5",
-    "constraints": [
-      "use_symm_break_weeks",
-      "use_symm_break_periods",
-      "use_symm_break_teams",
-      "use_implied_matches_per_team",
-      "use_implied_period_count"
-    ],
-    "optimize": false,
-    "runs": 5,
-    "sat_count": 5,
-    "optimal_count": 0
   }
 }

@@ -1,9 +1,9 @@
 {
   "z3_sat_use_symm_break_weeks_use_symm_break_periods_use_symm_break_teams": {
-    "time": 0,
+    "time": 309,
     "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
+    "time_min": 309,
+    "time_max": 309,
     "optimal": false,
     "obj": null,
     "sol": [],
@@ -19,10 +19,10 @@
     "optimal_count": 0
   },
   "z3_opt_use_symm_break_weeks_use_symm_break_periods_use_symm_break_teams": {
-    "time": 0,
+    "time": 309,
     "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
+    "time_min": 309,
+    "time_max": 309,
     "optimal": false,
     "obj": null,
     "sol": [],
@@ -38,10 +38,10 @@
     "optimal_count": 0
   },
   "cvc5_sat_use_symm_break_weeks_use_symm_break_periods_use_symm_break_teams": {
-    "time": 0,
+    "time": 300,
     "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
+    "time_min": 300,
+    "time_max": 300,
     "optimal": false,
     "obj": null,
     "sol": [],
@@ -57,10 +57,10 @@
     "optimal_count": 0
   },
   "z3_sat_use_implied_matches_per_team_use_implied_period_count": {
-    "time": 0,
-    "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
+    "time": 301,
+    "time_std": 0.5477225575051661,
+    "time_min": 301,
+    "time_max": 302,
     "optimal": false,
     "obj": null,
     "sol": [],
@@ -75,10 +75,10 @@
     "optimal_count": 0
   },
   "z3_opt_use_implied_matches_per_team_use_implied_period_count": {
-    "time": 0,
+    "time": 301,
     "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
+    "time_min": 301,
+    "time_max": 301,
     "optimal": false,
     "obj": null,
     "sol": [],
@@ -93,10 +93,10 @@
     "optimal_count": 0
   },
   "cvc5_sat_use_implied_matches_per_team_use_implied_period_count": {
-    "time": 0,
+    "time": 300,
     "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
+    "time_min": 300,
+    "time_max": 300,
     "optimal": false,
     "obj": null,
     "sol": [],
@@ -111,10 +111,10 @@
     "optimal_count": 0
   },
   "z3_sat_use_symm_break_weeks_use_symm_break_periods_use_symm_break_teams_use_implied_matches_per_team_use_implied_period_count": {
-    "time": 0,
+    "time": 300,
     "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
+    "time_min": 300,
+    "time_max": 300,
     "optimal": false,
     "obj": null,
     "sol": [],
@@ -132,10 +132,10 @@
     "optimal_count": 0
   },
   "z3_opt_use_symm_break_weeks_use_symm_break_periods_use_symm_break_teams_use_implied_matches_per_team_use_implied_period_count": {
-    "time": 0,
+    "time": 300,
     "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
+    "time_min": 300,
+    "time_max": 300,
     "optimal": false,
     "obj": null,
     "sol": [],
@@ -153,10 +153,10 @@
     "optimal_count": 0
   },
   "cvc5_sat_use_symm_break_weeks_use_symm_break_periods_use_symm_break_teams_use_implied_matches_per_team_use_implied_period_count": {
-    "time": 0,
+    "time": 300,
     "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
+    "time_min": 300,
+    "time_max": 300,
     "optimal": false,
     "obj": null,
     "sol": [],

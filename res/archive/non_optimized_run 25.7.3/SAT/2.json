@@ -5,7 +5,7 @@
     "time_min": 0,
     "time_max": 0,
     "optimal": "true",
-    "obj": 1,
+    "obj": null,
     "sol": [[[1, 2]]],
     "solver": "z3",
     "constraints": [],
@@ -59,7 +59,7 @@
     "time_min": 0,
     "time_max": 0,
     "optimal": "true",
-    "obj": 1,
+    "obj": null,
     "sol": [[[1, 2]]],
     "solver": "z3",
     "constraints": [
@@ -119,7 +119,7 @@
     "time_min": 0,
     "time_max": 0,
     "optimal": "true",
-    "obj": 1,
+    "obj": null,
     "sol": [[[1, 2]]],
     "solver": "z3",
     "constraints": [
@@ -179,7 +179,7 @@
     "time_min": 0,
     "time_max": 0,
     "optimal": "true",
-    "obj": 1,
+    "obj": null,
     "sol": [[[1, 2]]],
     "solver": "z3",
     "constraints": [
@@ -239,7 +239,7 @@
     "time_min": 0,
     "time_max": 0,
     "optimal": "true",
-    "obj": 1,
+    "obj": null,
     "sol": [[[1, 2]]],
     "solver": "z3",
     "constraints": [
@@ -302,7 +302,7 @@
     "time_min": 0,
     "time_max": 0,
     "optimal": "true",
-    "obj": 1,
+    "obj": null,
     "sol": [[[1, 2]]],
     "solver": "z3",
     "constraints": [
@@ -365,7 +365,7 @@
     "time_min": 0,
     "time_max": 0,
     "optimal": "true",
-    "obj": 1,
+    "obj": null,
     "sol": [[[1, 2]]],
     "solver": "z3",
     "constraints": [
@@ -428,7 +428,7 @@
     "time_min": 0,
     "time_max": 0,
     "optimal": "true",
-    "obj": 1,
+    "obj": null,
     "sol": [[[1, 2]]],
     "solver": "z3",
     "constraints": [
@@ -494,7 +494,7 @@
     "time_min": 0,
     "time_max": 0,
     "optimal": "true",
-    "obj": 1,
+    "obj": null,
     "sol": [[[1, 2]]],
     "solver": "z3",
     "constraints": [],
@@ -548,7 +548,7 @@
     "time_min": 0,
     "time_max": 0,
     "optimal": "true",
-    "obj": 1,
+    "obj": null,
     "sol": [[[1, 2]]],
     "solver": "z3",
     "constraints": [
@@ -608,7 +608,7 @@
     "time_min": 0,
     "time_max": 0,
     "optimal": "true",
-    "obj": 1,
+    "obj": null,
     "sol": [[[1, 2]]],
     "solver": "z3",
     "constraints": [
@@ -668,7 +668,7 @@
     "time_min": 0,
     "time_max": 0,
     "optimal": "true",
-    "obj": 1,
+    "obj": null,
     "sol": [[[1, 2]]],
     "solver": "z3",
     "constraints": [
