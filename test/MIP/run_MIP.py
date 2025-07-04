@@ -156,7 +156,12 @@ def run_mip_with_averaging(
             if isinstance(result.get("time"), (int, float)):
                 valid_times.append(result["time"])
             if result.get("obj") is not None:
-                valid_objs.append(result["obj"])
+                # Convert objective to integer if it's a numeric value
+                obj_val = result["obj"]
+                if isinstance(obj_val, (int, float)):
+                    valid_objs.append(int(obj_val))
+                else:
+                    valid_objs.append(obj_val)
         else:
             error_msg = result.get("error", result.get("sol", "Unknown error"))
             errors.append(error_msg)
@@ -189,17 +194,17 @@ def run_mip_with_averaging(
     # Compute objective statistics
     obj_stats = None
     if valid_objs:
-        avg_result["obj"] = round(statistics.mean(valid_objs), 2)
+        avg_result["obj"] = int(round(statistics.mean(valid_objs)))
         obj_stats = {
-            "mean": round(statistics.mean(valid_objs), 2),
-            "median": round(statistics.median(valid_objs), 2),
-            "min": min(valid_objs),
-            "max": max(valid_objs),
+            "mean": int(round(statistics.mean(valid_objs))),
+            "median": int(round(statistics.median(valid_objs))),
+            "min": int(min(valid_objs)),
+            "max": int(max(valid_objs)),
         }
         if len(valid_objs) > 1:
             obj_stats["stdev"] = round(statistics.stdev(valid_objs), 2)
         else:
-            obj_stats["stdev"] = 0
+            obj_stats["stdev"] = 0.0
     else:
         avg_result["obj"] = "None"  # No objective when not optimizing
     
