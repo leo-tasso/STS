@@ -286,7 +286,7 @@ def run_sts_with_averaging_all_solvers(
     return results
 
 def run_test_mode(n: int, constraints: list[str], encoding_type: str = "bw", timeout_sec: int = 300,
-                 verbose: bool = False, num_runs: int = 5, max_workers: int = None, solver: str = "z3"):
+                 verbose: bool = False, num_runs: int = 5, max_workers: int = None, solver: str = "z3", opt: bool = False):
     """
     Test mode: try all possible combinations of the selected constraints.
     
@@ -317,7 +317,7 @@ def run_test_mode(n: int, constraints: list[str], encoding_type: str = "bw", tim
             
             if solver == "all":
                 solver_results = run_sts_with_averaging_all_solvers(
-                    n, combo_list, encoding_type, timeout_sec, verbose, num_runs, max_workers
+                    n, combo_list, encoding_type, timeout_sec, verbose, num_runs, max_workers, opt=opt
                 )
                 for sname, sres in solver_results.items():
                     results.append(sres)
@@ -328,7 +328,7 @@ def run_test_mode(n: int, constraints: list[str], encoding_type: str = "bw", tim
                     names.append(name)
             else:
                 result = run_sts_with_averaging(
-                    n, combo_list, encoding_type, timeout_sec, verbose, num_runs, max_workers, solver=solver
+                    n, combo_list, encoding_type, timeout_sec, verbose, num_runs, max_workers, solver=solver, opt=opt
                 )
                 if combo_list:
                     name = "_".join([c.replace("use_", "") for c in combo_list])
@@ -340,7 +340,7 @@ def run_test_mode(n: int, constraints: list[str], encoding_type: str = "bw", tim
     return results, names
 
 def run_select_mode(n: int, group_name: str, encoding_type: str = "bw", timeout_sec: int = 300, 
-                   verbose: bool = False, num_runs: int = 5, max_workers: int = None, solver: str = "z3"):
+                   verbose: bool = False, num_runs: int = 5, max_workers: int = None, solver: str = "z3", opt: bool = False):
     """
     Select group mode: run with all possible combinations of the selected constraint group.
     
@@ -366,17 +366,17 @@ def run_select_mode(n: int, group_name: str, encoding_type: str = "bw", timeout_
                 print(f"Testing group: {group}")
             
             group_results, group_names = run_select_group(
-                n, group, encoding_type, timeout_sec, verbose, num_runs, max_workers, solver=solver
+                n, group, encoding_type, timeout_sec, verbose, num_runs, max_workers, solver=solver, opt=opt
             )
             all_results.extend(group_results)
             all_names.extend(group_names)
         
         return all_results, all_names
     else:
-        return run_select_group(n, group_name, encoding_type, timeout_sec, verbose, num_runs, max_workers, solver=solver)
+        return run_select_group(n, group_name, encoding_type, timeout_sec, verbose, num_runs, max_workers, solver=solver, opt=opt)
 
 def run_select_group(n: int, group_name: str, encoding_type: str = "bw", timeout_sec: int = 300,
-                    verbose: bool = False, num_runs: int = 5, max_workers: int = None, solver: str = "z3"):
+                    verbose: bool = False, num_runs: int = 5, max_workers: int = None, solver: str = "z3", opt: bool = False):
     """
     Run all possible combinations of constraints from a specific group.
     
@@ -397,7 +397,7 @@ def run_select_group(n: int, group_name: str, encoding_type: str = "bw", timeout
     if verbose:
         print(f"Testing all combinations of {group_name} constraints: {group_constraints}")
     
-    results, names = run_test_mode(n, group_constraints, encoding_type, timeout_sec, verbose, num_runs, max_workers, solver=solver)
+    results, names = run_test_mode(n, group_constraints, encoding_type, timeout_sec, verbose, num_runs, max_workers, solver=solver, opt=opt)
     
     # Prefix names with group identifier for clarity
     prefixed_names = [f"select_group_{group_name}_{name}" for name in names]
@@ -586,14 +586,14 @@ Examples:
         print("Test mode: Running all possible combinations of selected constraints...")
         print(f"Each combination will be run {args.runs} times for reliable measurements.")
         results, names = run_test_mode(
-            args.teams, args.constraints, args.encoding, args.timeout, args.verbose, args.runs, args.max_workers, solver=args.solver
+            args.teams, args.constraints, args.encoding, args.timeout, args.verbose, args.runs, args.max_workers, solver=args.solver, opt=args.opt
         )
     elif args.select:
         # Select group mode: run with all possible combinations of the selected constraint group
         print("Select group mode: Running all possible combinations of selected group constraints...")
         print(f"Each combination will be run {args.runs} times for reliable measurements.")
         results, names = run_select_mode(
-            args.teams, args.select, args.encoding, args.timeout, args.verbose, args.runs, args.max_workers, solver=args.solver
+            args.teams, args.select, args.encoding, args.timeout, args.verbose, args.runs, args.max_workers, solver=args.solver, opt=args.opt
         )
     else:
         # Generate mode: run once with all selected constraints active (default)
