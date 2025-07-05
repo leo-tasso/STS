@@ -6,44 +6,75 @@
     "time_max": 1,
     "optimal": true,
     "obj": 1,
-    "sol": [[[6, 3], [5, 6], [2, 5], [4, 1], [3, 2]], [[5, 4], [3, 1], [4, 3], [2, 6], [1, 5]], [[1, 2], [2, 4], [1, 6], [3, 5], [6, 4]]],
+    "sol": [
+      [
+        [
+          6,
+          3
+        ],
+        [
+          5,
+          6
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          3,
+          2
+        ]
+      ],
+      [
+        [
+          5,
+          4
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          2,
+          6
+        ],
+        [
+          1,
+          5
+        ]
+      ],
+      [
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          6
+        ],
+        [
+          3,
+          5
+        ],
+        [
+          6,
+          4
+        ]
+      ]
+    ],
     "solver": "z3",
-    "constraints": [],
-    "encoding_type": "bw",
-    "status": "sat",
-    "runs": 5,
-    "sat_count": 5,
-    "unsat_count": 0,
-    "timeout_count": 0,
-    "error_count": 0
-  },
-  "select_group_symm_minisat_no_constraints": {
-    "time": 0,
-    "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
-    "optimal": true,
-    "obj": "None",
-    "sol": [[[5, 4], [6, 5], [6, 3], [3, 4], [1, 2]], [[2, 6], [1, 4], [2, 4], [1, 6], [3, 5]], [[1, 3], [3, 2], [1, 5], [5, 2], [4, 6]]],
-    "solver": "minisat",
-    "constraints": [],
-    "encoding_type": "bw",
-    "status": "sat",
-    "runs": 5,
-    "sat_count": 5,
-    "unsat_count": 0,
-    "timeout_count": 0,
-    "error_count": 0
-  },
-  "select_group_symm_glucose_no_constraints": {
-    "time": 0,
-    "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
-    "optimal": true,
-    "obj": "None",
-    "sol": [[[5, 4], [6, 5], [6, 1], [1, 4], [2, 3]], [[2, 6], [3, 4], [2, 4], [3, 6], [1, 5]], [[1, 3], [1, 2], [3, 5], [5, 2], [4, 6]]],
-    "solver": "glucose",
     "constraints": [],
     "encoding_type": "bw",
     "status": "sat",
@@ -60,48 +91,75 @@
     "time_max": 1,
     "optimal": true,
     "obj": 1,
-    "sol": [[[6, 3], [6, 2], [5, 3], [2, 5], [4, 1]], [[1, 2], [3, 4], [2, 4], [1, 3], [5, 6]], [[5, 4], [1, 5], [6, 1], [4, 6], [3, 2]]],
+    "sol": [
+      [
+        [
+          6,
+          3
+        ],
+        [
+          6,
+          2
+        ],
+        [
+          5,
+          3
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          4,
+          1
+        ]
+      ],
+      [
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          5,
+          6
+        ]
+      ],
+      [
+        [
+          5,
+          4
+        ],
+        [
+          1,
+          5
+        ],
+        [
+          6,
+          1
+        ],
+        [
+          4,
+          6
+        ],
+        [
+          3,
+          2
+        ]
+      ]
+    ],
     "solver": "z3",
-    "constraints": [
-      "use_symm_break_weeks"
-    ],
-    "encoding_type": "bw",
-    "status": "sat",
-    "runs": 5,
-    "sat_count": 5,
-    "unsat_count": 0,
-    "timeout_count": 0,
-    "error_count": 0
-  },
-  "select_group_symm_minisat_symm_break_weeks": {
-    "time": 0,
-    "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
-    "optimal": true,
-    "obj": "None",
-    "sol": [[[1, 3], [2, 1], [3, 6], [6, 2], [5, 4]], [[6, 4], [5, 6], [1, 5], [4, 1], [3, 2]], [[2, 5], [4, 3], [2, 4], [3, 5], [1, 6]]],
-    "solver": "minisat",
-    "constraints": [
-      "use_symm_break_weeks"
-    ],
-    "encoding_type": "bw",
-    "status": "sat",
-    "runs": 5,
-    "sat_count": 5,
-    "unsat_count": 0,
-    "timeout_count": 0,
-    "error_count": 0
-  },
-  "select_group_symm_glucose_symm_break_weeks": {
-    "time": 0,
-    "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
-    "optimal": true,
-    "obj": "None",
-    "sol": [[[1, 2], [2, 6], [3, 6], [3, 1], [5, 4]], [[6, 4], [5, 1], [1, 4], [5, 6], [3, 2]], [[3, 5], [4, 3], [2, 5], [4, 2], [1, 6]]],
-    "solver": "glucose",
     "constraints": [
       "use_symm_break_weeks"
     ],
@@ -120,48 +178,75 @@
     "time_max": 1,
     "optimal": true,
     "obj": 1,
-    "sol": [[[1, 3], [2, 4], [3, 6], [5, 6], [5, 1]], [[5, 2], [1, 6], [4, 5], [3, 2], [4, 3]], [[6, 4], [3, 5], [2, 1], [1, 4], [6, 2]]],
+    "sol": [
+      [
+        [
+          1,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          6
+        ],
+        [
+          5,
+          6
+        ],
+        [
+          5,
+          1
+        ]
+      ],
+      [
+        [
+          5,
+          2
+        ],
+        [
+          1,
+          6
+        ],
+        [
+          4,
+          5
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          3
+        ]
+      ],
+      [
+        [
+          6,
+          4
+        ],
+        [
+          3,
+          5
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          6,
+          2
+        ]
+      ]
+    ],
     "solver": "z3",
-    "constraints": [
-      "use_symm_break_periods"
-    ],
-    "encoding_type": "bw",
-    "status": "sat",
-    "runs": 5,
-    "sat_count": 5,
-    "unsat_count": 0,
-    "timeout_count": 0,
-    "error_count": 0
-  },
-  "select_group_symm_minisat_symm_break_periods": {
-    "time": 0,
-    "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
-    "optimal": true,
-    "obj": "None",
-    "sol": [[[1, 3], [6, 4], [2, 5], [2, 6], [5, 4]], [[4, 2], [1, 5], [1, 6], [3, 5], [6, 3]], [[6, 5], [3, 2], [3, 4], [4, 1], [2, 1]]],
-    "solver": "minisat",
-    "constraints": [
-      "use_symm_break_periods"
-    ],
-    "encoding_type": "bw",
-    "status": "sat",
-    "runs": 5,
-    "sat_count": 5,
-    "unsat_count": 0,
-    "timeout_count": 0,
-    "error_count": 0
-  },
-  "select_group_symm_glucose_symm_break_periods": {
-    "time": 0,
-    "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
-    "optimal": true,
-    "obj": "None",
-    "sol": [[[1, 5], [2, 4], [5, 2], [6, 3], [4, 1]], [[2, 3], [1, 3], [1, 6], [5, 4], [2, 6]], [[6, 4], [5, 6], [3, 4], [1, 2], [5, 3]]],
-    "solver": "glucose",
     "constraints": [
       "use_symm_break_periods"
     ],
@@ -180,48 +265,75 @@
     "time_max": 1,
     "optimal": true,
     "obj": 1,
-    "sol": [[[1, 2], [6, 4], [1, 3], [2, 5], [3, 5]], [[3, 4], [5, 1], [2, 6], [3, 6], [4, 2]], [[5, 6], [2, 3], [4, 5], [1, 4], [6, 1]]],
+    "sol": [
+      [
+        [
+          1,
+          2
+        ],
+        [
+          6,
+          4
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      [
+        [
+          3,
+          4
+        ],
+        [
+          5,
+          1
+        ],
+        [
+          2,
+          6
+        ],
+        [
+          3,
+          6
+        ],
+        [
+          4,
+          2
+        ]
+      ],
+      [
+        [
+          5,
+          6
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          5
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          6,
+          1
+        ]
+      ]
+    ],
     "solver": "z3",
-    "constraints": [
-      "use_symm_break_teams"
-    ],
-    "encoding_type": "bw",
-    "status": "sat",
-    "runs": 5,
-    "sat_count": 5,
-    "unsat_count": 0,
-    "timeout_count": 0,
-    "error_count": 0
-  },
-  "select_group_symm_minisat_symm_break_teams": {
-    "time": 0,
-    "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
-    "optimal": true,
-    "obj": "None",
-    "sol": [[[1, 2], [6, 4], [6, 3], [5, 3], [5, 4]], [[3, 4], [5, 1], [5, 2], [1, 6], [6, 2]], [[5, 6], [2, 3], [1, 4], [4, 2], [1, 3]]],
-    "solver": "minisat",
-    "constraints": [
-      "use_symm_break_teams"
-    ],
-    "encoding_type": "bw",
-    "status": "sat",
-    "runs": 5,
-    "sat_count": 5,
-    "unsat_count": 0,
-    "timeout_count": 0,
-    "error_count": 0
-  },
-  "select_group_symm_glucose_symm_break_teams": {
-    "time": 0,
-    "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
-    "optimal": true,
-    "obj": "None",
-    "sol": [[[1, 2], [6, 3], [6, 4], [5, 3], [4, 5]], [[3, 4], [5, 1], [5, 2], [2, 6], [6, 1]], [[5, 6], [2, 4], [1, 3], [1, 4], [3, 2]]],
-    "solver": "glucose",
     "constraints": [
       "use_symm_break_teams"
     ],
@@ -240,50 +352,75 @@
     "time_max": 1,
     "optimal": true,
     "obj": 1,
-    "sol": [[[1, 2], [6, 1], [5, 6], [4, 3], [2, 5]], [[4, 5], [5, 3], [1, 4], [2, 6], [3, 1]], [[3, 6], [4, 2], [2, 3], [1, 5], [6, 4]]],
+    "sol": [
+      [
+        [
+          1,
+          2
+        ],
+        [
+          6,
+          1
+        ],
+        [
+          5,
+          6
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          2,
+          5
+        ]
+      ],
+      [
+        [
+          4,
+          5
+        ],
+        [
+          5,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          6
+        ],
+        [
+          3,
+          1
+        ]
+      ],
+      [
+        [
+          3,
+          6
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          5
+        ],
+        [
+          6,
+          4
+        ]
+      ]
+    ],
     "solver": "z3",
-    "constraints": [
-      "use_symm_break_weeks",
-      "use_symm_break_periods"
-    ],
-    "encoding_type": "bw",
-    "status": "sat",
-    "runs": 5,
-    "sat_count": 5,
-    "unsat_count": 0,
-    "timeout_count": 0,
-    "error_count": 0
-  },
-  "select_group_symm_minisat_symm_break_weeks_symm_break_periods": {
-    "time": 0,
-    "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
-    "optimal": true,
-    "obj": "None",
-    "sol": [[[1, 3], [4, 5], [4, 6], [6, 2], [5, 2]], [[6, 5], [2, 1], [3, 2], [4, 1], [4, 3]], [[2, 4], [6, 3], [1, 5], [3, 5], [1, 6]]],
-    "solver": "minisat",
-    "constraints": [
-      "use_symm_break_weeks",
-      "use_symm_break_periods"
-    ],
-    "encoding_type": "bw",
-    "status": "sat",
-    "runs": 5,
-    "sat_count": 5,
-    "unsat_count": 0,
-    "timeout_count": 0,
-    "error_count": 0
-  },
-  "select_group_symm_glucose_symm_break_weeks_symm_break_periods": {
-    "time": 0,
-    "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
-    "optimal": true,
-    "obj": "None",
-    "sol": [[[1, 5], [1, 4], [6, 4], [6, 5], [2, 3]], [[4, 3], [5, 2], [3, 5], [2, 4], [1, 6]], [[6, 2], [3, 6], [1, 2], [1, 3], [4, 5]]],
-    "solver": "glucose",
     "constraints": [
       "use_symm_break_weeks",
       "use_symm_break_periods"
@@ -303,50 +440,75 @@
     "time_max": 1,
     "optimal": true,
     "obj": 1,
-    "sol": [[[1, 2], [6, 4], [1, 3], [2, 5], [3, 5]], [[3, 4], [5, 1], [2, 6], [3, 6], [4, 2]], [[5, 6], [2, 3], [4, 5], [1, 4], [6, 1]]],
+    "sol": [
+      [
+        [
+          1,
+          2
+        ],
+        [
+          6,
+          4
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      [
+        [
+          3,
+          4
+        ],
+        [
+          5,
+          1
+        ],
+        [
+          2,
+          6
+        ],
+        [
+          3,
+          6
+        ],
+        [
+          4,
+          2
+        ]
+      ],
+      [
+        [
+          5,
+          6
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          5
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          6,
+          1
+        ]
+      ]
+    ],
     "solver": "z3",
-    "constraints": [
-      "use_symm_break_weeks",
-      "use_symm_break_teams"
-    ],
-    "encoding_type": "bw",
-    "status": "sat",
-    "runs": 5,
-    "sat_count": 5,
-    "unsat_count": 0,
-    "timeout_count": 0,
-    "error_count": 0
-  },
-  "select_group_symm_minisat_symm_break_weeks_symm_break_teams": {
-    "time": 0,
-    "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
-    "optimal": true,
-    "obj": "None",
-    "sol": [[[1, 2], [2, 4], [3, 6], [5, 1], [4, 5]], [[3, 4], [1, 6], [2, 5], [6, 4], [1, 3]], [[5, 6], [5, 3], [1, 4], [2, 3], [2, 6]]],
-    "solver": "minisat",
-    "constraints": [
-      "use_symm_break_weeks",
-      "use_symm_break_teams"
-    ],
-    "encoding_type": "bw",
-    "status": "sat",
-    "runs": 5,
-    "sat_count": 5,
-    "unsat_count": 0,
-    "timeout_count": 0,
-    "error_count": 0
-  },
-  "select_group_symm_glucose_symm_break_weeks_symm_break_teams": {
-    "time": 0,
-    "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
-    "optimal": true,
-    "obj": "None",
-    "sol": [[[1, 2], [2, 5], [1, 3], [4, 6], [3, 5]], [[3, 4], [6, 3], [2, 6], [1, 5], [2, 4]], [[5, 6], [1, 4], [4, 5], [3, 2], [1, 6]]],
-    "solver": "glucose",
     "constraints": [
       "use_symm_break_weeks",
       "use_symm_break_teams"
@@ -366,50 +528,75 @@
     "time_max": 1,
     "optimal": true,
     "obj": 1,
-    "sol": [[[1, 2], [6, 4], [1, 3], [2, 5], [3, 5]], [[3, 4], [5, 1], [2, 6], [3, 6], [4, 2]], [[5, 6], [2, 3], [4, 5], [1, 4], [6, 1]]],
+    "sol": [
+      [
+        [
+          1,
+          2
+        ],
+        [
+          6,
+          4
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      [
+        [
+          3,
+          4
+        ],
+        [
+          5,
+          1
+        ],
+        [
+          2,
+          6
+        ],
+        [
+          3,
+          6
+        ],
+        [
+          4,
+          2
+        ]
+      ],
+      [
+        [
+          5,
+          6
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          5
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          6,
+          1
+        ]
+      ]
+    ],
     "solver": "z3",
-    "constraints": [
-      "use_symm_break_periods",
-      "use_symm_break_teams"
-    ],
-    "encoding_type": "bw",
-    "status": "sat",
-    "runs": 5,
-    "sat_count": 5,
-    "unsat_count": 0,
-    "timeout_count": 0,
-    "error_count": 0
-  },
-  "select_group_symm_minisat_symm_break_periods_symm_break_teams": {
-    "time": 0,
-    "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
-    "optimal": true,
-    "obj": "None",
-    "sol": [[[1, 2], [5, 2], [1, 4], [5, 4], [3, 6]], [[3, 4], [4, 6], [6, 2], [2, 3], [1, 5]], [[5, 6], [1, 3], [3, 5], [6, 1], [4, 2]]],
-    "solver": "minisat",
-    "constraints": [
-      "use_symm_break_periods",
-      "use_symm_break_teams"
-    ],
-    "encoding_type": "bw",
-    "status": "sat",
-    "runs": 5,
-    "sat_count": 5,
-    "unsat_count": 0,
-    "timeout_count": 0,
-    "error_count": 0
-  },
-  "select_group_symm_glucose_symm_break_periods_symm_break_teams": {
-    "time": 0,
-    "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
-    "optimal": true,
-    "obj": "None",
-    "sol": [[[1, 2], [1, 6], [2, 4], [6, 4], [5, 3]], [[3, 4], [4, 5], [5, 1], [3, 1], [6, 2]], [[5, 6], [2, 3], [6, 3], [5, 2], [4, 1]]],
-    "solver": "glucose",
     "constraints": [
       "use_symm_break_periods",
       "use_symm_break_teams"
@@ -429,52 +616,75 @@
     "time_max": 1,
     "optimal": true,
     "obj": 1,
-    "sol": [[[1, 2], [6, 4], [1, 3], [2, 5], [3, 5]], [[3, 4], [5, 1], [2, 6], [3, 6], [4, 2]], [[5, 6], [2, 3], [4, 5], [1, 4], [6, 1]]],
+    "sol": [
+      [
+        [
+          1,
+          2
+        ],
+        [
+          6,
+          4
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      [
+        [
+          3,
+          4
+        ],
+        [
+          5,
+          1
+        ],
+        [
+          2,
+          6
+        ],
+        [
+          3,
+          6
+        ],
+        [
+          4,
+          2
+        ]
+      ],
+      [
+        [
+          5,
+          6
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          5
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          6,
+          1
+        ]
+      ]
+    ],
     "solver": "z3",
-    "constraints": [
-      "use_symm_break_weeks",
-      "use_symm_break_periods",
-      "use_symm_break_teams"
-    ],
-    "encoding_type": "bw",
-    "status": "sat",
-    "runs": 5,
-    "sat_count": 5,
-    "unsat_count": 0,
-    "timeout_count": 0,
-    "error_count": 0
-  },
-  "select_group_symm_minisat_symm_break_weeks_symm_break_periods_symm_break_teams": {
-    "time": 0,
-    "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
-    "optimal": true,
-    "obj": "None",
-    "sol": [[[1, 2], [5, 2], [4, 5], [4, 1], [6, 3]], [[3, 4], [6, 4], [2, 3], [6, 2], [1, 5]], [[5, 6], [3, 1], [6, 1], [3, 5], [4, 2]]],
-    "solver": "minisat",
-    "constraints": [
-      "use_symm_break_weeks",
-      "use_symm_break_periods",
-      "use_symm_break_teams"
-    ],
-    "encoding_type": "bw",
-    "status": "sat",
-    "runs": 5,
-    "sat_count": 5,
-    "unsat_count": 0,
-    "timeout_count": 0,
-    "error_count": 0
-  },
-  "select_group_symm_glucose_symm_break_weeks_symm_break_periods_symm_break_teams": {
-    "time": 0,
-    "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
-    "optimal": true,
-    "obj": "None",
-    "sol": [[[1, 2], [4, 5], [6, 3], [4, 1], [2, 5]], [[3, 4], [3, 2], [5, 1], [2, 6], [6, 4]], [[5, 6], [6, 1], [4, 2], [5, 3], [1, 3]]],
-    "solver": "glucose",
     "constraints": [
       "use_symm_break_weeks",
       "use_symm_break_periods",
@@ -495,44 +705,75 @@
     "time_max": 1,
     "optimal": true,
     "obj": 1,
-    "sol": [[[6, 1], [5, 4], [2, 4], [3, 5], [2, 3]], [[5, 2], [3, 1], [3, 6], [4, 6], [1, 4]], [[4, 3], [2, 6], [5, 1], [1, 2], [6, 5]]],
+    "sol": [
+      [
+        [
+          6,
+          1
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          5
+        ],
+        [
+          2,
+          3
+        ]
+      ],
+      [
+        [
+          5,
+          2
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          6
+        ],
+        [
+          4,
+          6
+        ],
+        [
+          1,
+          4
+        ]
+      ],
+      [
+        [
+          4,
+          3
+        ],
+        [
+          2,
+          6
+        ],
+        [
+          5,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          6,
+          5
+        ]
+      ]
+    ],
     "solver": "z3",
-    "constraints": [],
-    "encoding_type": "bw",
-    "status": "sat",
-    "runs": 5,
-    "sat_count": 5,
-    "unsat_count": 0,
-    "timeout_count": 0,
-    "error_count": 0
-  },
-  "select_group_implied_minisat_no_constraints": {
-    "time": 0,
-    "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
-    "optimal": true,
-    "obj": "None",
-    "sol": [[[5, 4], [6, 5], [6, 3], [3, 4], [2, 1]], [[2, 6], [4, 1], [2, 4], [1, 6], [3, 5]], [[1, 3], [3, 2], [1, 5], [2, 5], [4, 6]]],
-    "solver": "minisat",
-    "constraints": [],
-    "encoding_type": "bw",
-    "status": "sat",
-    "runs": 5,
-    "sat_count": 5,
-    "unsat_count": 0,
-    "timeout_count": 0,
-    "error_count": 0
-  },
-  "select_group_implied_glucose_no_constraints": {
-    "time": 0,
-    "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
-    "optimal": true,
-    "obj": "None",
-    "sol": [[[5, 4], [6, 5], [6, 3], [3, 4], [2, 1]], [[2, 6], [1, 4], [2, 4], [1, 6], [3, 5]], [[1, 3], [2, 3], [1, 5], [2, 5], [4, 6]]],
-    "solver": "glucose",
     "constraints": [],
     "encoding_type": "bw",
     "status": "sat",
@@ -549,48 +790,75 @@
     "time_max": 1,
     "optimal": true,
     "obj": 1,
-    "sol": [[[6, 2], [3, 1], [2, 3], [1, 6], [5, 4]], [[3, 5], [6, 5], [4, 6], [4, 3], [1, 2]], [[4, 1], [2, 4], [1, 5], [5, 2], [6, 3]]],
+    "sol": [
+      [
+        [
+          6,
+          2
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          6
+        ],
+        [
+          5,
+          4
+        ]
+      ],
+      [
+        [
+          3,
+          5
+        ],
+        [
+          6,
+          5
+        ],
+        [
+          4,
+          6
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      [
+        [
+          4,
+          1
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          5
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          6,
+          3
+        ]
+      ]
+    ],
     "solver": "z3",
-    "constraints": [
-      "use_implied_matches_per_team"
-    ],
-    "encoding_type": "bw",
-    "status": "sat",
-    "runs": 5,
-    "sat_count": 5,
-    "unsat_count": 0,
-    "timeout_count": 0,
-    "error_count": 0
-  },
-  "select_group_implied_minisat_implied_matches_per_team": {
-    "time": 0,
-    "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
-    "optimal": true,
-    "obj": "None",
-    "sol": [[[1, 3], [4, 5], [3, 5], [6, 2], [4, 1]], [[2, 5], [2, 1], [1, 6], [4, 3], [6, 5]], [[6, 4], [6, 3], [2, 4], [1, 5], [3, 2]]],
-    "solver": "minisat",
-    "constraints": [
-      "use_implied_matches_per_team"
-    ],
-    "encoding_type": "bw",
-    "status": "sat",
-    "runs": 5,
-    "sat_count": 5,
-    "unsat_count": 0,
-    "timeout_count": 0,
-    "error_count": 0
-  },
-  "select_group_implied_glucose_implied_matches_per_team": {
-    "time": 0,
-    "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
-    "optimal": true,
-    "obj": "None",
-    "sol": [[[5, 1], [5, 2], [6, 1], [6, 2], [3, 4]], [[6, 4], [6, 3], [5, 3], [5, 4], [2, 1]], [[2, 3], [4, 1], [4, 2], [1, 3], [6, 5]]],
-    "solver": "glucose",
     "constraints": [
       "use_implied_matches_per_team"
     ],
@@ -609,48 +877,75 @@
     "time_max": 1,
     "optimal": true,
     "obj": 1,
-    "sol": [[[6, 1], [5, 4], [2, 3], [5, 6], [1, 4]], [[2, 5], [1, 2], [6, 4], [3, 1], [3, 5]], [[4, 3], [3, 6], [1, 5], [4, 2], [6, 2]]],
+    "sol": [
+      [
+        [
+          6,
+          1
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          5,
+          6
+        ],
+        [
+          1,
+          4
+        ]
+      ],
+      [
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          6,
+          4
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      [
+        [
+          4,
+          3
+        ],
+        [
+          3,
+          6
+        ],
+        [
+          1,
+          5
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          6,
+          2
+        ]
+      ]
+    ],
     "solver": "z3",
-    "constraints": [
-      "use_implied_period_count"
-    ],
-    "encoding_type": "bw",
-    "status": "sat",
-    "runs": 5,
-    "sat_count": 5,
-    "unsat_count": 0,
-    "timeout_count": 0,
-    "error_count": 0
-  },
-  "select_group_implied_minisat_implied_period_count": {
-    "time": 0,
-    "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
-    "optimal": true,
-    "obj": "None",
-    "sol": [[[2, 1], [6, 3], [3, 4], [6, 5], [4, 5]], [[5, 3], [4, 1], [2, 6], [2, 4], [1, 6]], [[6, 4], [5, 2], [5, 1], [3, 1], [2, 3]]],
-    "solver": "minisat",
-    "constraints": [
-      "use_implied_period_count"
-    ],
-    "encoding_type": "bw",
-    "status": "sat",
-    "runs": 5,
-    "sat_count": 5,
-    "unsat_count": 0,
-    "timeout_count": 0,
-    "error_count": 0
-  },
-  "select_group_implied_glucose_implied_period_count": {
-    "time": 0,
-    "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
-    "optimal": true,
-    "obj": "None",
-    "sol": [[[5, 3], [6, 2], [4, 1], [6, 1], [2, 4]], [[1, 2], [4, 3], [6, 3], [4, 5], [6, 5]], [[6, 4], [5, 1], [2, 5], [2, 3], [3, 1]]],
-    "solver": "glucose",
     "constraints": [
       "use_implied_period_count"
     ],
@@ -669,50 +964,75 @@
     "time_max": 1,
     "optimal": true,
     "obj": 1,
-    "sol": [[[6, 2], [5, 3], [4, 5], [1, 4], [3, 1]], [[5, 1], [4, 6], [2, 3], [3, 6], [2, 4]], [[4, 3], [1, 2], [1, 6], [2, 5], [6, 5]]],
+    "sol": [
+      [
+        [
+          6,
+          2
+        ],
+        [
+          5,
+          3
+        ],
+        [
+          4,
+          5
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          3,
+          1
+        ]
+      ],
+      [
+        [
+          5,
+          1
+        ],
+        [
+          4,
+          6
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          6
+        ],
+        [
+          2,
+          4
+        ]
+      ],
+      [
+        [
+          4,
+          3
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          1,
+          6
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          6,
+          5
+        ]
+      ]
+    ],
     "solver": "z3",
-    "constraints": [
-      "use_implied_matches_per_team",
-      "use_implied_period_count"
-    ],
-    "encoding_type": "bw",
-    "status": "sat",
-    "runs": 5,
-    "sat_count": 5,
-    "unsat_count": 0,
-    "timeout_count": 0,
-    "error_count": 0
-  },
-  "select_group_implied_minisat_implied_matches_per_team_implied_period_count": {
-    "time": 0,
-    "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
-    "optimal": true,
-    "obj": "None",
-    "sol": [[[5, 1], [6, 4], [3, 2], [3, 1], [2, 5]], [[3, 4], [2, 1], [4, 5], [5, 6], [6, 3]], [[6, 2], [3, 5], [6, 1], [4, 2], [4, 1]]],
-    "solver": "minisat",
-    "constraints": [
-      "use_implied_matches_per_team",
-      "use_implied_period_count"
-    ],
-    "encoding_type": "bw",
-    "status": "sat",
-    "runs": 5,
-    "sat_count": 5,
-    "unsat_count": 0,
-    "timeout_count": 0,
-    "error_count": 0
-  },
-  "select_group_implied_glucose_implied_matches_per_team_implied_period_count": {
-    "time": 0,
-    "time_std": 0.0,
-    "time_min": 0,
-    "time_max": 0,
-    "optimal": true,
-    "obj": "None",
-    "sol": [[[2, 1], [6, 3], [5, 4], [6, 4], [3, 5]], [[3, 4], [1, 5], [1, 6], [5, 2], [6, 2]], [[6, 5], [4, 2], [3, 2], [1, 3], [4, 1]]],
-    "solver": "glucose",
     "constraints": [
       "use_implied_matches_per_team",
       "use_implied_period_count"
