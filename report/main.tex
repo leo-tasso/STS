@@ -249,7 +249,7 @@ Also, other strategies were used, but they didn't improve either the performance
 
 \paragraph{Experimental Results}
 
-The results obtained using the described search strategies are reported in the following tables and in the Chuffed plot to assess the effectiveness of symmetry breaking constraints, implied constraints, and search strategies. In the table \ref{tab:cp}, C. stands for Chuffed and G. stands for Gecode.
+The results obtained using the described search strategies are reported in the following tables and in the plot to assess the effectiveness of symmetry breaking constraints, implied constraints, and search strategies. In the table \ref{tab:cp}, C. stands for Chuffed and G. stands for Gecode.
 
 \begin{table}[H]
 \small
@@ -257,12 +257,12 @@ The results obtained using the described search strategies are reported in the f
 \toprule
 ID & C. (all) & C. w/o SB & C. w/o IC & C. w/o SS & G. (all) & G. w/o SB & G. w/o IC & G. w/o SS \\
 \midrule
-6 & \textbf{1} & \textbf{1} & \textbf{1} & \textbf{1} & \textbf{1} & \textbf{1} & \textbf{1} & \textbf{1}\\
-8 & \textbf{1} & \textbf{1} & \textbf{1} & \textbf{1} & \textbf{1} & \textbf{1} & \textbf{1} & \textbf{1}\\
-10 & \textbf{1} & \textbf{1} & \textbf{1} & \textbf{1} & \textbf{1} & \textbf{1} & \textbf{1} & \textbf{\texttt{N/A}}\\
-12 & \textbf{3} & \textbf{1} & \textbf{5} & \textbf{5} & \textbf{\texttt{N/A}} & \textbf{\texttt{N/A}} & \textbf{\texttt{N/A}} & \textbf{\texttt{N/A}}\\
-14 & \textbf{\texttt{N/A}} & \textbf{13} & \textbf{\texttt{N/A}} & \textbf{\texttt{N/A}} & \textbf{\texttt{N/A}} & \textbf{\texttt{N/A}} & \textbf{\texttt{N/A}} & \textbf{\texttt{N/A}}\\
-16 & \textbf{\texttt{N/A}} & \textbf{15} & \textbf{\texttt{N/A}} & \textbf{\texttt{N/A}} & \textbf{\texttt{N/A}} & \textbf{\texttt{N/A}} & \textbf{\texttt{N/A}} & \textbf{\texttt{N/A}}\\
+6 & 0 | \textbf{1} & 0 | \textbf{1} & 0 | \textbf{1} & 0 | \textbf{1} & 0 | \textbf{1} & 0 | \textbf{1} & 0 | \textbf{1} & 0 | \textbf{1}\\
+8 & 0 | \textbf{1} & 0 | \textbf{1} & 0 | \textbf{1} & 0 | \textbf{1} & 1 | \textbf{1} & 9 | \textbf{1} & 73 | \textbf{1} & 2 | \textbf{1}\\
+10 & 3 | \textbf{1} & 4 | \textbf{1} & 3 | \textbf{1} & 3 | \textbf{1} & 8 | \textbf{1} & 63 | \textbf{1} & 146 | \textbf{1} & \texttt{N/A} | \textbf{\texttt{N/A}}\\
+12 & 110 | \textbf{3} & 16 | \textbf{1} & 56 | \textbf{5} & 109 | \textbf{5} & \texttt{N/A} | \textbf{\texttt{N/A}} & \texttt{N/A} | \textbf{\texttt{N/A}} & \texttt{N/A} | \textbf{\texttt{N/A}} & \texttt{N/A} | \textbf{\texttt{N/A}}\\
+14 & \texttt{N/A} | \textbf{\texttt{N/A}} & 37 | \textbf{13} & \texttt{N/A} | \textbf{\texttt{N/A}} & \texttt{N/A} | \textbf{\texttt{N/A}} & \texttt{N/A} | \textbf{\texttt{N/A}} & \texttt{N/A} | \textbf{\texttt{N/A}} & \texttt{N/A} | \textbf{\texttt{N/A}} & \texttt{N/A} | \textbf{\texttt{N/A}}\\
+16 & \texttt{N/A} | \textbf{\texttt{N/A}} & \texttt{N/A} | \textbf{15} & \texttt{N/A} | \textbf{\texttt{N/A}} & \texttt{N/A} | \textbf{\texttt{N/A}} & \texttt{N/A} | \textbf{\texttt{N/A}} & \texttt{N/A} | \textbf{\texttt{N/A}} & \texttt{N/A} | \textbf{\texttt{N/A}} & \texttt{N/A} | \textbf{\texttt{N/A}}\\
 \bottomrule
 \end{tabular}
 \caption{Results using Chuffed (C.) and Gecode (G.) with the possible combinations of active constraints, both in decision and optimization version.}
@@ -271,9 +271,9 @@ ID & C. (all) & C. w/o SB & C. w/o IC & C. w/o SS & G. (all) & G. w/o SB & G. w/
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{chuffed_plot.png}
-    \caption{Chuffed solver: solving time for different constraint configurations.}
-    \label{fig:chuffed_plot}
+    \includegraphics[width=0.8\textwidth]{cp_plot.png}
+    \caption{Minizinc solvers: solving time for different constraint configurations.}
+    \label{fig:cp_plot}
 \end{figure}
 
 \section{SAT Model}
@@ -410,7 +410,7 @@ The primary implementation of the STS model uses the Z3 SMT solver. All constrai
 \end{itemize}
 This approach allows the same model to be validated with different SAT solvers, ensuring correctness and robustness of the encoding.
 
-\paragraph{Results} The following tables show the time performance of the different solvers given the best encoding method:
+\paragraph{Experimental Results} The following tables and plot show the time performance of the different solvers given the best encoding method:
 \begin{table}[H]
 \centering
 \small
@@ -419,11 +419,10 @@ This approach allows the same model to be validated with different SAT solvers, 
 \toprule
 ID & Z3 (all) & Z3 w/o SB & Z3 w/o IC \\
 \midrule
-6 & 1 | \textbf{1} & 1 | \textbf{1} & 1 | \textbf{1} \\
-8 & 5 | \textbf{1} & 16 | \textbf{1} & 8 | \textbf{1}  \\
-10 & 54 | \textbf{1} & 300 | 5 & 69 | \textbf{1} \\
-10 & 54 | \textbf{1} & 300 | 5 & 69 | \textbf{1} \\
-12 & 300 | 6 & 300 | 6 & 300 | 6 \\
+6 & 0 | \textbf{1} & 0 | \textbf{1} & 0 | \textbf{1} \\
+8 & 2 | \textbf{1} & 2 | \textbf{1} & 0 | \textbf{1}  \\
+10 & 8 | \textbf{1} & 10 | \textbf{5} & 1 | \textbf{1} \\
+12 & \texttt{N/A} | \textbf{6} & \texttt{N/A} | \textbf{6} & \texttt{N/A} | \textbf{6} \\
 \bottomrule
 \end{tabular}
 \caption{Results using Z3 with the possible combinations of active constraints.}
@@ -440,11 +439,18 @@ ID & G. (all) & G. w/o SB & G. w/o IC & M.S. (all) & M.S. w/o SB & M.S. w/o IC\\
 6 & 0 & 0 & 0 & 0 & 0 & 0\\
 8 & 0 & 1 & 0 & 0 & 1 & 0 \\
 10 & 4 & 72 & 2 & 4 & 48 & 5\\
-12 & 116 & \texttt{N/A} & 132 & 49 & 300 & 281\\
+12 & 116 & \texttt{N/A} & 132 & 49 & \texttt{N/A} & 281\\
 \bottomrule
 \end{tabular}
 \caption{Results using Glucose (G.) and MiniSAT (M.S.) with the possible combinations of active constraints.}
 \end{table}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{sat_plot.png}
+    \caption{SAT solvers: solving time for different constraint configurations.}
+    \label{fig:sat_plot}
+\end{figure}
 
 \section{SMT Model}
 
@@ -573,7 +579,7 @@ The SMT model was validated with both Z3 and CVC5 for the decision version and Z
 ID & Z3 (all) & Z3 w/o SB & Z3 w/o IC & CVC5 (all) & CVC5 w/o SB & CVC5 w/o IC \\
 \midrule
 6 & 0 | \textbf{1} & 0 | \textbf{1} & 0 | \textbf{1} &  0 | &  1 | &  0 |\\
-8 & 0 | \textbf{1} & 0 | \textbf{1} & 0 | \textbf{1} & 18 | & 33 | & 20 |\\
+8 & 0 | \textbf{1} & 2 | \textbf{1} & 0 | \textbf{1} & 18 | & 33 | & 20 |\\
 10 &  30 | \texttt{N/A} &  49 | \texttt{N/A} &  37 | \texttt{N/A} & \texttt{N/A} | & \texttt{N/A} | & \texttt{N/A} |\\
 12 &  216 | \texttt{N/A} &  289 | \texttt{N/A} & \texttt{N/A} | \texttt{N/A} & \texttt{N/A} | & \texttt{N/A} | & \texttt{N/A} |\\
 \bottomrule
@@ -695,7 +701,7 @@ It fixes the order of team 1's opponents by ensuring that in week $w$, team 1 pl
 
 The MIP model was implemented using PuLP, a Python library for linear programming that provides a solver-independent interface. This design choice allows the same model to be tested with different MIP solvers, in our case, CBC and GLPK.
 
-\paragraph{Experimental Results} The following tables show the results of the two MIP solvers.
+\paragraph{Experimental Results} The following tables and plot show the results of the two MIP solvers.
 
 \begin{table}[H]
 \centering
@@ -707,13 +713,20 @@ ID & CBC (all) & CBC w/o SB & CBC w/o IC & GLPK (all) & GLPK w/o SB & GLPK w/o I
 \midrule
 6 & 0 | \textbf{1} & 0 | \textbf{1} & 0 | \textbf{1} & 0 | \textbf{1} & 0 | \textbf{1} & 0 | \textbf{1}\\
 8 & 0 | \textbf{1} & 0 | \textbf{1} & 0 | \textbf{1} & 2 | \textbf{1} & 0 | \textbf{1} & 1 | \textbf{1}\\
-10 & 1 | \textbf{1} & 2 | \textbf{1} & 2 | \textbf{1} & 40 | \textbf{\texttt{N/A}} & 74 | \textbf{\texttt{N/A}} & 3 | \textbf{1}\\
-12 & 15 | \textbf{\texttt{N/A}} & 17 | \textbf{\texttt{N/A}} & 3 | 5 & \texttt{N/A} |& \texttt{N/A} |& \texttt{N/A} |\\
-14 & 29 | & \texttt{N/A} | & 27 | & \texttt{N/A} |& \texttt{N/A} |& \texttt{N/A} |\\
+10 & 1 | \textbf{1} & 2 | \textbf{1} & 2 | \textbf{1} & 1 | \textbf{\texttt{N/A}} & 38 | \textbf{\texttt{N/A}} & 59 | \textbf{1}\\
+12 & 15 | \textbf{\texttt{N/A}} & 17 | \textbf{\texttt{N/A}} & 3 | 5 & 40 | \texttt{N/A}& 74 | \texttt{N/A}& 218 | \texttt{N/A}\\
+14 & 29 | \texttt{N/A} & \texttt{N/A} | \texttt{N/A} & 27 | \texttt{N/A} & \texttt{N/A} | \texttt{N/A} & \texttt{N/A} | \texttt{N/A}& \texttt{N/A} | \texttt{N/A}\\
 \bottomrule
 \end{tabular}
 \caption{Results using CBC and GLPK with the possible combinations of active constraints.}
 \end{table}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{mip_plot.png}
+    \caption{MIP solvers: solving time for different constraint configurations.}
+    \label{fig:mip_plot}
+\end{figure}
 
 \section{Conclusions}
 
