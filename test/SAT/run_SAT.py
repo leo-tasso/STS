@@ -81,7 +81,7 @@ def run_sts_solver(
                 print(f"Z3 optimization result: {result}")
                 status = "sat" if result.get('obj', -1) > 0 else "unsat"
                 return {
-                    "time": int(round(result.get('time', timeout_sec))),
+                    "time": min(int(round(result.get('time', timeout_sec))), timeout_sec),
                     "optimal": obj == 1 ,
                     "obj": obj if obj is not None else "None",
                     "sol": sol if status == "sat" else [],  # Return [] for unsat/timeout
@@ -118,7 +118,7 @@ def run_sts_solver(
             result = sts.solve_sts_dimacs(n, constraints, encoding_type, solver)
             if result['satisfiable']:
                 return {
-                    "time": int(round(result['time'])),
+                    "time": min(int(round(result['time'])), timeout_sec),
                     "optimal": "true",
                     "obj": "None",
                     "sol": result['solution'],
@@ -129,7 +129,7 @@ def run_sts_solver(
                 }
             else:
                 return {
-                    "time": int(round(result['time'])),
+                    "time": min(int(round(result['time'])), timeout_sec),
                     "optimal": False,
                     "obj": "None",
                     "sol": [],  # Return [] for unsat/timeout
@@ -189,6 +189,9 @@ def run_sts_with_averaging(
     for i in range(num_runs):
         try:
             result = run_sts_solver(n, active_constraints, encoding_type, timeout_sec, verbose=False, solver=solver, opt=opt)
+            # Cap time at timeout if it exceeds
+            if isinstance(result.get("time"), (int, float)) and result["time"] > timeout_sec:
+                result["time"] = timeout_sec
             results.append(result)
             if verbose:
                 print(f"  Run {i+1}/{num_runs}: {result['status']} in {result['time']}s")
@@ -196,7 +199,7 @@ def run_sts_with_averaging(
             if verbose:
                 print(f"  Run {i+1}/{num_runs}: Error - {str(e)}")
             results.append({
-                "time": int(round(timeout_sec)),
+                "time": timeout_sec,
                 "optimal": False,
                 "obj": "None",
                 "sol": f"error: {str(e)}",
@@ -207,7 +210,9 @@ def run_sts_with_averaging(
             })
 
     # Calculate statistics
-    times = [r["time"] for r in results if r["status"] != "error"]
+    # Cap all times at timeout before calculating statistics
+    capped_times = [min(r["time"], timeout_sec) for r in results if r["status"] != "error"]
+    times = capped_times
     sat_count = sum(1 for r in results if r["status"] == "sat")
     unsat_count = sum(1 for r in results if r["status"] == "unsat")
     timeout_count = sum(1 for r in results if r["status"] == "unknown")

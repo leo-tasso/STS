@@ -221,16 +221,17 @@ def clean_minizinc_stdout(
             if len(parts) >= 5:
                 time_elapsed = math.floor(float(parts[3]))
 
-
     # If no time was found but we have valid output, set time to 0
     if time_elapsed is None:
         time_elapsed = "unknown"
-
-        
+    
+    # Cap time at timeout if it exceeds
+    if isinstance(time_elapsed, (int, float)) and time_elapsed > timeout_sec:
+        time_elapsed = timeout_sec
 
     ordered_output = {
         "time": time_elapsed,
-        "optimal": True if time_elapsed < timeout_sec else False,
+        "optimal": True if isinstance(time_elapsed, (int, float)) and time_elapsed < timeout_sec else False,
         "obj": cleaned_output.get("obj") if optimization_version else None,
         "sol": str(cleaned_output.get("sol", "unknown")),
         "solver": solver,
@@ -714,6 +715,10 @@ def run_minizinc_with_averaging(
     errors = []
     
     for result in results:
+        # Cap time at timeout if it exceeds
+        if isinstance(result.get("time"), (int, float)) and result["time"] > timeout_sec:
+            result["time"] = timeout_sec
+            
         # Check if this run was successful (not error, timeout, or unsat)
         if (result.get("sol") != []):
             
@@ -749,15 +754,17 @@ def run_minizinc_with_averaging(
     
     # Compute time statistics
     if valid_times:
-        avg_result["time"] = round(statistics.mean(valid_times), 0)
+        # Ensure all times are capped at timeout
+        capped_times = [min(t, timeout_sec) for t in valid_times]
+        avg_result["time"] = round(statistics.mean(capped_times), 0)
         time_stats = {
-            "mean": round(statistics.mean(valid_times), 2),
-            "median": round(statistics.median(valid_times), 2),
-            "min": min(valid_times),
-            "max": max(valid_times),
+            "mean": round(statistics.mean(capped_times), 2),
+            "median": round(statistics.median(capped_times), 2),
+            "min": min(capped_times),
+            "max": min(max(capped_times), timeout_sec),
         }
-        if len(valid_times) > 1:
-            time_stats["stdev"] = round(statistics.stdev(valid_times), 2)
+        if len(capped_times) > 1:
+            time_stats["stdev"] = round(statistics.stdev(capped_times), 2)
         else:
             time_stats["stdev"] = 0
     else:

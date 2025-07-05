@@ -101,7 +101,11 @@ def run_mip_with_averaging(
     def single_run(run_id):
         if verbose:
             print(f"  Run {run_id + 1}/{num_runs}")
-        return sts.solve_sts_mip(n, constraints, solver_name, timeout_sec, verbose, optimize)
+        result = sts.solve_sts_mip(n, constraints, solver_name, timeout_sec, verbose, optimize)
+        # Cap time at timeout if it exceeds
+        if isinstance(result.get("time"), (int, float)) and result["time"] > timeout_sec:
+            result["time"] = timeout_sec
+        return result
     
     # Execute runs in parallel if max_workers allows
     if max_workers != 1:
@@ -151,6 +155,10 @@ def run_mip_with_averaging(
     
     # Process results
     for result in results:
+        # Cap time at timeout if it exceeds
+        if isinstance(result.get("time"), (int, float)) and result["time"] > timeout_sec:
+            result["time"] = timeout_sec
+            
         if result.get("sol") != [] and result.get("sol") not in ["unsat", "=====UNKNOWN===== (likely timeout)", "ERROR PARSING STDOUT"]:
             successful_runs += 1
             if isinstance(result.get("time"), (int, float)):
@@ -176,15 +184,17 @@ def run_mip_with_averaging(
     
     # Compute time statistics
     if valid_times:
-        avg_result["time"] = round(statistics.mean(valid_times), 0)
+        # Ensure all times are capped at timeout
+        capped_times = [min(t, timeout_sec) for t in valid_times]
+        avg_result["time"] = round(statistics.mean(capped_times), 0)
         time_stats = {
-            "mean": round(statistics.mean(valid_times), 2),
-            "median": round(statistics.median(valid_times), 2),
-            "min": min(valid_times),
-            "max": max(valid_times),
+            "mean": round(statistics.mean(capped_times), 2),
+            "median": round(statistics.median(capped_times), 2),
+            "min": min(capped_times),
+            "max": min(max(capped_times), timeout_sec),
         }
-        if len(valid_times) > 1:
-            time_stats["stdev"] = round(statistics.stdev(valid_times), 2)
+        if len(capped_times) > 1:
+            time_stats["stdev"] = round(statistics.stdev(capped_times), 2)
         else:
             time_stats["stdev"] = 0
     else:

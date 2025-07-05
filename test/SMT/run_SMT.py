@@ -69,7 +69,7 @@ def run_sts_solver(
             sol_val = []
         
         return {
-            "time": 300 if sol_val == "unsat" else int(result['time']),
+            "time": timeout_sec if result['time'] > timeout_sec else int(result['time']),
             "optimal": result['optimal'],
             "obj": result.get('obj', "None"),
             "sol": sol_val,
@@ -117,12 +117,17 @@ def run_sts_with_averaging(
     results = []
     for i in range(num_runs):
         result = run_sts_solver(n, active_constraints, optimize, timeout_sec, verbose=False, solver=solver)
+        # Cap time at timeout if it exceeds
+        if isinstance(result.get("time"), (int, float)) and result["time"] > timeout_sec:
+            result["time"] = timeout_sec
         results.append(result)
         if verbose:
             print(f"  Run {i+1}/{num_runs}: {'sat' if result['sol'] else 'unsat'} in {result['time']}s")
     
     # Calculate statistics
-    times = [r["time"] for r in results]
+    # Cap all times at timeout before calculating statistics
+    capped_times = [min(r["time"], timeout_sec) for r in results]
+    times = capped_times
     sat_count = sum(1 for r in results if r["sol"] and not isinstance(r["sol"], str))
     optimal_count = sum(1 for r in results if r["optimal"])
     
