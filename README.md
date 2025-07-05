@@ -26,14 +26,7 @@ A comprehensive platform for solving sports tournament scheduling using four dif
    python test/run_all_models.py -n 6
    ```
 
-## Solution Approaches
 
-| Paradigm | Best For | Optimization | Solver |
-|----------|----------|--------------|---------|
-| **CP** | Medium-large instances (8-16 teams) | Minimize home/away imbalance | MiniZinc (Chuffed/Gecode) |
-| **MIP** | Small-medium instances (4-12 teams) | Proven optimal solutions | PuLP (CBC/Gurobi/CPLEX) |
-| **SAT** | Small instances (4-10 teams) | Any valid solution | Z3 with multiple encodings |
-| **SMT** | Small-medium instances (4-12 teams) | Any valid solution | Z3 |
 
 ## Project Structure
 
@@ -64,6 +57,58 @@ All solvers output JSON with:
 - Schedule matrix (team × week × period)
 - Solution statistics (time, objective, solver)
 - Constraint satisfaction verification
+
+## Unified Runner: run_all_models.py
+
+You can run all (or selected) models for multiple team sizes using the unified runner script:
+
+```bash
+python test/run_all_models.py
+```
+
+By default, this runs all models (CP, MIP, SAT, SMT) for even team numbers from 2 to 12.
+
+### Common options:
+
+- `--models CP MIP` &nbsp;&nbsp;&nbsp;&nbsp;Run only selected models.
+- `--n-values 6 8 10` &nbsp;&nbsp;&nbsp;&nbsp;Specify exact team numbers.
+- `--start 4 --end 10 --step 2` &nbsp;&nbsp;&nbsp;&nbsp;Range of team numbers.
+- `--mode test` &nbsp;&nbsp;&nbsp;&nbsp;Run in test mode.
+- `--timeout 600` &nbsp;&nbsp;&nbsp;&nbsp;Set timeout per run (seconds).
+- `--no-parallel` &nbsp;&nbsp;&nbsp;&nbsp;Run models sequentially.
+- `--no-validate` &nbsp;&nbsp;&nbsp;&nbsp;Skip solution validation.
+- `--output results.json` &nbsp;&nbsp;&nbsp;&nbsp;Set output file name.
+
+### Example usages:
+
+```bash
+# Run all models for n=6,8,10
+python test/run_all_models.py --n-values 6 8 10
+
+# Run only CP and MIP for n=4 to 10
+python test/run_all_models.py --models CP MIP --start 4 --end 10 --step 2
+
+# Run in test mode with longer timeout
+python test/run_all_models.py --mode test --timeout 600
+```
+
+The script will print a summary and save results to a JSON file. It also validates solutions using the checker.
+
+## Solution Checker
+
+You can verify the validity of solution JSON files using the provided checker script:
+
+```bash
+python test/solution_checker.py <path_to_json_directory>
+```
+
+- `<path_to_json_directory>`: Directory containing one or more `.json` files produced by the solvers.
+- The script will print the validity status and reasons for each solution in every file.
+
+Example usage:
+```bash
+python test/solution_checker.py test/results/
+```
 
 ## Features
 
