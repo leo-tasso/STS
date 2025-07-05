@@ -1,11 +1,11 @@
 {
   "z3_sat_use_symm_break_weeks_use_symm_break_periods_use_symm_break_teams": {
-    "time": 0,
+    "time": 300,
     "time_std": 0.0,
     "time_min": 0,
     "time_max": 0,
     "optimal": false,
-    "obj": null,
+    "obj": "None",
     "sol": [],
     "solver": "z3",
     "constraints": [
@@ -19,12 +19,12 @@
     "optimal_count": 0
   },
   "z3_opt_use_symm_break_weeks_use_symm_break_periods_use_symm_break_teams": {
-    "time": 0,
+    "time": 300,
     "time_std": 0.0,
     "time_min": 0,
     "time_max": 0,
     "optimal": false,
-    "obj": null,
+    "obj": "None",
     "sol": [],
     "solver": "z3",
     "constraints": [
@@ -38,12 +38,12 @@
     "optimal_count": 0
   },
   "cvc5_sat_use_symm_break_weeks_use_symm_break_periods_use_symm_break_teams": {
-    "time": 0,
+    "time": 300,
     "time_std": 0.0,
     "time_min": 0,
     "time_max": 0,
     "optimal": false,
-    "obj": null,
+    "obj": "None",
     "sol": [],
     "solver": "cvc5",
     "constraints": [
@@ -57,12 +57,12 @@
     "optimal_count": 0
   },
   "z3_sat_use_implied_matches_per_team_use_implied_period_count": {
-    "time": 0,
+    "time": 300,
     "time_std": 0.0,
     "time_min": 0,
     "time_max": 0,
     "optimal": false,
-    "obj": null,
+    "obj": "None",
     "sol": [],
     "solver": "z3",
     "constraints": [
@@ -75,12 +75,12 @@
     "optimal_count": 0
   },
   "z3_opt_use_implied_matches_per_team_use_implied_period_count": {
-    "time": 0,
+    "time": 300,
     "time_std": 0.0,
     "time_min": 0,
     "time_max": 0,
     "optimal": false,
-    "obj": null,
+    "obj": "None",
     "sol": [],
     "solver": "z3",
     "constraints": [
@@ -93,12 +93,12 @@
     "optimal_count": 0
   },
   "cvc5_sat_use_implied_matches_per_team_use_implied_period_count": {
-    "time": 0,
+    "time": 300,
     "time_std": 0.0,
     "time_min": 0,
     "time_max": 0,
     "optimal": false,
-    "obj": null,
+    "obj": "None",
     "sol": [],
     "solver": "cvc5",
     "constraints": [
@@ -111,12 +111,12 @@
     "optimal_count": 0
   },
   "z3_sat_use_symm_break_weeks_use_symm_break_periods_use_symm_break_teams_use_implied_matches_per_team_use_implied_period_count": {
-    "time": 0,
+    "time": 300,
     "time_std": 0.0,
     "time_min": 0,
     "time_max": 0,
     "optimal": false,
-    "obj": null,
+    "obj": "None",
     "sol": [],
     "solver": "z3",
     "constraints": [
@@ -132,12 +132,12 @@
     "optimal_count": 0
   },
   "z3_opt_use_symm_break_weeks_use_symm_break_periods_use_symm_break_teams_use_implied_matches_per_team_use_implied_period_count": {
-    "time": 0,
+    "time": 300,
     "time_std": 0.0,
     "time_min": 0,
     "time_max": 0,
     "optimal": false,
-    "obj": null,
+    "obj": "None",
     "sol": [],
     "solver": "z3",
     "constraints": [
@@ -153,12 +153,12 @@
     "optimal_count": 0
   },
   "cvc5_sat_use_symm_break_weeks_use_symm_break_periods_use_symm_break_teams_use_implied_matches_per_team_use_implied_period_count": {
-    "time": 0,
+    "time": 300,
     "time_std": 0.0,
     "time_min": 0,
     "time_max": 0,
     "optimal": false,
-    "obj": null,
+    "obj": "None",
     "sol": [],
     "solver": "cvc5",
     "constraints": [

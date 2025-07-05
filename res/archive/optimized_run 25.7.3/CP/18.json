@@ -1,8 +1,8 @@
 {
   "generate_all_constraints_chuffed": {
     "time": 300,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": [],
     "solver": "chuffed",
     "constraints": [
@@ -29,8 +29,8 @@
   },
   "generate_all_constraints_gecode": {
     "time": 300,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": [],
     "solver": "gecode",
     "constraints": [

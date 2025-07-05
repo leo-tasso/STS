@@ -5,7 +5,7 @@
     "time_min": 0,
     "time_max": 0,
     "optimal": false,
-    "obj": null,
+    "obj": "None",
     "sol": [
       [
         [
@@ -91,7 +91,7 @@
     "time_min": 0,
     "time_max": 0,
     "optimal": false,
-    "obj": null,
+    "obj": "None",
     "sol": [
       [
         [
@@ -177,7 +177,7 @@
     "time_min": 0,
     "time_max": 0,
     "optimal": false,
-    "obj": null,
+    "obj": "None",
     "sol": [
       [
         [
@@ -262,7 +262,7 @@
     "time_min": 1,
     "time_max": 1,
     "optimal": false,
-    "obj": null,
+    "obj": "None",
     "sol": [
       [
         [
@@ -347,7 +347,7 @@
     "time_min": 0,
     "time_max": 0,
     "optimal": false,
-    "obj": null,
+    "obj": "None",
     "sol": [
       [
         [
@@ -435,7 +435,7 @@
     "time_min": 0,
     "time_max": 0,
     "optimal": false,
-    "obj": null,
+    "obj": "None",
     "sol": [
       [
         [

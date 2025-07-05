@@ -1,8 +1,8 @@
 {
   "select_group_symm_none_chuffed": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "chuffed",
     "constraints": [
@@ -23,8 +23,8 @@
   },
   "select_group_symm_use_symm_break_weeks_chuffed": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "chuffed",
     "constraints": [
@@ -46,8 +46,8 @@
   },
   "select_group_symm_use_symm_break_periods_chuffed": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "chuffed",
     "constraints": [
@@ -69,8 +69,8 @@
   },
   "select_group_symm_use_symm_break_teams_chuffed": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "chuffed",
     "constraints": [
@@ -92,8 +92,8 @@
   },
   "select_group_symm_use_symm_break_weeks_use_symm_break_periods_chuffed": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "chuffed",
     "constraints": [
@@ -116,8 +116,8 @@
   },
   "select_group_symm_use_symm_break_weeks_use_symm_break_teams_chuffed": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "chuffed",
     "constraints": [
@@ -140,8 +140,8 @@
   },
   "select_group_symm_use_symm_break_periods_use_symm_break_teams_chuffed": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "chuffed",
     "constraints": [
@@ -164,8 +164,8 @@
   },
   "select_group_symm_use_symm_break_weeks_use_symm_break_periods_use_symm_break_teams_chuffed": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "chuffed",
     "constraints": [
@@ -189,8 +189,8 @@
   },
   "select_group_implied_none_chuffed": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "chuffed",
     "constraints": [
@@ -212,8 +212,8 @@
   },
   "select_group_implied_use_implied_matches_per_team_chuffed": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "chuffed",
     "constraints": [
@@ -236,8 +236,8 @@
   },
   "select_group_implied_use_implied_period_count_chuffed": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "chuffed",
     "constraints": [
@@ -260,8 +260,8 @@
   },
   "select_group_implied_use_implied_matches_per_team_use_implied_period_count_chuffed": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "chuffed",
     "constraints": [
@@ -285,8 +285,8 @@
   },
   "select_group_search_none_chuffed": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "chuffed",
     "constraints": [
@@ -307,8 +307,8 @@
   },
   "select_group_search_use_int_search_chuffed": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "chuffed",
     "constraints": [
@@ -330,8 +330,8 @@
   },
   "select_group_search_use_restart_luby_chuffed": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "chuffed",
     "constraints": [
@@ -353,8 +353,8 @@
   },
   "select_group_search_use_relax_and_reconstruct_chuffed": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "chuffed",
     "constraints": [
@@ -376,8 +376,8 @@
   },
   "select_group_search_use_int_search_use_restart_luby_chuffed": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "chuffed",
     "constraints": [
@@ -400,8 +400,8 @@
   },
   "select_group_search_use_int_search_use_relax_and_reconstruct_chuffed": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "chuffed",
     "constraints": [
@@ -424,8 +424,8 @@
   },
   "select_group_search_use_restart_luby_use_relax_and_reconstruct_chuffed": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "chuffed",
     "constraints": [
@@ -448,8 +448,8 @@
   },
   "select_group_search_use_int_search_use_restart_luby_use_relax_and_reconstruct_chuffed": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "chuffed",
     "constraints": [
@@ -473,8 +473,8 @@
   },
   "select_group_symm_none_gecode": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "gecode",
     "constraints": [
@@ -495,8 +495,8 @@
   },
   "select_group_symm_use_symm_break_weeks_gecode": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "gecode",
     "constraints": [
@@ -518,8 +518,8 @@
   },
   "select_group_symm_use_symm_break_periods_gecode": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "gecode",
     "constraints": [
@@ -541,8 +541,8 @@
   },
   "select_group_symm_use_symm_break_teams_gecode": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "gecode",
     "constraints": [
@@ -564,8 +564,8 @@
   },
   "select_group_symm_use_symm_break_weeks_use_symm_break_periods_gecode": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "gecode",
     "constraints": [
@@ -588,8 +588,8 @@
   },
   "select_group_symm_use_symm_break_weeks_use_symm_break_teams_gecode": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "gecode",
     "constraints": [
@@ -612,8 +612,8 @@
   },
   "select_group_symm_use_symm_break_periods_use_symm_break_teams_gecode": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "gecode",
     "constraints": [
@@ -636,8 +636,8 @@
   },
   "select_group_symm_use_symm_break_weeks_use_symm_break_periods_use_symm_break_teams_gecode": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "gecode",
     "constraints": [
@@ -661,8 +661,8 @@
   },
   "select_group_implied_none_gecode": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "gecode",
     "constraints": [
@@ -684,8 +684,8 @@
   },
   "select_group_implied_use_implied_matches_per_team_gecode": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "gecode",
     "constraints": [
@@ -708,8 +708,8 @@
   },
   "select_group_implied_use_implied_period_count_gecode": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "gecode",
     "constraints": [
@@ -732,8 +732,8 @@
   },
   "select_group_implied_use_implied_matches_per_team_use_implied_period_count_gecode": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "gecode",
     "constraints": [
@@ -757,8 +757,8 @@
   },
   "select_group_search_none_gecode": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "gecode",
     "constraints": [
@@ -779,8 +779,8 @@
   },
   "select_group_search_use_int_search_gecode": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "gecode",
     "constraints": [
@@ -802,8 +802,8 @@
   },
   "select_group_search_use_restart_luby_gecode": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "gecode",
     "constraints": [
@@ -825,8 +825,8 @@
   },
   "select_group_search_use_relax_and_reconstruct_gecode": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "gecode",
     "constraints": [
@@ -848,8 +848,8 @@
   },
   "select_group_search_use_int_search_use_restart_luby_gecode": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "gecode",
     "constraints": [
@@ -872,8 +872,8 @@
   },
   "select_group_search_use_int_search_use_relax_and_reconstruct_gecode": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "gecode",
     "constraints": [
@@ -896,8 +896,8 @@
   },
   "select_group_search_use_restart_luby_use_relax_and_reconstruct_gecode": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "gecode",
     "constraints": [
@@ -920,8 +920,8 @@
   },
   "select_group_search_use_int_search_use_restart_luby_use_relax_and_reconstruct_gecode": {
     "time": null,
-    "optimal": "false",
-    "obj": null,
+    "optimal": false,
+    "obj": "None",
     "sol": "unsat",
     "solver": "gecode",
     "constraints": [
