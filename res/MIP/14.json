@@ -1,0 +1,1199 @@
+{
+  "combo_none": {
+    "solver": "PULP_CBC_CMD",
+    "constraints": [],
+    "time": 300,
+    "obj": "None",
+    "optimal":  false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "combo_use_symm_break_weeks": {
+    "solver": "PULP_CBC_CMD",
+    "constraints": [
+      "use_symm_break_weeks"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal":  false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "combo_use_symm_break_periods": {
+    "solver": "PULP_CBC_CMD",
+    "constraints": [
+      "use_symm_break_periods"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal":  false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "combo_use_symm_break_teams": {
+    "solver": "PULP_CBC_CMD",
+    "constraints": [
+      "use_symm_break_teams"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal":  false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "combo_use_implied_matches_per_team": {
+    "solver": "PULP_CBC_CMD",
+    "constraints": [
+      "use_implied_matches_per_team"
+    ],
+    "time": 27,
+    "obj": "None",
+    "optimal":  true,
+    "sol": [[[5, 9], [5, 4], [10, 2], [6, 13], [11, 7], [8, 14], [12, 10], [6, 3], [2, 3], [7, 13], [8, 9], [12, 4], [14, 1]], [[13, 11], [13, 2], [9, 12], [9, 3], [6, 1], [6, 4], [8, 1], [4, 8], [7, 14], [3, 12], [5, 14], [5, 7], [10, 11]], [[2, 1], [6, 11], [7, 3], [11, 8], [2, 14], [10, 3], [4, 13], [10, 7], [5, 12], [5, 8], [12, 1], [9, 14], [13, 9]], [[8, 7], [8, 10], [14, 11], [5, 1], [13, 3], [5, 11], [7, 2], [1, 9], [9, 6], [4, 14], [3, 4], [10, 6], [2, 12]], [[12, 6], [12, 14], [6, 8], [4, 2], [10, 5], [7, 1], [3, 5], [14, 13], [4, 11], [9, 10], [2, 11], [13, 1], [3, 8]], [[3, 14], [1, 3], [13, 5], [14, 10], [4, 9], [13, 12], [9, 11], [12, 11], [10, 1], [6, 2], [6, 7], [8, 2], [4, 7]], [[4, 10], [9, 7], [4, 1], [12, 7], [8, 12], [9, 2], [14, 6], [2, 5], [13, 8], [11, 1], [13, 10], [3, 11], [5, 6]]],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 5,
+      "time_stats": {
+        "mean": 27,
+        "median": 27,
+        "min": 27,
+        "max": 27,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "combo_use_symm_break_weeks_use_symm_break_periods": {
+    "solver": "PULP_CBC_CMD",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal":  false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "combo_use_symm_break_weeks_use_symm_break_teams": {
+    "solver": "PULP_CBC_CMD",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_teams"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal":  false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "combo_use_symm_break_weeks_use_implied_matches_per_team": {
+    "solver": "PULP_CBC_CMD",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_implied_matches_per_team"
+    ],
+    "time": 29,
+    "obj": "None",
+    "optimal":  true,
+    "sol": [[[5, 9], [5, 4], [10, 2], [6, 13], [11, 7], [8, 14], [12, 10], [6, 3], [2, 3], [7, 13], [8, 9], [12, 4], [14, 1]], [[13, 11], [13, 2], [9, 12], [9, 3], [6, 1], [6, 4], [8, 1], [4, 8], [7, 14], [3, 12], [5, 14], [5, 7], [10, 11]], [[2, 1], [6, 11], [7, 3], [11, 8], [2, 14], [10, 3], [4, 13], [10, 7], [5, 12], [5, 8], [12, 1], [9, 14], [13, 9]], [[8, 7], [8, 10], [14, 11], [5, 1], [13, 3], [5, 11], [7, 2], [1, 9], [9, 6], [4, 14], [3, 4], [10, 6], [2, 12]], [[12, 6], [12, 14], [6, 8], [4, 2], [10, 5], [7, 1], [3, 5], [14, 13], [4, 11], [9, 10], [2, 11], [13, 1], [3, 8]], [[3, 14], [1, 3], [13, 5], [14, 10], [4, 9], [13, 12], [9, 11], [12, 11], [10, 1], [6, 2], [6, 7], [8, 2], [4, 7]], [[4, 10], [9, 7], [4, 1], [12, 7], [8, 12], [9, 2], [14, 6], [2, 5], [13, 8], [11, 1], [13, 10], [3, 11], [5, 6]]],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 5,
+      "time_stats": {
+        "mean": 29,
+        "median": 29,
+        "min": 29,
+        "max": 29,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "combo_use_symm_break_periods_use_symm_break_teams": {
+    "solver": "PULP_CBC_CMD",
+    "constraints": [
+      "use_symm_break_periods",
+      "use_symm_break_teams"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal":  false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "combo_use_symm_break_periods_use_implied_matches_per_team": {
+    "solver": "PULP_CBC_CMD",
+    "constraints": [
+      "use_symm_break_periods",
+      "use_implied_matches_per_team"
+    ],
+    "time": 30.0,
+    "obj": "None",
+    "optimal":  true,
+    "sol": [[[5, 9], [5, 4], [10, 2], [6, 13], [11, 7], [8, 14], [12, 10], [6, 3], [2, 3], [7, 13], [8, 9], [12, 4], [14, 1]], [[13, 11], [13, 2], [9, 12], [9, 3], [6, 1], [6, 4], [8, 1], [4, 8], [7, 14], [3, 12], [5, 14], [5, 7], [10, 11]], [[2, 1], [6, 11], [7, 3], [11, 8], [2, 14], [10, 3], [4, 13], [10, 7], [5, 12], [5, 8], [12, 1], [9, 14], [13, 9]], [[8, 7], [8, 10], [14, 11], [5, 1], [13, 3], [5, 11], [7, 2], [1, 9], [9, 6], [4, 14], [3, 4], [10, 6], [2, 12]], [[12, 6], [12, 14], [6, 8], [4, 2], [10, 5], [7, 1], [3, 5], [14, 13], [4, 11], [9, 10], [2, 11], [13, 1], [3, 8]], [[3, 14], [1, 3], [13, 5], [14, 10], [4, 9], [13, 12], [9, 11], [12, 11], [10, 1], [6, 2], [6, 7], [8, 2], [4, 7]], [[4, 10], [9, 7], [4, 1], [12, 7], [8, 12], [9, 2], [14, 6], [2, 5], [13, 8], [11, 1], [13, 10], [3, 11], [5, 6]]],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 5,
+      "time_stats": {
+        "mean": 29.6,
+        "median": 30,
+        "min": 29,
+        "max": 30,
+        "stdev": 0.55
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "combo_use_symm_break_teams_use_implied_matches_per_team": {
+    "solver": "PULP_CBC_CMD",
+    "constraints": [
+      "use_symm_break_teams",
+      "use_implied_matches_per_team"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal":  false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "combo_use_symm_break_weeks_use_symm_break_periods_use_symm_break_teams": {
+    "solver": "PULP_CBC_CMD",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal":  false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "combo_use_symm_break_weeks_use_symm_break_periods_use_implied_matches_per_team": {
+    "solver": "PULP_CBC_CMD",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_implied_matches_per_team"
+    ],
+    "time": 29,
+    "obj": "None",
+    "optimal":  true,
+    "sol": [[[5, 9], [5, 4], [10, 2], [6, 13], [11, 7], [8, 14], [12, 10], [6, 3], [2, 3], [7, 13], [8, 9], [12, 4], [14, 1]], [[13, 11], [13, 2], [9, 12], [9, 3], [6, 1], [6, 4], [8, 1], [4, 8], [7, 14], [3, 12], [5, 14], [5, 7], [10, 11]], [[2, 1], [6, 11], [7, 3], [11, 8], [2, 14], [10, 3], [4, 13], [10, 7], [5, 12], [5, 8], [12, 1], [9, 14], [13, 9]], [[8, 7], [8, 10], [14, 11], [5, 1], [13, 3], [5, 11], [7, 2], [1, 9], [9, 6], [4, 14], [3, 4], [10, 6], [2, 12]], [[12, 6], [12, 14], [6, 8], [4, 2], [10, 5], [7, 1], [3, 5], [14, 13], [4, 11], [9, 10], [2, 11], [13, 1], [3, 8]], [[3, 14], [1, 3], [13, 5], [14, 10], [4, 9], [13, 12], [9, 11], [12, 11], [10, 1], [6, 2], [6, 7], [8, 2], [4, 7]], [[4, 10], [9, 7], [4, 1], [12, 7], [8, 12], [9, 2], [14, 6], [2, 5], [13, 8], [11, 1], [13, 10], [3, 11], [5, 6]]],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 5,
+      "time_stats": {
+        "mean": 29,
+        "median": 29,
+        "min": 29,
+        "max": 29,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "combo_use_symm_break_weeks_use_symm_break_teams_use_implied_matches_per_team": {
+    "solver": "PULP_CBC_CMD",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal":  false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "combo_use_symm_break_periods_use_symm_break_teams_use_implied_matches_per_team": {
+    "solver": "PULP_CBC_CMD",
+    "constraints": [
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal":  false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "combo_use_symm_break_weeks_use_symm_break_periods_use_symm_break_teams_use_implied_matches_per_team": {
+    "solver": "PULP_CBC_CMD",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal":  false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "opt_combo_none": {
+    "solver": "PULP_CBC_CMD",
+    "constraints": [],
+    "time": 300,
+    "obj": "None",
+    "optimal": false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "opt_combo_use_symm_break_weeks": {
+    "solver": "PULP_CBC_CMD",
+    "constraints": [
+      "use_symm_break_weeks"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal": false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "opt_combo_use_symm_break_periods": {
+    "solver": "PULP_CBC_CMD",
+    "constraints": [
+      "use_symm_break_periods"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal": false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "opt_combo_use_symm_break_teams": {
+    "solver": "PULP_CBC_CMD",
+    "constraints": [
+      "use_symm_break_teams"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal": false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "opt_combo_use_implied_matches_per_team": {
+    "solver": "PULP_CBC_CMD",
+    "constraints": [
+      "use_implied_matches_per_team"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal": false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "opt_combo_use_symm_break_weeks_use_symm_break_periods": {
+    "solver": "PULP_CBC_CMD",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal": false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "opt_combo_use_symm_break_weeks_use_symm_break_teams": {
+    "solver": "PULP_CBC_CMD",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_teams"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal": false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "opt_combo_use_symm_break_weeks_use_implied_matches_per_team": {
+    "solver": "PULP_CBC_CMD",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_implied_matches_per_team"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal": false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "opt_combo_use_symm_break_periods_use_symm_break_teams": {
+    "solver": "PULP_CBC_CMD",
+    "constraints": [
+      "use_symm_break_periods",
+      "use_symm_break_teams"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal": false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "opt_combo_use_symm_break_periods_use_implied_matches_per_team": {
+    "solver": "PULP_CBC_CMD",
+    "constraints": [
+      "use_symm_break_periods",
+      "use_implied_matches_per_team"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal": false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "opt_combo_use_symm_break_teams_use_implied_matches_per_team": {
+    "solver": "PULP_CBC_CMD",
+    "constraints": [
+      "use_symm_break_teams",
+      "use_implied_matches_per_team"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal": false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "opt_combo_use_symm_break_weeks_use_symm_break_periods_use_symm_break_teams": {
+    "solver": "PULP_CBC_CMD",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal": false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "opt_combo_use_symm_break_weeks_use_symm_break_periods_use_implied_matches_per_team": {
+    "solver": "PULP_CBC_CMD",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_implied_matches_per_team"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal": false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "opt_combo_use_symm_break_weeks_use_symm_break_teams_use_implied_matches_per_team": {
+    "solver": "PULP_CBC_CMD",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal": false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "opt_combo_use_symm_break_periods_use_symm_break_teams_use_implied_matches_per_team": {
+    "solver": "PULP_CBC_CMD",
+    "constraints": [
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal": false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "opt_combo_use_symm_break_weeks_use_symm_break_periods_use_symm_break_teams_use_implied_matches_per_team": {
+    "solver": "PULP_CBC_CMD",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal": false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "opt_glpk_combo_none": {
+    "solver": "GLPK_CMD",
+    "constraints": [],
+    "time": 300,
+    "obj": "None",
+    "optimal": false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "opt_glpk_combo_use_symm_break_weeks": {
+    "solver": "GLPK_CMD",
+    "constraints": [
+      "use_symm_break_weeks"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal": false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "opt_glpk_combo_use_symm_break_periods": {
+    "solver": "GLPK_CMD",
+    "constraints": [
+      "use_symm_break_periods"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal": false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "opt_glpk_combo_use_symm_break_teams": {
+    "solver": "GLPK_CMD",
+    "constraints": [
+      "use_symm_break_teams"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal": false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "opt_glpk_combo_use_implied_matches_per_team": {
+    "solver": "GLPK_CMD",
+    "constraints": [
+      "use_implied_matches_per_team"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal": false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "opt_glpk_combo_use_symm_break_weeks_use_symm_break_periods": {
+    "solver": "GLPK_CMD",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal": false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "opt_glpk_combo_use_symm_break_weeks_use_symm_break_teams": {
+    "solver": "GLPK_CMD",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_teams"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal": false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "opt_glpk_combo_use_symm_break_weeks_use_implied_matches_per_team": {
+    "solver": "GLPK_CMD",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_implied_matches_per_team"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal": false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "opt_glpk_combo_use_symm_break_periods_use_symm_break_teams": {
+    "solver": "GLPK_CMD",
+    "constraints": [
+      "use_symm_break_periods",
+      "use_symm_break_teams"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal": false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "opt_glpk_combo_use_symm_break_periods_use_implied_matches_per_team": {
+    "solver": "GLPK_CMD",
+    "constraints": [
+      "use_symm_break_periods",
+      "use_implied_matches_per_team"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal": false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "opt_glpk_combo_use_symm_break_teams_use_implied_matches_per_team": {
+    "solver": "GLPK_CMD",
+    "constraints": [
+      "use_symm_break_teams",
+      "use_implied_matches_per_team"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal": false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "opt_glpk_combo_use_symm_break_weeks_use_symm_break_periods_use_symm_break_teams": {
+    "solver": "GLPK_CMD",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal": false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "opt_glpk_combo_use_symm_break_weeks_use_symm_break_periods_use_implied_matches_per_team": {
+    "solver": "GLPK_CMD",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_implied_matches_per_team"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal": false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "opt_glpk_combo_use_symm_break_weeks_use_symm_break_teams_use_implied_matches_per_team": {
+    "solver": "GLPK_CMD",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal": false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "opt_glpk_combo_use_symm_break_periods_use_symm_break_teams_use_implied_matches_per_team": {
+    "solver": "GLPK_CMD",
+    "constraints": [
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal": false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  },
+  "opt_glpk_combo_use_symm_break_weeks_use_symm_break_periods_use_symm_break_teams_use_implied_matches_per_team": {
+    "solver": "GLPK_CMD",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team"
+    ],
+    "time": 300,
+    "obj": "None",
+    "optimal": false,
+    "sol": [],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 0,
+      "optimal_runs": 0,
+      "time_stats": null,
+      "obj_stats": null,
+      "errors": [
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)",
+        "=====UNKNOWN===== (likely timeout)"
+      ]
+    }
+  }
+}

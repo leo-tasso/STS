@@ -1,0 +1,1192 @@
+{
+  "select_group_symm_none_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol":  [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "select_group_symm_use_symm_break_weeks_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol":  [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "select_group_symm_use_symm_break_periods_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol":  [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_periods",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "select_group_symm_use_symm_break_teams_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol":  [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "select_group_symm_use_symm_break_weeks_use_symm_break_periods_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol":  [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "select_group_symm_use_symm_break_weeks_use_symm_break_teams_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol":  [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "select_group_symm_use_symm_break_periods_use_symm_break_teams_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol":  [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "select_group_symm_use_symm_break_weeks_use_symm_break_periods_use_symm_break_teams_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol":  [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "select_group_implied_none_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol":  [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "select_group_implied_use_implied_matches_per_team_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol":  [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "select_group_implied_use_implied_period_count_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol":  [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "select_group_implied_use_implied_matches_per_team_use_implied_period_count_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol":  [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "select_group_search_none_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol":  [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "select_group_search_use_int_search_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol":  [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "select_group_search_use_restart_luby_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol":  [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_restart_luby"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "select_group_search_use_relax_and_reconstruct_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol":  [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "select_group_search_use_int_search_use_restart_luby_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol":  [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "select_group_search_use_int_search_use_relax_and_reconstruct_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol":  [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "select_group_search_use_restart_luby_use_relax_and_reconstruct_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol":  [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "select_group_search_use_int_search_use_restart_luby_use_relax_and_reconstruct_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol":  [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "opt_select_group_symm_none_chuffed": {
+    "time": 50.0,
+    "optimal": true,
+    "obj": 15,
+    "sol": [[[16, 15], [4, 9], [8, 14], [3, 2], [13, 7], [12, 5], [16, 1], [12, 3], [5, 6], [11, 9], [10, 15], [13, 10], [14, 11], [4, 6], [7, 1]], [[13, 9], [5, 15], [12, 7], [10, 14], [5, 9], [10, 1], [14, 15], [6, 11], [8, 4], [16, 2], [8, 12], [4, 7], [16, 3], [2, 1], [3, 13]], [[5, 8], [13, 2], [6, 9], [9, 1], [6, 14], [14, 13], [12, 10], [15, 1], [11, 15], [7, 3], [16, 4], [16, 8], [2, 12], [7, 5], [4, 11]], [[11, 3], [12, 6], [2, 15], [7, 11], [16, 10], [6, 8], [4, 13], [5, 4], [2, 10], [5, 1], [3, 9], [14, 1], [7, 9], [16, 12], [8, 15]], [[7, 10], [16, 14], [10, 4], [16, 5], [3, 15], [2, 11], [11, 5], [8, 2], [13, 12], [14, 4], [6, 1], [3, 6], [8, 1], [15, 13], [12, 9]], [[14, 12], [11, 1], [3, 5], [12, 4], [4, 2], [7, 15], [7, 6], [16, 13], [3, 1], [10, 8], [13, 11], [9, 15], [6, 10], [9, 8], [14, 2]], [[6, 2], [8, 7], [16, 11], [8, 13], [12, 1], [4, 3], [9, 2], [10, 9], [16, 7], [6, 13], [5, 14], [12, 11], [4, 15], [3, 14], [5, 10]], [[4, 1], [3, 10], [13, 1], [6, 15], [8, 11], [16, 9], [8, 3], [14, 7], [14, 9], [12, 15], [2, 7], [5, 2], [13, 5], [11, 10], [16, 6]]],
+    "solver": "chuffed",
+    "constraints": [
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 5,
+      "time_stats": {
+        "mean": 50.4,
+        "median": 50,
+        "min": 50,
+        "max": 51,
+        "stdev": 0.55
+      },
+      "obj_stats": {
+        "mean": 15,
+        "median": 15,
+        "min": 15,
+        "max": 15,
+        "stdev": 0.0
+      },
+      "errors": null
+    }
+  },
+  "opt_select_group_symm_use_symm_break_weeks_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol": [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "opt_select_group_symm_use_symm_break_periods_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol": [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_periods",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "opt_select_group_symm_use_symm_break_teams_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol": [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "opt_select_group_symm_use_symm_break_weeks_use_symm_break_periods_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol": [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "opt_select_group_symm_use_symm_break_weeks_use_symm_break_teams_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol": [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "opt_select_group_symm_use_symm_break_periods_use_symm_break_teams_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol": [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "opt_select_group_symm_use_symm_break_weeks_use_symm_break_periods_use_symm_break_teams_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol": [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "opt_select_group_implied_none_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol": [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "opt_select_group_implied_use_implied_matches_per_team_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol": [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "opt_select_group_implied_use_implied_period_count_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol": [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "opt_select_group_implied_use_implied_matches_per_team_use_implied_period_count_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol": [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "opt_select_group_search_none_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol": [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "opt_select_group_search_use_int_search_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol": [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "opt_select_group_search_use_restart_luby_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol": [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_restart_luby"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "opt_select_group_search_use_relax_and_reconstruct_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol": [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "opt_select_group_search_use_int_search_use_restart_luby_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol": [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "opt_select_group_search_use_int_search_use_relax_and_reconstruct_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol": [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "opt_select_group_search_use_restart_luby_use_relax_and_reconstruct_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol": [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  },
+  "opt_select_group_search_use_int_search_use_restart_luby_use_relax_and_reconstruct_chuffed": {
+    "time": 300,
+    "optimal": false,
+    "obj": "None",
+    "sol": [],
+    "solver": "chuffed",
+    "constraints": [
+      "use_symm_break_weeks",
+      "use_symm_break_periods",
+      "use_symm_break_teams",
+      "use_implied_matches_per_team",
+      "use_implied_period_count",
+      "use_int_search",
+      "use_restart_luby",
+      "use_relax_and_reconstruct"
+    ],
+    "runs_info": {
+      "total_runs": 5,
+      "successful_runs": 5,
+      "optimal_runs": 0,
+      "time_stats": {
+        "mean": 300,
+        "median": 300,
+        "min": 300,
+        "max": 300,
+        "stdev": 0.0
+      },
+      "obj_stats": null,
+      "errors": null
+    }
+  }
+}
