@@ -112,7 +112,7 @@ constraint
   forall(i in Periods) (
     home[1, i] = 2*i - 1 /\ 
     away[1, i] = 2*i
-  );% for not optimized version could fix the whole first week
+  );
 
 % Objective: balance home/away games
 set of int: Count_diff = 1..n-1;

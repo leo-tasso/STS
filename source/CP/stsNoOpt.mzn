@@ -112,8 +112,7 @@ constraint
   forall(i in Periods) (
     home[1, i] = 2*i - 1 /\ 
     away[1, i] = 2*i
-  );% for not optimized version could fix the whole first week
-
+  );
 
 
 % Objective: just find a solution
