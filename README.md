@@ -4,6 +4,32 @@ A comprehensive platform for solving sports tournament scheduling using four dif
 
 ## Quick Start
 
+### Option 1: Docker (Recommended)
+
+1. **Build and run**
+   ```bash
+   docker build -t sts-solver .
+   docker-compose up -d
+   docker-compose exec sts bash
+   ```
+
+2. **Run examples inside the container:**
+   ```bash
+   # Constraint Programming
+   cd test/CP && python run_CP.py -n 6
+   
+   # Mixed Integer Programming  
+   cd test/MIP && python run_MIP.py -n 6
+   
+   # SAT Solver
+   cd test/SAT && python run_SAT.py 6
+   
+   # All paradigms, more info on usage below
+   cd test && python run_all_models.py -n 6
+   ```
+
+### Option 2: Local Installation
+
 1. **Install Dependencies:**
    ```bash
    pip install -r requirements.txt
@@ -11,7 +37,9 @@ A comprehensive platform for solving sports tournament scheduling using four dif
 
 2. **Install MiniZinc** (for CP): Download from https://www.minizinc.org/
 
-3. **Run Examples:**
+3. **Install CVC5** (for SMT): Download from https://github.com/cvc5/cvc5/releases
+
+4. **Run Examples:**
    ```bash
    # Constraint Programming
    python test/CP/run_CP.py -n 6
