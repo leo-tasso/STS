@@ -3,7 +3,7 @@ import time
 import subprocess
 import os
 
-def create_smt_solver(n: int, constraints: dict[str, bool] = None, optimize: bool = False) -> tuple[Solver, dict]:
+def create_smt_solver(n: int, constraints: dict[str, bool] = None, optimize: bool = False) -> tuple[Solver | Optimize, dict]:
     """
     Creates a Z3 SMT solver instance for the STS problem.
     
@@ -70,7 +70,7 @@ def create_smt_solver(n: int, constraints: dict[str, bool] = None, optimize: boo
     def pb_le_bool_sum(bool_exprs, rhs):
         return Sum([If(b, 1, 0) for b in bool_exprs]) <= rhs
 
-    # Each slot has exactly one home and one away team
+    # Each pair of teams plays exactly one match against each other (home or away)
     for i in Teams:
         for j in Teams:
             if i < j:
